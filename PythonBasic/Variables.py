@@ -30,3 +30,5 @@ print(c.replace("WORLD","THINH"));
 print("Enter a name:");
 name = input();
 print("Hello "+ name.upper());
+# Repeat a string
+print("Hello "*3)
