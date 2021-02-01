@@ -27,7 +27,7 @@ This was a popular file...
 Notice that we’ve appended "... and it still is" to the file a second time! This is because in script.py we opened generated_file.txt in append-mode.
 """
 with open('bad_bands.txt', 'a') as cool_dogs_file:
-     cool_dogs_file.write("Air Buddy")
+    cool_dogs_file.write("Air Buddy")
 with open('bad_bands.txt') as read_file:
-     for line in read_file.read():
-         print(line)
+    for line in read_file.read():
+        print(line)

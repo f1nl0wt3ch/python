@@ -25,10 +25,10 @@ print(b.upper());
 # Lower case a string
 print(c.lower());
 # Replace
-print(c.replace("WORLD","THINH"));
+print(c.replace("WORLD", "THINH"));
 # Command line string input
 print("Enter a name:");
 name = input();
-print("Hello "+ name.upper());
+print("Hello " + name.upper());
 # Repeat a string
-print("Hello "*3)
+print("Hello " * 3)

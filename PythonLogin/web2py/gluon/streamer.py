@@ -20,11 +20,11 @@ from gluon.utils import unlocalised_http_header_date
 from gluon.contenttype import contenttype
 from gluon._compat import PY2
 
-
 regex_start_range = re.compile('\d+(?=\-)')
 regex_stop_range = re.compile('(?<=\-)\d+')
 
 DEFAULT_CHUNK_SIZE = 64 * 1024
+
 
 def streamer(stream, chunk_size=DEFAULT_CHUNK_SIZE, bytes=None, callback=None):
     try:
@@ -46,23 +46,24 @@ def streamer(stream, chunk_size=DEFAULT_CHUNK_SIZE, bytes=None, callback=None):
         if callback:
             callback()
 
+
 def stream_file_or_304_or_206(
-    static_file,
-    chunk_size=DEFAULT_CHUNK_SIZE,
-    request=None,
-    headers={},
-    status=200,
-    error_message=None
-    ):
+        static_file,
+        chunk_size=DEFAULT_CHUNK_SIZE,
+        request=None,
+        headers={},
+        status=200,
+        error_message=None
+):
     # FIX THIS
     # if error_message is None:
     #     error_message = rewrite.THREAD_LOCAL.routes.error_message % 'invalid request'
     try:
         if PY2:
-            open_f = file # this makes no sense but without it GAE cannot open files
+            open_f = file  # this makes no sense but without it GAE cannot open files
         else:
             open_f = open
-        fp = open_f(static_file,'rb')
+        fp = open_f(static_file, 'rb')
     except IOError as e:
         if e.errno == errno.EISDIR:
             raise HTTP(403, error_message, web2py_error='file is a directory')

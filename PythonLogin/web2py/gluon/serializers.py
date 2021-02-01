@@ -127,6 +127,7 @@ def json(value, default=custom_json, indent=None, sort_keys=False):
     # return value.replace(ur'\u2028', '\\u2028').replace(ur'\2029', '\\u2029')
     return value
 
+
 def csv(value):
     return ''
 
@@ -160,11 +161,12 @@ def ics(events, title=None, link=None, timeshift=0, calname=True,
     s += '\nEND:VCALENDAR'
     return s
 
+
 def safe_encode(text):
     if not isinstance(text, (str, unicodeT)):
         text = str(text)
     try:
-        text = text.encode('utf8','replace')
+        text = text.encode('utf8', 'replace')
     except ValueError:
         new_text = ''
         for c in text:
@@ -175,24 +177,25 @@ def safe_encode(text):
         text = new_text
     return text
 
+
 def rss(feed):
     if not 'entries' in feed and 'items' in feed:
         feed['entries'] = feed['items']
 
     def safestr(obj, key, default=''):
-        return safe_encode(obj.get(key,''))
+        return safe_encode(obj.get(key, ''))
 
     now = datetime.datetime.now()
-    rss = rss2.RSS2(title=safestr(feed,'title'),
-                    link=safestr(feed,'link'),
-                    description=safestr(feed,'description'),
+    rss = rss2.RSS2(title=safestr(feed, 'title'),
+                    link=safestr(feed, 'link'),
+                    description=safestr(feed, 'description'),
                     lastBuildDate=feed.get('created_on', now),
                     items=[rss2.RSSItem(
-                           title=safestr(entry,'title','(notitle)'),
-                           link=safestr(entry,'link'),
-                           description=safestr(entry,'description'),
-                           pubDate=entry.get('created_on', now)
-                           ) for entry in feed.get('entries', [])])
+                        title=safestr(entry, 'title', '(notitle)'),
+                        link=safestr(entry, 'link'),
+                        description=safestr(entry, 'description'),
+                        pubDate=entry.get('created_on', now)
+                    ) for entry in feed.get('entries', [])])
     return rss.to_xml(encoding='utf8')
 
 

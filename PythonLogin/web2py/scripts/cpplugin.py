@@ -2,6 +2,7 @@ import sys
 import glob
 import os
 import shutil
+
 name = sys.argv[1]
 app = sys.argv[2]
 dest = sys.argv[3]
@@ -11,12 +12,15 @@ b = glob.glob(
     'applications/%(app)s/*/plugin_%(name)s/*' % dict(app=app, name=name))
 
 for f in a:
-    print 'cp %s ...' % f,
+    print
+    'cp %s ...' % f,
     shutil.copyfile(f, os.path.join('applications', dest, *f.split('/')[2:]))
-    print 'done'
+    print
+    'done'
 
 for f in b:
-    print 'cp %s ...' % f,
+    print
+    'cp %s ...' % f,
     path = f.split('/')
     for i in range(3, len(path)):
         try:
@@ -29,4 +33,5 @@ for f in b:
             shutil.copytree(f, path)
     else:
         shutil.copyfile(f, path)
-    print 'done'
+    print
+    'done'

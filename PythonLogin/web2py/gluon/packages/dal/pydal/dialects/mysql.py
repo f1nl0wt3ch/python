@@ -35,20 +35,20 @@ class MySQLDialect(SQLDialect):
     @sqltype_for('reference')
     def type_reference(self):
         return 'INT %(null)s %(unique)s, INDEX %(index_name)s ' + \
-            '(%(field_name)s), FOREIGN KEY (%(field_name)s) REFERENCES ' + \
-            '%(foreign_key)s ON DELETE %(on_delete_action)s'
+               '(%(field_name)s), FOREIGN KEY (%(field_name)s) REFERENCES ' + \
+               '%(foreign_key)s ON DELETE %(on_delete_action)s'
 
     @sqltype_for('big-reference')
     def type_big_reference(self):
         return 'BIGINT %(null)s %(unique)s, INDEX %(index_name)s ' + \
-            '(%(field_name)s), FOREIGN KEY (%(field_name)s) REFERENCES ' + \
-            '%(foreign_key)s ON DELETE %(on_delete_action)s'
+               '(%(field_name)s), FOREIGN KEY (%(field_name)s) REFERENCES ' + \
+               '%(foreign_key)s ON DELETE %(on_delete_action)s'
 
     @sqltype_for('reference FK')
     def type_reference_fk(self):
         return ', CONSTRAINT `FK_%(constraint_name)s` FOREIGN KEY ' + \
-            '(%(field_name)s) REFERENCES %(foreign_key)s ON DELETE ' + \
-            '%(on_delete_action)s'
+               '(%(field_name)s) REFERENCES %(foreign_key)s ON DELETE ' + \
+               '%(on_delete_action)s'
 
     def varquote(self, val):
         return varquote_aux(val, '`%s`')
@@ -70,7 +70,7 @@ class MySQLDialect(SQLDialect):
     def substring(self, field, parameters, query_env={}):
         return 'SUBSTRING(%s,%s,%s)' % (
             self.expand(field, query_env=query_env), parameters[0],
-                parameters[1])
+            parameters[1])
 
     def epoch(self, first, query_env={}):
         return "UNIX_TIMESTAMP(%s)" % self.expand(first, query_env=query_env)

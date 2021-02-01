@@ -18,7 +18,6 @@ from gluon._compat import urlopen, urlencode, FancyURLopene
 
 
 class DowCommerce:
-
     class DowCommerceError(Exception):
         def __init__(self, value):
             self.parameter = value
@@ -84,16 +83,21 @@ class DowCommerce:
             raise DowCommerce.DowCommerceError(self.results)
 
     def setTransaction(
-        self, creditcard, expiration, total, cvv=None, orderid=None, orderdescription=None,
-        ipaddress=None, tax=None, shipping=None,
-        firstname=None, lastname=None, company=None, address1=None, address2=None, city=None, state=None, zipcode=None,
-        country=None, phone=None, fax=None, emailaddress=None, website=None,
-        shipping_firstname=None, shipping_lastname=None, shipping_company=None, shipping_address1=None, shipping_address2=None,
-            shipping_city=None, shipping_state=None, shipping_zipcode=None, shipping_country=None, shipping_emailaddress=None):
+            self, creditcard, expiration, total, cvv=None, orderid=None, orderdescription=None,
+            ipaddress=None, tax=None, shipping=None,
+            firstname=None, lastname=None, company=None, address1=None, address2=None, city=None, state=None,
+            zipcode=None,
+            country=None, phone=None, fax=None, emailaddress=None, website=None,
+            shipping_firstname=None, shipping_lastname=None, shipping_company=None, shipping_address1=None,
+            shipping_address2=None,
+            shipping_city=None, shipping_state=None, shipping_zipcode=None, shipping_country=None,
+            shipping_emailaddress=None):
         if str(creditcard).strip() == '' or creditcard is None:
-            raise DowCommerce.DowCommerceError('No credit card number passed to setTransaction(): {0}'.format(creditcard))
+            raise DowCommerce.DowCommerceError(
+                'No credit card number passed to setTransaction(): {0}'.format(creditcard))
         if str(expiration).strip() == '' or expiration is None:
-            raise DowCommerce.DowCommerceError('No expiration number passed to setTransaction(): {0}'.format(expiration))
+            raise DowCommerce.DowCommerceError(
+                'No expiration number passed to setTransaction(): {0}'.format(expiration))
         if str(total).strip() == '' or total is None:
             raise DowCommerce.DowCommerceError('No total amount passed to setTransaction(): {0}'.format(total))
 
@@ -165,7 +169,8 @@ class DowCommerce:
     def setTransactionType(self, transtype=None):
         types = ['sale', 'auth', 'credit']
         if transtype.lower() not in types:
-            raise DowCommerce.DowCommerceError('Incorrect Transaction Type passed to setTransactionType(): {0}'.format(transtype))
+            raise DowCommerce.DowCommerceError(
+                'Incorrect Transaction Type passed to setTransactionType(): {0}'.format(transtype))
         self.setParameter('type', transtype.lower())
 
     def setProxy(self, proxy=None):
@@ -177,7 +182,8 @@ class DowCommerce:
         if key is not None and value is not None and str(key).strip() != '' and str(value).strip() != '':
             self.parameters[key] = str(value).strip()
         else:
-            raise DowCommerce.DowCommerceError('Incorrect parameters passed to setParameter(): {0}:{1}'.format(key, value))
+            raise DowCommerce.DowCommerceError(
+                'Incorrect parameters passed to setParameter(): {0}:{1}'.format(key, value))
 
     def isApproved(self):
         return self.success
@@ -224,7 +230,8 @@ def test():
         payment.setTransaction(
             creditcard, expiration, total, cvv=cvv, tax=tax, orderid=orderid, orderdescription='Test Transaction',
             firstname='John', lastname='Doe', company='Acme', address1='123 Min Street', city='Hometown', state='VA',
-            zipcode='12345', country='US', phone='888-555-1212', emailaddress='john@noemail.local', ipaddress='192.168.1.1')
+            zipcode='12345', country='US', phone='888-555-1212', emailaddress='john@noemail.local',
+            ipaddress='192.168.1.1')
 
         payment.process()
         if payment.isApproved():
@@ -240,6 +247,7 @@ def test():
     print('approved', payment.isApproved())
     print('declined', payment.isDeclined())
     print('error', payment.isError())
+
 
 if __name__ == '__main__':
     test()

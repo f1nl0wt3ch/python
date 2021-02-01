@@ -18,6 +18,7 @@ __license__ = "LGPL 3.0"
 __version__ = "0.05"
 
 import sys
+
 PY2 = sys.version_info[0] == 2
 
 if PY2:
@@ -34,6 +35,7 @@ import json
 
 class JSONRPCError(RuntimeError):
     "Error object for remote procedure call fail"
+
     def __init__(self, code, message, data=''):
         value = "%s: %s\n%s" % (code, message, '\n'.join(data))
         RuntimeError.__init__(self, value)
@@ -44,6 +46,7 @@ class JSONRPCError(RuntimeError):
 
 class JSONDummyParser:
     "json wrapper for xmlrpclib parser interfase"
+
     def __init__(self):
         self.buf = StringIO()
 
@@ -82,13 +85,13 @@ class JSONSafeTransport(JSONTransportMixin, SafeTransport):
 class ServerProxy(object):
     "JSON RPC Simple Client Service Proxy"
 
-    def __init__(self, uri, transport=None, encoding=None, verbose=0,version=None):
-        self.location = uri             # server location (url)
-        self.trace = verbose            # show debug messages
-        self.exceptions = True          # raise errors? (JSONRPCError)
+    def __init__(self, uri, transport=None, encoding=None, verbose=0, version=None):
+        self.location = uri  # server location (url)
+        self.trace = verbose  # show debug messages
+        self.exceptions = True  # raise errors? (JSONRPCError)
         self.timeout = None
         self.json_request = self.json_response = ''
-        self.version = version          # '2.0' for jsonrpc2
+        self.version = version  # '2.0' for jsonrpc2
 
         type, uri = urllib.splittype(uri)
         if type not in ("http", "https"):
@@ -115,7 +118,7 @@ class ServerProxy(object):
         request_id = random.randint(0, sys.maxsize)
         data = {'id': request_id, 'method': method, 'params': args or vars, }
         if self.version:
-            data['jsonrpc'] = self.version #mandatory key/value for jsonrpc2 validation else err -32600
+            data['jsonrpc'] = self.version  # mandatory key/value for jsonrpc2 validation else err -32600
         request = json.dumps(data)
 
         # make HTTP request (retry if connection is lost)
@@ -147,9 +150,8 @@ class ServerProxy(object):
 
 ServiceProxy = ServerProxy
 
-
 if __name__ == "__main__":
     # basic tests:
     location = "http://www.web2py.com.ar/webservices/sample/call/jsonrpc"
-    client = ServerProxy(location, verbose='--verbose' in sys.argv,)
+    client = ServerProxy(location, verbose='--verbose' in sys.argv, )
     print(client.add(1, 2))

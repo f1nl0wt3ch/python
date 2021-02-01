@@ -33,6 +33,7 @@ if PY2:
     import cookielib
     from xmlrpclib import ProtocolError
     from gluon.contrib import ipaddress
+
     BytesIO = StringIO
     reduce = reduce
     reload = reload
@@ -49,15 +50,18 @@ if PY2:
     unichr = unichr
     unicodeT = unicode
 
+
     def implements_bool(cls):
         cls.__nonzero__ = cls.__bool__
         del cls.__bool__
         return cls
 
+
     def implements_iterator(cls):
         cls.next = cls.__next__
         del cls.__next__
         return cls
+
 
     def to_bytes(obj, charset='utf-8', errors='strict'):
         if obj is None:
@@ -67,6 +71,7 @@ if PY2:
         if hasattr(obj, 'encode'):
             return obj.encode(charset, errors)
         raise TypeError('Expected bytes')
+
 
     def to_native(obj, charset='utf8', errors='strict'):
         if obj is None or isinstance(obj, str):
@@ -96,11 +101,13 @@ else:
     from email.header import Header
     from email.charset import Charset, add_charset, QP as charset_QP
     from urllib.request import FancyURLopener, urlopen
-    from urllib.parse import quote as urllib_quote, unquote as urllib_unquote, urlencode, quote_plus as urllib_quote_plus
+    from urllib.parse import quote as urllib_quote, unquote as urllib_unquote, urlencode, \
+        quote_plus as urllib_quote_plus
     from http import cookiejar as cookielib
     from xmlrpc.client import ProtocolError
-    import html # warning, this is the python3 module and not the web2py html module
+    import html  # warning, this is the python3 module and not the web2py html module
     import ipaddress
+
     hashlib_md5 = lambda s: hashlib.md5(bytes(s, 'utf8'))
     iterkeys = lambda d: iter(d.keys())
     itervalues = lambda d: iter(d.values())
@@ -119,6 +126,7 @@ else:
     implements_iterator = _identity
     implements_bool = _identity
 
+
     def to_bytes(obj, charset='utf-8', errors='strict'):
         if obj is None:
             return None
@@ -128,6 +136,7 @@ else:
             return obj.encode(charset, errors)
         raise TypeError('Expected bytes')
 
+
     def to_native(obj, charset='utf8', errors='strict'):
         if obj is None or isinstance(obj, str):
             return obj
@@ -136,6 +145,7 @@ else:
 
 def with_metaclass(meta, *bases):
     """Create a base class with a metaclass."""
+
     # This requires a bit of explanation: the basic idea is to make a dummy
     # metaclass for one level of class instantiation that replaces itself with
     # the actual metaclass.
@@ -147,6 +157,7 @@ def with_metaclass(meta, *bases):
             if this_bases is None:
                 return type.__new__(cls, name, (), d)
             return meta(name, bases, d)
+
     return metaclass('temporary_class', None, {})
 
 

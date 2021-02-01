@@ -14,17 +14,21 @@ from playsound import playsound
 
 DEFAULT_ANSWER = "Selvä"
 DEFAULT_GREETINGS = "Moikka, saisinko auttaa?"
+
+
 # open application on mac
 def _open_application_on_mac(application):
     subprocess.call(
         ["/usr/bin/open", "-W", "-n", "-a", "/Applications/" + application + ".app"]
     )
 
+
 # close application on mac
 def _close_application_on_mac(application):
     subprocess.call(
-        ["/usr/bin/osascript", "-e", 'tell application \"'+application+'\" to quit']
+        ["/usr/bin/osascript", "-e", 'tell application \"' + application + '\" to quit']
     )
+
 
 # get current date
 def _get_current_date():
@@ -33,11 +37,13 @@ def _get_current_date():
     current_date = today.strftime("%B %d, %Y")
     return current_date
 
+
 # get current time
 def _get_current_time():
     now = datetime.now()
     current_time = now.strftime("%H:%M:%S")
     return current_time
+
 
 # start recording sound
 def _speech_to_text(greetings):
@@ -134,7 +140,7 @@ def _answer_question(question):
         _open_application_on_mac("Microsoft Outlook")
         answer = DEFAULT_ANSWER
     elif all(x in question for x in ["mikä", "päivä", "tänään"]):
-        answer = "Tänään on "+_get_current_date()
+        answer = "Tänään on " + _get_current_date()
     elif all(x in question for x in ["mitä", "kello"]):
         answer = _get_current_time()
     elif any(x in question for x in ["käyttöjärjestelmä", "kone"]):

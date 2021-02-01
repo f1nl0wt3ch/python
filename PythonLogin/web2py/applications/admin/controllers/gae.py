@@ -1,6 +1,7 @@
 ### this works on linux only
 
 import re
+
 try:
     import fcntl
     import subprocess
@@ -17,6 +18,7 @@ if MULTI_USER_MODE and not is_manager():
     redirect(URL('default', 'site'))
 
 from gluon.settings import settings
+
 if not settings.is_source:
     session.flash = 'Requires running web2py from source'
     redirect(URL(request.application, 'default', 'site'))
@@ -78,7 +80,7 @@ def deploy():
 
         path = request.env.applications_parent
         cmd = '%s --email=%s --passin update %s' % \
-            (form.vars.appcfg, form.vars.email, path)
+              (form.vars.appcfg, form.vars.email, path)
         p = cache.ram('gae_upload',
                       lambda s=subprocess, c=cmd: s.Popen(c, shell=True,
                                                           stdin=s.PIPE,

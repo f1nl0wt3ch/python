@@ -12,6 +12,7 @@ def tearDownModule():
     if os.path.isfile('test.txt'):
         os.unlink('test.txt')
 
+
 class testPortalocker(unittest.TestCase):
 
     def test_LockedFile(self):
@@ -26,6 +27,7 @@ class testPortalocker(unittest.TestCase):
     def test_openmultiple(self):
 
         t0 = time.time()
+
         def worker1():
             start = time.time()
             f1 = LockedFile('test.txt', mode='ab')
@@ -48,7 +50,7 @@ class testPortalocker(unittest.TestCase):
 
         results = [line.strip().split('\t') for line in content.split('\n') if line]
         # all started at more or less the same time
-        starts = [1 for line in results if float(line[0])-t0<1]
+        starts = [1 for line in results if float(line[0]) - t0 < 1]
         ends = [line[1] for line in results]
         self.assertEqual(sum(starts), len(starts))
         # end - start is at least 2
@@ -71,7 +73,7 @@ class testPortalocker(unittest.TestCase):
         f = open('test.txt', mode='wb')
         lock(f, LOCK_EX)
         f.write(to_bytes('test ok'))
-        t1 = threading.Thread(target=worker1, args=(f, ))
+        t1 = threading.Thread(target=worker1, args=(f,))
         t1.start()
         start = int(time.time())
         content = read_locked('test.txt')
@@ -87,7 +89,7 @@ class testPortalocker(unittest.TestCase):
 
         f = LockedFile('test.txt', mode='wb')
         f.write(to_bytes('test ok'))
-        t1 = threading.Thread(target=worker2, args=(f, ))
+        t1 = threading.Thread(target=worker2, args=(f,))
         t1.start()
         start = int(time.time())
         content = read_locked('test.txt')
@@ -107,7 +109,7 @@ class testPortalocker(unittest.TestCase):
 
         f = LockedFile('test.txt', mode='wb')
         f.write(to_bytes('test ok'))
-        t1 = threading.Thread(target=worker, args=(f, ))
+        t1 = threading.Thread(target=worker, args=(f,))
         t1.start()
         start = int(time.time())
         content = read_locked('test.txt')
@@ -126,7 +128,7 @@ class testPortalocker(unittest.TestCase):
 
         f = open('test.txt', mode='wb')
         lock(f, LOCK_EX)
-        t1 = threading.Thread(target=worker, args=(f, ))
+        t1 = threading.Thread(target=worker, args=(f,))
         t1.start()
         start = int(time.time())
         write_locked('test.txt', to_bytes('test ok'))

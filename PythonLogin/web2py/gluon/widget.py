@@ -25,12 +25,10 @@ import logging
 import getpass
 from gluon import main, newcron
 
-
 from gluon.fileutils import read_file, write_file, create_welcome_w2p
 from gluon.settings import global_settings
 from gluon.shell import run, test
 from gluon.utils import is_valid_ip_address, is_loopback_ip_address, getipaddrinfo
-
 
 ProgramName = 'web2py Web Framework'
 ProgramAuthor = 'Created by Massimo Di Pierro, Copyright 2007-' + str(
@@ -141,7 +139,6 @@ class web2pyDialog(object):
             import tkinter
             from tkinter import messagebox
 
-
         bg_color = 'white'
         root.withdraw()
 
@@ -171,10 +168,10 @@ class web2pyDialog(object):
         self.pagesmenu = tkinter.Menu(self.menu, tearoff=0)
         self.menu.add_cascade(label='Pages', menu=self.pagesmenu)
 
-        #scheduler menu
+        # scheduler menu
         self.schedmenu = tkinter.Menu(self.menu, tearoff=0)
         self.menu.add_cascade(label='Scheduler', menu=self.schedmenu)
-        #start and register schedulers from options
+        # start and register schedulers from options
         self.update_schedulers(start=True)
 
         helpmenu = tkinter.Menu(self.menu, tearoff=0)
@@ -203,9 +200,9 @@ class web2pyDialog(object):
 
         # Prepare the logo area
         self.logoarea = tkinter.Canvas(self.root,
-                                background=bg_color,
-                                width=300,
-                                height=300)
+                                       background=bg_color,
+                                       width=300,
+                                       height=300)
         self.logoarea.grid(row=0, column=0, columnspan=4, sticky=sticky)
         self.logoarea.after(1000, self.update_canvas)
 
@@ -219,9 +216,9 @@ class web2pyDialog(object):
 
         # Prepare the banner area
         self.bannerarea = tkinter.Canvas(self.root,
-                                bg=bg_color,
-                                width=300,
-                                height=300)
+                                         bg=bg_color,
+                                         width=300,
+                                         height=300)
         self.bannerarea.grid(row=1, column=1, columnspan=2, sticky=sticky)
 
         tkinter.Label(self.bannerarea, anchor=tkinter.N,
@@ -244,9 +241,9 @@ class web2pyDialog(object):
         self.selected_ip = tkinter.StringVar()
         row = 4
         ips = [('127.0.0.1', 'Local (IPv4)')] + \
-            ([('::1', 'Local (IPv6)')] if socket.has_ipv6 else []) + \
-            [(ip, 'Public') for ip in options.ips] + \
-            [('0.0.0.0', 'Public')]
+              ([('::1', 'Local (IPv6)')] if socket.has_ipv6 else []) + \
+              [(ip, 'Public') for ip in options.ips] + \
+              [('0.0.0.0', 'Public')]
         for ip, legend in ips:
             self.ips[ip] = tkinter.Radiobutton(
                 self.root, bg=bg_color, highlightthickness=0,
@@ -309,7 +306,7 @@ class web2pyDialog(object):
                                           text='stop server',
                                           command=self.stop)
 
-        self.button_stop.grid(row=0, column=1,  sticky=sticky)
+        self.button_stop.grid(row=0, column=1, sticky=sticky)
         self.button_stop.configure(state='disabled')
 
         if options.taskbar:
@@ -345,11 +342,11 @@ class web2pyDialog(object):
 
         for arq in available_apps:
             if arq not in self.scheduler_processes:
-                item = lambda u = arq: self.try_start_scheduler(u)
+                item = lambda u=arq: self.try_start_scheduler(u)
                 self.schedmenu.add_command(label="start %s" % arq,
                                            command=item)
             if arq in self.scheduler_processes:
-                item = lambda u = arq: self.try_stop_scheduler(u)
+                item = lambda u=arq: self.try_stop_scheduler(u)
                 self.schedmenu.add_command(label="stop %s" % arq,
                                            command=item)
 
@@ -486,7 +483,7 @@ class web2pyDialog(object):
 
         # Check for non default value for ssl inputs
         if (len(self.options.ssl_certificate) > 0 or
-            len(self.options.ssl_private_key) > 0):
+                len(self.options.ssl_private_key) > 0):
             proto = 'https'
         else:
             proto = 'http'
@@ -590,7 +587,7 @@ class web2pyDialog(object):
             self.t0 = t1
             self.p0 = [100] * 400
             self.q0 = [self.canvas.create_line(i, 100, i + 1, 100,
-                       fill='green') for i in xrange(len(self.p0) - 1)]
+                                               fill='green') for i in xrange(len(self.p0) - 1)]
 
         self.canvas.after(1000, self.update_canvas)
 
@@ -986,7 +983,7 @@ def console():
 
     if options.cronjob:
         global_settings.cronjob = True  # tell the world
-        options.plain = True    # cronjobs use a plain shell
+        options.plain = True  # cronjobs use a plain shell
         options.nobanner = True
         options.nogui = True
 
@@ -1157,7 +1154,7 @@ def start(cron=True):
     if options.extcron:
         logger.debug('Starting extcron...')
         global_settings.web2py_crontype = 'external'
-        if options.scheduler:   # -K
+        if options.scheduler:  # -K
             apps = [app.strip() for app in options.scheduler.split(
                 ',') if check_existent_app(options, app.strip())]
         else:
@@ -1300,6 +1297,7 @@ end tell
             except (IOError, OSError):
                 line = None
         return line
+
     linecache.getline = getline
 
     server = main.HttpServer(ip=ip,

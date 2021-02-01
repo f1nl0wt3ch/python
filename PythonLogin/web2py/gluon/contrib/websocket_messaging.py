@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-#!/usr/bin/env python
+# !/usr/bin/env python
 
 """
 This file is part of the web2py Web Framework
@@ -98,6 +98,7 @@ from gluon._compat import to_native, to_bytes, urlencode, urlopen
 
 listeners, names, tokens = {}, {}, {}
 
+
 def websocket_send(url, message, hmac_key=None, group='default'):
     sig = hmac_key and hmac.new(to_bytes(hmac_key), to_bytes(message)).hexdigest() or ''
     params = urlencode(
@@ -112,6 +113,7 @@ class PostHandler(tornado.web.RequestHandler):
     """
     only authorized parties can post messages
     """
+
     def post(self):
         if hmac_key and not 'signature' in self.request.arguments:
             self.send_error(401)
@@ -134,6 +136,7 @@ class TokenHandler(tornado.web.RequestHandler):
     the message here is the token (any uuid)
     allows only authorized parties to joins, for example, a chat
     """
+
     def post(self):
         if hmac_key and not 'message' in self.request.arguments:
             self.send_error(401)
@@ -183,6 +186,7 @@ class DistributeHandler(tornado.websocket.WebSocketHandler):
         for client in listeners.get(self.group, []):
             client.write_message('-' + self.name)
         print('%s:DISCONNECT from %s' % (time.time(), self.group))
+
 
 # if your webserver is different from tornado server uncomment this
 # or override using something more restrictive:

@@ -26,12 +26,12 @@ try:
              socket.gethostbyname(http_host),
              '::1', '127.0.0.1', '::ffff:127.0.0.1')
 except:
-    hosts = (http_host, )
+    hosts = (http_host,)
 
 if request.is_https:
     session.secure()
 elif (remote_addr not in hosts) and (remote_addr != "127.0.0.1") and \
-    (request.function != 'manage'):
+        (request.function != 'manage'):
     raise HTTP(200, T('appadmin is disabled because insecure channel'))
 
 if request.function == 'manage':
@@ -60,10 +60,11 @@ ignore_rw = True
 response.view = 'appadmin.html'
 if menu:
     response.menu = [[T('design'), False, URL('admin', 'default', 'design',
-                 args=[request.application])], [T('db'), False,
-                 URL('index')], [T('state'), False,
-                 URL('state')], [T('cache'), False,
-                 URL('ccache')]]
+                                              args=[request.application])], [T('db'), False,
+                                                                             URL('index')], [T('state'), False,
+                                                                                             URL('state')],
+                     [T('cache'), False,
+                      URL('ccache')]]
 
 # ##########################################################
 # ## auxiliary functions
@@ -71,8 +72,10 @@ if menu:
 
 if False and request.tickets_db:
     from gluon.restricted import TicketStorage
+
     ts = TicketStorage()
     ts._get_table(request.tickets_db, ts.tablename, request.application)
+
 
 def get_databases(request):
     dbs = {}
@@ -85,10 +88,12 @@ def get_databases(request):
             dbs[key] = value
     return dbs
 
+
 databases = get_databases(None)
 
+
 def eval_in_global_env(text):
-    exec ('_ret=%s' % text, {}, global_env)
+    exec('_ret=%s' % text, {}, global_env)
     return global_env['_ret']
 
 
@@ -98,6 +103,7 @@ def get_database(request):
     else:
         session.flash = T('invalid request')
         redirect(URL('index'))
+
 
 def get_table(request):
     db = get_database(request)
@@ -168,8 +174,8 @@ def csv():
     query = get_query(request)
     if not query:
         return None
-    response.headers['Content-disposition'] = 'attachment; filename=%s_%s.csv'\
-        % tuple(request.vars.query.split('.')[:2])
+    response.headers['Content-disposition'] = 'attachment; filename=%s_%s.csv' \
+                                              % tuple(request.vars.query.split('.')[:2])
     return str(db(query, ignore_common_filters=True).select())
 
 
@@ -224,15 +230,20 @@ def select():
     session.last_orderby = orderby
     session.last_query = request.vars.query
     form = FORM(TABLE(TR(T('Query:'), '', INPUT(_style='width:400px',
-                _name='query', _value=request.vars.query or '', _class="form-control",
-                requires=IS_NOT_EMPTY(
-                    error_message=T("Cannot be empty")))), TR(T('Update:'),
-                INPUT(_name='update_check', _type='checkbox',
-                value=False), INPUT(_style='width:400px',
-                _name='update_fields', _value=request.vars.update_fields
-                                    or '', _class="form-control")), TR(T('Delete:'), INPUT(_name='delete_check',
-                _class='delete', _type='checkbox', value=False), ''),
-                TR('', '', INPUT(_type='submit', _value=T('submit'), _class="btn btn-primary"))),
+                                                _name='query', _value=request.vars.query or '', _class="form-control",
+                                                requires=IS_NOT_EMPTY(
+                                                    error_message=T("Cannot be empty")))), TR(T('Update:'),
+                                                                                              INPUT(
+                                                                                                  _name='update_check',
+                                                                                                  _type='checkbox',
+                                                                                                  value=False), INPUT(
+            _style='width:400px',
+            _name='update_fields', _value=request.vars.update_fields
+                                          or '', _class="form-control")), TR(T('Delete:'), INPUT(_name='delete_check',
+                                                                                                 _class='delete',
+                                                                                                 _type='checkbox',
+                                                                                                 value=False), ''),
+                      TR('', '', INPUT(_type='submit', _value=T('submit'), _class="btn btn-primary"))),
                 _action=URL(r=request, args=request.args))
 
     tb = None
@@ -254,12 +265,12 @@ def select():
 
             if is_imap:
                 fields = [db[table][name] for name in
-                    ("id", "uid", "created", "to",
-                     "sender", "subject")]
+                          ("id", "uid", "created", "to",
+                           "sender", "subject")]
             if orderby:
                 rows = db(query, ignore_common_filters=True).select(
-                              *fields, limitby=(start, stop),
-                              orderby=eval_in_global_env(orderby))
+                    *fields, limitby=(start, stop),
+                    orderby=eval_in_global_env(orderby))
             else:
                 rows = db(query, ignore_common_filters=True).select(
                     *fields, limitby=(start, stop))
@@ -314,7 +325,7 @@ def update():
         key = [f for f in request.vars if f in db[table]._primarykey]
         if key:
             record = db(db[table][key[0]] == request.vars[key[
-                        0]]).select().first()
+                0]]).select().first()
     else:
         record = db(db[table].id == request.args(
             2)).select().first()
@@ -340,7 +351,7 @@ def update():
         session.flash = T('done!')
         qry = query_by_table_type(table, db)
         redirect(URL('select', args=request.args[:1],
-                 vars=dict(query=qry)))
+                     vars=dict(query=qry)))
     return dict(form=form, table=db[table])
 
 
@@ -434,7 +445,7 @@ def ccache():
         gae_stats = cache.ram.client.get_stats()
         try:
             gae_stats['ratio'] = ((gae_stats['hits'] * 100) /
-                (gae_stats['hits'] + gae_stats['misses']))
+                                  (gae_stats['hits'] + gae_stats['misses']))
         except ZeroDivisionError:
             gae_stats['ratio'] = T("?")
         gae_stats['oldest'] = GetInHMS(time.time() - gae_stats['oldest_item_age'])
@@ -476,7 +487,7 @@ def ccache():
                     disk['oldest'] = value[0]
                 disk['keys'].append((key, GetInHMS(time.time() - value[0])))
 
-        ram_keys = list(ram) # ['hits', 'objects', 'ratio', 'entries', 'keys', 'oldest', 'bytes', 'misses']
+        ram_keys = list(ram)  # ['hits', 'objects', 'ratio', 'entries', 'keys', 'oldest', 'bytes', 'misses']
         ram_keys.remove('ratio')
         ram_keys.remove('oldest')
         for key in ram_keys:
@@ -484,7 +495,7 @@ def ccache():
 
         try:
             total['ratio'] = total['hits'] * 100 / (total['hits'] +
-                                                total['misses'])
+                                                    total['misses'])
         except (KeyError, ZeroDivisionError):
             total['ratio'] = 0
 
@@ -521,7 +532,7 @@ def table_template(table):
 
     def types(field):
         f_type = field.type
-        if not isinstance(f_type,str):
+        if not isinstance(f_type, str):
             return ' '
         elif f_type == 'string':
             return field.length
@@ -543,21 +554,22 @@ def table_template(table):
     border = 0
 
     rows.append(TR(TD(FONT(table, _face=face_bold, _color=bgcolor),
-                           _colspan=3, _cellpadding=cellpadding,
-                           _align="center", _bgcolor=color)))
+                      _colspan=3, _cellpadding=cellpadding,
+                      _align="center", _bgcolor=color)))
     for row in db[table]:
         rows.append(TR(TD(FONT(row.name, _color=color, _face=face_bold),
-                              _align="left", _cellpadding=cellpadding,
-                              _border=border),
+                          _align="left", _cellpadding=cellpadding,
+                          _border=border),
                        TD(FONT(row.type, _color=color, _face=face),
-                               _align="left", _cellpadding=cellpadding,
-                               _border=border),
+                          _align="left", _cellpadding=cellpadding,
+                          _border=border),
                        TD(FONT(types(row), _color=color, _face=face),
-                               _align="center", _cellpadding=cellpadding,
-                               _border=border)))
+                          _align="center", _cellpadding=cellpadding,
+                          _border=border)))
     return "< %s >" % TABLE(*rows, **dict(_bgcolor=bgcolor, _border=1,
                                           _cellborder=0, _cellspacing=0)
-                             ).xml()
+                            ).xml()
+
 
 def manage():
     tables = manager_action['tables']
@@ -572,7 +584,8 @@ def manage():
         auth.table_permission()._plural = T('Permissions')
     if request.extension != 'load':
         return dict(heading=manager_action.get('heading',
-                    T('Manage %(action)s') % dict(action=request.args(0).replace('_', ' ').title())),
+                                               T('Manage %(action)s') % dict(
+                                                   action=request.args(0).replace('_', ' ').title())),
                     tablenames=[table._tablename for table in tables],
                     labels=[table._plural.title() for table in tables])
 
@@ -581,8 +594,8 @@ def manage():
     linked_tables = orderby = None
     if request.args(0) == 'auth':
         auth.table_group()._id.readable = \
-        auth.table_membership()._id.readable = \
-        auth.table_permission()._id.readable = False
+            auth.table_membership()._id.readable = \
+            auth.table_permission()._id.readable = False
         auth.table_membership().user_id.label = T('User')
         auth.table_membership().group_id.label = T('Role')
         auth.table_permission().group_id.label = T('Role')
@@ -601,10 +614,11 @@ def manage():
     grid = SQLFORM.smartgrid(table, args=request.args[:2], formname=formname, **kwargs)
     return grid
 
+
 def hooks():
     import functools
     import inspect
-    list_op = ['_%s_%s' %(h,m) for h in ['before', 'after'] for m in ['insert','update','delete']]
+    list_op = ['_%s_%s' % (h, m) for h in ['before', 'after'] for m in ['insert', 'update', 'delete']]
     tables = []
     with_build_it = False
     for db_str in sorted(databases):
@@ -619,20 +633,24 @@ def hooks():
                             if isinstance(f, (functools.partial)):
                                 f = f.func
                             filename = inspect.getsourcefile(f)
-                            details = {'funcname':f.__name__,
-                                       'filename':filename[len(request.folder):] if request.folder in filename else None,
+                            details = {'funcname': f.__name__,
+                                       'filename': filename[
+                                                   len(request.folder):] if request.folder in filename else None,
                                        'lineno': inspect.getsourcelines(f)[1]}
-                            if details['filename']: # Built in functions as delete_uploaded_files are not editable
-                                details['url'] = URL(a='admin',c='default',f='edit', args=[request['application'], details['filename']],vars={'lineno':details['lineno']})
+                            if details['filename']:  # Built in functions as delete_uploaded_files are not editable
+                                details['url'] = URL(a='admin', c='default', f='edit',
+                                                     args=[request['application'], details['filename']],
+                                                     vars={'lineno': details['lineno']})
                             if details['filename'] or with_build_it:
                                 functions.append(details)
                         # compiled app and windows build don't support code inspection
                         except:
                             pass
                 if len(functions):
-                    method_hooks.append({'name': op, 'functions':functions})
+                    method_hooks.append({'name': op, 'functions': functions})
             if len(method_hooks):
-                tables.append({'name': "%s.%s" % (db_str, t), 'slug': IS_SLUG()("%s.%s" % (db_str,t))[0], 'method_hooks':method_hooks})
+                tables.append({'name': "%s.%s" % (db_str, t), 'slug': IS_SLUG()("%s.%s" % (db_str, t))[0],
+                               'method_hooks': method_hooks})
     # Render
     ul_main = UL(_class='nav nav-list')
     for t in tables:
@@ -640,7 +658,8 @@ def hooks():
         ul_t = UL(_class='nav nav-list', _id="a_%s" % t['slug'], _style='display:none')
         for op in t['method_hooks']:
             ul_t.append(LI(op['name']))
-            ul_t.append(UL([LI(A(f['funcname'], _class="editor_filelink", _href=f['url']if 'url' in f else None, **{'_data-lineno':f['lineno']-1})) for f in op['functions']]))
+            ul_t.append(UL([LI(A(f['funcname'], _class="editor_filelink", _href=f['url'] if 'url' in f else None,
+                                 **{'_data-lineno': f['lineno'] - 1})) for f in op['functions']]))
         ul_main.append(ul_t)
     return ul_main
 
@@ -672,22 +691,22 @@ def d3_graph_model():
                 elif f_type == 'id':
                     disp = "PK"
                 elif f_type.startswith('reference') or \
-                    f_type.startswith('list:reference'):
+                        f_type.startswith('list:reference'):
                     disp = "FK"
                 else:
                     disp = ' '
                 fields.append(dict(name=field.name, type=field.type, disp=disp))
 
                 if isinstance(f_type, str) and (
-                    f_type.startswith('reference') or
-                    f_type.startswith('list:reference')):
+                        f_type.startswith('reference') or
+                        f_type.startswith('list:reference')):
                     referenced_table = f_type.split()[1].split('.')[0]
 
-                    links.append(dict(source=tablename, target = referenced_table))
+                    links.append(dict(source=tablename, target=referenced_table))
 
-            nodes.append(dict(name=tablename, type="table", fields = fields))
+            nodes.append(dict(name=tablename, type="table", fields=fields))
 
     # d3 v4 allows individual modules to be specified.  The complete d3 library is included below.
-    response.files.append(URL('admin','static','js/d3.min.js'))
-    response.files.append(URL('admin','static','js/d3_graph.js'))
+    response.files.append(URL('admin', 'static', 'js/d3.min.js'))
+    response.files.append(URL('admin', 'static', 'js/d3_graph.js'))
     return dict(databases=databases, nodes=nodes, links=links)

@@ -1,5 +1,6 @@
 import os
 import sys
+
 paths = [sys.argv[1]]
 paths1 = []
 paths2 = []
@@ -20,6 +21,7 @@ for filename, fullname in paths1:
         if open(otherfullname).read().find(filename) >= 0:
             break
     else:
-        print fullname
+        print
+        fullname
         # os.system('hg rm '+fullname)
         # os.system('rm '+fullname)

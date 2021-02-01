@@ -17,6 +17,7 @@ from gluon import current
 NATIVE_IMPORTER = builtin.__import__
 INVALID_MODULES = set(('', 'gluon', 'applications', 'custom_import'))
 
+
 # backward compatibility API
 
 
@@ -62,7 +63,7 @@ def custom_importer(name, globals=None, locals=None, fromlist=None, level=-1):
     except:  # there is no current.request (should never happen)
         base_importer = NATIVE_IMPORTER
 
-    if not(PY2) and level < 0:
+    if not (PY2) and level < 0:
         level = 0
 
     # if not relative and not from applications:
@@ -73,7 +74,7 @@ def custom_importer(name, globals=None, locals=None, fromlist=None, level=-1):
         import_tb = None
         try:
             try:
-                oname = name if not name.startswith('.') else '.'+name
+                oname = name if not name.startswith('.') else '.' + name
                 return NATIVE_IMPORTER(oname, globals, locals, fromlist, level)
             except (ImportError, KeyError):
                 items = current.request.folder.split(os.path.sep)
@@ -87,7 +88,7 @@ def custom_importer(name, globals=None, locals=None, fromlist=None, level=-1):
                         new_mod = base_importer(
                             modules_prefix, globals, locals, [itemname], level)
                         try:
-                            result = result or sys.modules[modules_prefix+'.'+itemname]
+                            result = result or sys.modules[modules_prefix + '.' + itemname]
                         except KeyError as e:
                             raise ImportError('Cannot import module %s' % str(e))
                         modules_prefix += "." + itemname
@@ -169,12 +170,12 @@ class TrackImporter(object):
             except:
                 self._import_dates.pop(file, None)  # Clean up
                 # Handle module changing in package and
-                #package changing in module:
+                # package changing in module:
                 if file.endswith(".py"):
                     # Get path without file ext:
                     file = os.path.splitext(file)[0]
                     reload_mod = os.path.isdir(file) \
-                        and os.path.isfile(file + self.PACKAGE_PATH_SUFFIX)
+                                 and os.path.isfile(file + self.PACKAGE_PATH_SUFFIX)
                     mod_to_pack = reload_mod
                 else:  # Package turning into module?
                     file += ".py"
@@ -204,5 +205,6 @@ class TrackImporter(object):
             if file.endswith(self.PACKAGE_PATH_SUFFIX):
                 file = os.path.dirname(file)  # Track dir for packages
         return file
+
 
 TRACK_IMPORTER = TrackImporter()

@@ -48,7 +48,6 @@ mysched = RScheduler(db, dict(demo1=demo1,demo2=demo2), ...., redis_conn=rconn)
 
 """
 
-
 path = os.getcwd()
 
 if 'WEB2PY_PATH' not in os.environ:
@@ -358,19 +357,19 @@ class RScheduler(Scheduler):
             (~sd.task_child.belongs(
                 db(sd.can_visit == False)._select(sd.task_parent)
             )
-            )
+             )
         )._select(sd.task_child)
         no_deps = db(
             (st.status.belongs((QUEUED, ASSIGNED))) &
             (
-                (sd.id == None) | (st.id.belongs(deps_with_no_deps))
+                    (sd.id == None) | (st.id.belongs(deps_with_no_deps))
 
             )
         )._select(st.id, distinct=True, left=sd.on(
-                 (st.id == sd.task_parent) &
-                 (sd.can_visit == False)
+            (st.id == sd.task_parent) &
+            (sd.can_visit == False)
         )
-        )
+                  )
 
         all_available = db(
             (st.status.belongs((QUEUED, ASSIGNED))) &
@@ -399,7 +398,7 @@ class RScheduler(Scheduler):
                 r_server.sadd(queued_set, t)
 
             tasks = all_available(st.group_name == group).select(
-                limitby=(0, limit), orderby = st.next_run_time)
+                limitby=(0, limit), orderby=st.next_run_time)
 
             # put tasks in the processing list
 
@@ -717,10 +716,10 @@ class RScheduler(Scheduler):
         immediate = 'immediate' in kwargs and kwargs.pop('immediate') or None
         cronline = kwargs.get('cronline')
         kwargs.update(function_name=function,
-            task_name=tname,
-            args=targs,
-            vars=tvars,
-            uuid=tuuid)
+                      task_name=tname,
+                      args=targs,
+                      vars=tvars,
+                      uuid=tuuid)
         if cronline:
             try:
                 start_time = kwargs.get('start_time', self.now)

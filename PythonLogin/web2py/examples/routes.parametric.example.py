@@ -115,6 +115,7 @@ routers = dict(
 #
 logging = 'debug'
 
+
 # Error-handling redirects all HTTP errors (status codes >= 400) to a specified
 # path.  If you wish to use error-handling redirects, uncomment the tuple
 # below.  You can customize responses by adding a tuple entry with the first
@@ -208,6 +209,8 @@ def __routes_doctest():
     '''
     pass
 
+
 if __name__ == '__main__':
     import doctest
+
     doctest.testmod()

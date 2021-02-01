@@ -12,12 +12,11 @@
 
 """Pythonic simple SOAP Server implementation"""
 
-
 from __future__ import unicode_literals
 import sys
+
 if sys.version > '3':
     unicode = str
-
 
 import datetime
 import sys
@@ -25,6 +24,7 @@ import logging
 import warnings
 import re
 import traceback
+
 try:
     from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 except ImportError:
@@ -120,7 +120,8 @@ class SoapDispatcher(object):
         return xml
 
     def register_function(self, name, fn, returns=None, args=None, doc=None, response_element_name=None):
-        self.methods[name] = fn, returns, args, doc or getattr(fn, "__doc__", ""), response_element_name or '%sResponse' % name
+        self.methods[name] = fn, returns, args, doc or getattr(fn, "__doc__",
+                                                               ""), response_element_name or '%sResponse' % name
 
     def response_element_name(self, method):
         return self.methods[method][4]
@@ -171,7 +172,7 @@ class SoapDispatcher(object):
             method = request('Body', ns=soap_uri).children()(0)
             if action:
                 # method name = action
-                name = action[len(self.action)+1:-1]
+                name = action[len(self.action) + 1:-1]
                 prefix = self.prefix
             if not action or not name:
                 # method name = input message name
@@ -212,8 +213,8 @@ class SoapDispatcher(object):
             else:
                 detail = None
             fault.update({'faultcode': "%s.%s" % (soap_fault_code, etype.__name__),
-                     'faultstring': evalue,
-                     'detail': detail})
+                          'faultstring': evalue,
+                          'detail': detail})
 
         # build response message
         if not prefix:
@@ -222,7 +223,7 @@ class SoapDispatcher(object):
             xml = """<%(soap_ns)s:Envelope xmlns:%(soap_ns)s="%(soap_uri)s"
                        xmlns:%(prefix)s="%(namespace)s"/>"""
 
-        xml %= {    # a %= {} is a shortcut for a = a % {}
+        xml %= {  # a %= {} is a shortcut for a = a % {}
             'namespace': self.namespace,
             'prefix': prefix,
             'soap_ns': soap_ns,
@@ -235,7 +236,8 @@ class SoapDispatcher(object):
         # Change our namespace alias to that given by the client.
         # We put [('model', 'http://model.common.mt.moboperator'), ('external', 'http://external.mt.moboperator')]
         # mix it with {'http://external.mt.moboperator': 'ext', 'http://model.common.mt.moboperator': 'mod'}
-        mapping = dict(((k, _ns_reversed[v]) for k, v in self.namespaces.items()))  # Switch keys-values and change value
+        mapping = dict(
+            ((k, _ns_reversed[v]) for k, v in self.namespaces.items()))  # Switch keys-values and change value
         # and get {'model': u'mod', 'external': u'ext'}
 
         response = SimpleXMLElement(xml,
@@ -266,7 +268,7 @@ class SoapDispatcher(object):
                     types_ok = all([k in returns_types for k in ret.keys()])
                     if not types_ok:
                         warnings.warn("Return value doesn't match type structure: "
-                                     "%s vs %s" % (str(returns_types), str(ret)))
+                                      "%s vs %s" % (str(returns_types), str(ret)))
                 if not complex_type or not types_ok:
                     # backward compatibility for scalar and simple types
                     res.marshall(list(returns_types.keys())[0], ret, )
@@ -545,18 +547,22 @@ if __name__ == "__main__":
         trace=True, debug=True,
         ns=True)
 
+
     def adder(p, c, dt=None):
         """Add several values"""
         dt = dt + datetime.timedelta(365)
         return {'ab': p['a'] + p['b'], 'dd': c[0]['d'] + c[1]['d'], 'dt': dt}
 
+
     def dummy(in0):
         """Just return input"""
         return in0
 
+
     def echo(request):
         """Copy request->response (generic, any type)"""
         return request.value
+
 
     dispatcher.register_function(
         'Adder', adder,
@@ -588,12 +594,14 @@ if __name__ == "__main__":
     if '--wsgi-serve' in sys.argv:
         log.info("Starting wsgi server...")
         from wsgiref.simple_server import make_server
+
         application = WSGISOAPHandler(dispatcher)
         wsgid = make_server('', 8008, application)
         wsgid.serve_forever()
 
     if '--consume' in sys.argv:
         from .client import SoapClient
+
         client = SoapClient(
             location="http://localhost:8008/",
             action='http://localhost:8008/',  # SOAPAction
@@ -608,9 +616,10 @@ if __name__ == "__main__":
         result = response.AddResult
         log.info(int(result.ab))
         log.info(str(result.dd))
-        
+
     if '--consume-wsdl' in sys.argv:
         from .client import SoapClient
+
         client = SoapClient(
             wsdl="http://localhost:8008/",
         )
@@ -621,4 +630,3 @@ if __name__ == "__main__":
         result = response['AddResult']
         log.info(int(result['ab']))
         log.info(str(result['dd']))
-

@@ -13,6 +13,7 @@ from textwrap import dedent
 
 try:
     from mercurial import ui, hg, cmdutil
+
     try:
         from mercurial.scmutil import addremove
     except:

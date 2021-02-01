@@ -30,7 +30,6 @@ from gluon.utils import md5_hash
 from gluon.restricted import RestrictedError
 from gluon.settings import global_settings
 
-
 path = os.path.join(request.folder, 'errors')
 sent_errors_file = os.path.join(path, 'slack_errors.pickle')
 hashes = {}
@@ -45,7 +44,7 @@ if os.path.exists(sent_errors_file):
 SLEEP_MINUTES = 5
 ALLOW_DUPLICATES = False
 global_settings.slack_hook = global_settings.slack_hook or \
-    'https://hooks.slack.com/services/your_service'
+                             'https://hooks.slack.com/services/your_service'
 # ## END CONFIGURATION
 
 while 1:

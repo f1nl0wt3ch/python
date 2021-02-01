@@ -35,6 +35,7 @@ from collections import OrderedDict
 
 try:
     from gluon import settings
+
     have_settings = True
 except ImportError:
     have_settings = False
@@ -44,6 +45,7 @@ from gluon._compat import pickle, thread, to_bytes, to_native, hashlib_md5
 
 try:
     import psutil
+
     HAVE_PSUTIL = True
 except ImportError:
     HAVE_PSUTIL = False
@@ -70,7 +72,6 @@ def remove_oldest_entries(storage, percentage=90):
 logger = logging.getLogger("web2py.cache")
 
 __all__ = ['Cache', 'lazy_cache']
-
 
 DEFAULT_TIME_EXPIRE = 300
 
@@ -510,7 +511,7 @@ class CacheAction(object):
         if not self.key:
             key2 = self.__name__ + ':' + repr(a) + ':' + repr(b)
         else:
-            key2 = self.key.replace('%(name)s', self.__name__)\
+            key2 = self.key.replace('%(name)s', self.__name__) \
                 .replace('%(args)s', str(a)).replace('%(vars)s', str(b))
         cache_model = self.cache_model
         if not cache_model or isinstance(cache_model, str):
@@ -672,9 +673,11 @@ class Cache(object):
                         http.headers.update(current.response.headers)
                     raise http
                 return rtn
+
             wrapped_f.__name__ = func.__name__
             wrapped_f.__doc__ = func.__doc__
             return wrapped_f
+
         return wrap
 
     def __call__(self,
@@ -714,6 +717,7 @@ class Cache(object):
 
         def tmp(func, cache=self, cache_model=cache_model):
             return CacheAction(func, key, time_expire, self, cache_model)
+
         return tmp
 
     @staticmethod
@@ -735,12 +739,15 @@ def lazy_cache(key=None, time_expire=None, cache_model='ram'):
 
     If cache_model is "ram" then the model is current.cache.ram, etc.
     """
+
     def decorator(f, key=key, time_expire=time_expire, cache_model=cache_model):
         key = key or repr(f)
 
         def g(*c, **d):
             from gluon import current
             return current.cache(key, time_expire, cache_model)(f)(*c, **d)
+
         g.__name__ = f.__name__
         return g
+
     return decorator

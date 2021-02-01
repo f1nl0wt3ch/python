@@ -91,7 +91,6 @@ _map_error(OperationalError, ER.DBACCESS_DENIED_ERROR, ER.ACCESS_DENIED_ERROR,
            ER.CON_COUNT_ERROR, ER.TABLEACCESS_DENIED_ERROR,
            ER.COLUMNACCESS_DENIED_ERROR)
 
-
 del _map_error, ER
 
 

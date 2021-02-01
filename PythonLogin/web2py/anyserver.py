@@ -34,9 +34,11 @@ class Servers:
     def wsgiref(app, address, **options):  # pragma: no cover
         from wsgiref.simple_server import make_server, WSGIRequestHandler
         options = {}
+
         class QuietHandler(WSGIRequestHandler):
             def log_request(*args, **kw):
                 pass
+
         options['handler_class'] = QuietHandler
         srv = make_server(address[0], address[1], app, **options)
         srv.serve_forever()
@@ -86,6 +88,7 @@ class Servers:
         def app(environ, start_response):
             environ['wsgi.multiprocess'] = False
             return app(environ, start_response)
+
         evwsgi.wsgi_cb(('', app))
         evwsgi.run()
 
@@ -145,6 +148,7 @@ class Servers:
 
             def load(self):
                 return app
+
         g = GunicornApplication()
         g.run()
 
@@ -165,12 +169,12 @@ class Servers:
 
     @staticmethod
     def motor(app, address, **options):
-        #https://github.com/rpedroso/motor
+        # https://github.com/rpedroso/motor
         import motor
         app = motor.WSGIContainer(app)
         http_server = motor.HTTPServer(app)
         http_server.listen(address=address[0], port=address[1])
-        #http_server.start(2)
+        # http_server.start(2)
         motor.IOLoop.instance().start()
 
     @staticmethod
@@ -314,11 +318,10 @@ def run(servername, ip, port, softcron=True, logging=False, profiler=None,
     getattr(Servers, servername)(application, (ip, int(port)), options=options)
 
 
-
 def main():
     usage = "python anyserver.py -s tornado -i 127.0.0.1 -p 8000 -l -P"
     try:
-        version = open('VERSION','r')
+        version = open('VERSION', 'r')
     except IOError:
         version = ''
     parser = optparse.OptionParser(usage, None, optparse.Option, version)
@@ -360,6 +363,7 @@ def main():
     run(options.server, options.ip, options.port,
         logging=options.logging, profiler=options.profiler_dir,
         options=options)
+
 
 if __name__ == '__main__':
     main()

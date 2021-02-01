@@ -7,17 +7,21 @@
 
 import unittest
 
-
-from gluon.html import A, ASSIGNJS, B, BEAUTIFY, P, BODY, BR, BUTTON, CAT, CENTER, CODE, COL, COLGROUP, DIV, SPAN, URL, verifyURL
-from gluon.html import truncate_string, EM, FIELDSET, FORM, H1, H2, H3, H4, H5, H6, HEAD, HR, HTML, I, IFRAME, IMG, INPUT, EMBED
-from gluon.html import LABEL, LEGEND, LI, LINK, MARKMIN, MENU, META, OBJECT, OL, OPTGROUP, OPTION, PRE, SCRIPT, SELECT, STRONG
-from gluon.html import STYLE, TABLE, TR, TD, TAG, TBODY, THEAD, TEXTAREA, TFOOT, TH, TITLE, TT, UL, XHTML, XML, web2pyHTMLParser
+from gluon.html import A, ASSIGNJS, B, BEAUTIFY, P, BODY, BR, BUTTON, CAT, CENTER, CODE, COL, COLGROUP, DIV, SPAN, URL, \
+    verifyURL
+from gluon.html import truncate_string, EM, FIELDSET, FORM, H1, H2, H3, H4, H5, H6, HEAD, HR, HTML, I, IFRAME, IMG, \
+    INPUT, EMBED
+from gluon.html import LABEL, LEGEND, LI, LINK, MARKMIN, MENU, META, OBJECT, OL, OPTGROUP, OPTION, PRE, SCRIPT, SELECT, \
+    STRONG
+from gluon.html import STYLE, TABLE, TR, TD, TAG, TBODY, THEAD, TEXTAREA, TFOOT, TH, TITLE, TT, UL, XHTML, XML, \
+    web2pyHTMLParser
 from gluon.storage import Storage
 from gluon.html import XML_pickle, XML_unpickle
 from gluon.html import TAG_pickler, TAG_unpickler
 from gluon._compat import xrange, PY2, to_native
 from gluon.decoder import decoder
 import re
+
 
 class TestBareHelpers(unittest.TestCase):
 
@@ -76,6 +80,7 @@ class TestBareHelpers(unittest.TestCase):
 
         def weird():
             pass
+
         self.assertEqual(URL('a', 'c', weird), '/a/c/weird')
         self.assertRaises(SyntaxError, URL, *['a', 'c', 1])
         # test signature
@@ -348,7 +353,7 @@ class TestBareHelpers(unittest.TestCase):
 <>
 //--></script>''')
         self.assertEqual(SCRIPT().xml(), b'<script></script>')
-        self.assertEqual(SCRIPT(';').xml() + DIV().xml(), 
+        self.assertEqual(SCRIPT(';').xml() + DIV().xml(),
                          b'<script><!--\n;\n//--></script><div></div>')
 
     def test_STYLE(self):
@@ -425,11 +430,11 @@ class TestBareHelpers(unittest.TestCase):
                          b'<a data-w2p_disable_with="default" data-w2p_method="POST" href="b" id="c">a</a>')
         # Callback with no id trigger web2py_uuid() call
         from gluon.html import web2pyHTMLParser
-        #a = A('a', callback='b').xml()
+        # a = A('a', callback='b').xml()
 
-        #for tag in web2pyHTMLParser(a).tree.elements('a'):
+        # for tag in web2pyHTMLParser(a).tree.elements('a'):
         #    uuid_generated = tag.attributes['_id']
-        #self.assertEqual(a,
+        # self.assertEqual(a,
         #                 b'<a data-w2p_disable_with="default" data-w2p_method="POST" href="b" id="{id}">a</a>'.format(id=uuid_generated))
         self.assertEqual(A('a', delete='tr').xml(),
                          b'<a data-w2p_disable_with="default" data-w2p_remove="tr">a</a>')
@@ -615,7 +620,7 @@ class TestBareHelpers(unittest.TestCase):
         # OPTGROUP
         self.assertEqual(SELECT(OPTGROUP(OPTION('option 1', _value='1'),
                                          OPTION('option 2', _value='2'),
-                                         _label='Group 1',)).xml(),
+                                         _label='Group 1', )).xml(),
                          b'<select><optgroup label="Group 1"><option value="1">option 1</option><option value="2">option 2</option></optgroup></select>')
         # List
         self.assertEqual(SELECT([1, 2, 3, 4, 5]).xml(),
@@ -650,7 +655,7 @@ class TestBareHelpers(unittest.TestCase):
         self.assertEqual(len(FORM('<>', _a='1', _b='2').as_xml()), 334)
 
     def test_BEAUTIFY(self):
-        #self.assertEqual(BEAUTIFY(['a', 'b', {'hello': 'world'}]).xml(),
+        # self.assertEqual(BEAUTIFY(['a', 'b', {'hello': 'world'}]).xml(),
         #                 '<div><table><tr><td><div>a</div></td></tr><tr><td><div>b</div></td></tr><tr><td><div><table><tr><td style="font-weight:bold;vertical-align:top;">hello</td><td style="vertical-align:top;">:</td><td><div>world</div></td></tr></table></div></td></tr></table></div>')
         # unicode
         self.assertEqual(BEAUTIFY([P(u'àéèûôç'), 'a', 'b', {'hello': 'world'}]).xml(),
@@ -681,20 +686,20 @@ class TestBareHelpers(unittest.TestCase):
     # TODO: def test_embed64(self):
 
     def test_web2pyHTMLParser(self):
-        #tag should not be a byte
+        # tag should not be a byte
         self.assertEqual(web2pyHTMLParser("<div></div>").tree.components[0].tag, 'div')
         a = str(web2pyHTMLParser('<div>a<span>b</div>c').tree)
         self.assertEqual(a, "<div>a<span>b</span></div>c")
 
         tree = web2pyHTMLParser('hello<div a="b">world</div>').tree
-        tree.element(_a='b')['_c']=5
+        tree.element(_a='b')['_c'] = 5
         self.assertEqual(str(tree), 'hello<div a="b" c="5">world</div>')
 
         a = str(web2pyHTMLParser('<div><img class="img"/></div>', closed=['img']).tree)
         self.assertEqual(a, '<div><img class="img" /></div>')
 
-        #greater-than sign ( > )  --> decimal &#62; --> hexadecimal &#x3E;
-        #Less-than sign    ( < )  --> decimal &#60; --> hexadecimal &#x3C;
+        # greater-than sign ( > )  --> decimal &#62; --> hexadecimal &#x3E;
+        # Less-than sign    ( < )  --> decimal &#60; --> hexadecimal &#x3C;
         # test decimal
         a = str(web2pyHTMLParser('<div>&#60; &#62;</div>').tree)
         self.assertEqual(a, '<div>&lt; &gt;</div>')
@@ -704,11 +709,12 @@ class TestBareHelpers(unittest.TestCase):
 
     def test_markdown(self):
         def markdown(text, tag=None, attributes={}):
-            r = {None: re.sub('\s+',' ',text), \
-                 'h1':'#'+text+'\\n\\n', \
-                 'p':text+'\\n'}.get(tag,text)
+            r = {None: re.sub('\s+', ' ', text), \
+                 'h1': '#' + text + '\\n\\n', \
+                 'p': text + '\\n'}.get(tag, text)
             return r
-        a=TAG('<h1>Header</h1><p>this is a     test</p>')
+
+        a = TAG('<h1>Header</h1><p>this is a     test</p>')
         ret = a.flatten(markdown)
         self.assertEqual(ret, '#Header\\n\\nthis is a test\\n')
 

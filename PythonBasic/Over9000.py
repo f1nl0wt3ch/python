@@ -5,19 +5,22 @@ The function should sum the elements of the list until the sum is greater than 9
 
 For example, if lst was [8000, 900, 120, 5000], then the function should return 9020.
 """
-#Write your function here
+
+
+# Write your function here
 def over_nine_thousand(lst):
     lst_sum = 0
     if len(lst) == 0:
-       return lst_sum
+        return lst_sum
     else:
-       for i in lst:
-           if lst_sum < 9000:
-              lst_sum += i
-           else:
-              break
-       return  lst_sum      
-          
+        for i in lst:
+            if lst_sum < 9000:
+                lst_sum += i
+            else:
+                break
+        return lst_sum
 
-#Uncomment the line below when your function is done
+    # Uncomment the line below when your function is done
+
+
 print(over_nine_thousand([8000, 900, 120, 5000]))

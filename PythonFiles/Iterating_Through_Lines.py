@@ -13,5 +13,5 @@ The above script creates a temporary file object called keats_sonnet that points
 
 """
 with open('welcome.txt') as lines_doc:
-     for line in lines_doc.readlines():
-         print(line)
+    for line in lines_doc.readlines():
+        print(line)

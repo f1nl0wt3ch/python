@@ -12,9 +12,9 @@
 
 """Simple XML manipulation"""
 
-
 from __future__ import unicode_literals
 import sys
+
 if sys.version > '3':
     basestring = str
     unicode = str
@@ -28,7 +28,7 @@ from . import __author__, __copyright__, __license__, __version__
 
 # Utility functions used for marshalling, moved aside for readability
 from .helpers import TYPE_MAP, TYPE_MARSHAL_FN, TYPE_UNMARSHAL_FN, \
-                     REVERSE_TYPE_MAP, Struct, Date, Decimal
+    REVERSE_TYPE_MAP, Struct, Date, Decimal
 
 log = logging.getLogger(__name__)
 
@@ -45,11 +45,11 @@ class SimpleXMLElement(object):
         self.__namespaces_map = namespaces_map
         _rx = "|".join(namespaces_map.keys())  # {'external': 'ext', 'model': 'mod'} -> 'external|model'
         self.__ns_rx = re.compile(r"^(%s):.*$" % _rx)  # And now we build an expression ^(external|model):.*$
-                                                       # to find prefixes in all xml nodes i.e.: <model:code>1</model:code>
-                                                       # and later change that to <mod:code>1</mod:code>
+        # to find prefixes in all xml nodes i.e.: <model:code>1</model:code>
+        # and later change that to <mod:code>1</mod:code>
         self.__ns = namespace
         self.__prefix = prefix
-        self.__jetty = jetty                           # special list support
+        self.__jetty = jetty  # special list support
 
         if text is not None:
             try:
@@ -153,7 +153,7 @@ class SimpleXMLElement(object):
 
     def attributes(self):
         """Return a dict of attributes for this tag"""
-        #TODO: use slice syntax [:]?
+        # TODO: use slice syntax [:]?
         return self._element.attributes
 
     def __getitem__(self, item):
@@ -219,7 +219,7 @@ class SimpleXMLElement(object):
                 # return tag by index
                 elements = [self.__elements[tag]]
             if ns and not elements:
-                for ns_uri in isinstance(ns, (tuple, list)) and ns or (ns, ):
+                for ns_uri in isinstance(ns, (tuple, list)) and ns or (ns,):
                     ##log.debug('searching %s by ns=%s', tag, ns_uri)
                     elements = self._element.getElementsByTagNameNS(ns_uri, tag)
                     if elements:
@@ -276,7 +276,7 @@ class SimpleXMLElement(object):
                     if __element.nodeType == __element.ELEMENT_NODE]
         if not elements:
             return None
-            #raise IndexError("Tag %s has no children" % self._element.tagName)
+            # raise IndexError("Tag %s has no children" % self._element.tagName)
         return SimpleXMLElement(
             elements=elements,
             document=self.__document,
@@ -322,7 +322,7 @@ class SimpleXMLElement(object):
     _element = property(lambda self: self.__elements[0])
 
     def unmarshall(self, types, strict=True):
-        #import pdb; pdb.set_trace()
+        # import pdb; pdb.set_trace()
 
         """Convert to python values the current serialized xml element"""
         # types is a dict of {tag name: conversion function}
@@ -348,18 +348,18 @@ class SimpleXMLElement(object):
                     fn = types[name]
                     # custom array only in the response (not defined in the WSDL):
                     # <results soapenc:arrayType="xsd:string[199]>
-                    if any([k for k,v in node[:] if 'arrayType' in k]) and not isinstance(fn, list):
+                    if any([k for k, v in node[:] if 'arrayType' in k]) and not isinstance(fn, list):
                         fn = [fn]
                 else:
                     fn = types
-            except (KeyError, ) as e:
+            except (KeyError,) as e:
                 xmlns = node['xmlns'] or node.get_namespace_uri(node.get_prefix())
                 if 'xsi:type' in node.attributes().keys():
                     xsd_type = node['xsi:type'].split(":")[1]
                     try:
                         # get fn type from SOAP-ENC:arrayType="xsd:string[28]"
                         if xsd_type == 'Array':
-                            array_type = [k for k,v in node[:] if 'arrayType' in k][0]
+                            array_type = [k for k, v in node[:] if 'arrayType' in k][0]
                             xsd_type = node[array_type].split(":")[1]
                             if "[" in xsd_type:
                                 xsd_type = xsd_type[:xsd_type.index("[")]
@@ -396,11 +396,11 @@ class SimpleXMLElement(object):
                     for child in (children or []):
                         tmp_dict = child.unmarshall(fn[0], strict)
                         value.extend(tmp_dict.values())
-                #elif (self.__jetty and len(fn[0]) > 1):
+                # elif (self.__jetty and len(fn[0]) > 1):
                 elif (len(fn[0]) > 1):
                     # Jetty and now all dialects use array style support [{k, v}]
                     for parent in node:
-                        tmp_dict = {}    # unmarshall each value & mix
+                        tmp_dict = {}  # unmarshall each value & mix
                         for child in (node.children() or []):
                             tmp_dict.update(child.unmarshall(fn[0], strict))
                         value.append(tmp_dict)
@@ -491,7 +491,7 @@ class SimpleXMLElement(object):
                 ns = False
             for k, v in value:
                 getattr(self, name).marshall(k, v, add_comments=add_comments, ns=ns)
-        elif isinstance(value, list): # serialize lists name: [value1, value2]
+        elif isinstance(value, list):  # serialize lists name: [value1, value2]
             # list elements should be a dict with one element:
             # 'vats': [{'vat': {'vat_amount': 50, 'vat_percent': 5}}, {...}]
             # or an array of complex types directly (a.k.a. jetty dialect)

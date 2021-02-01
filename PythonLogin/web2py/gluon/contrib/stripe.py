@@ -3,6 +3,7 @@ import urllib
 import json
 from hashlib import sha1
 
+
 class Stripe:
     """
     Use in WEB2PY (guaranteed PCI compliant)
@@ -50,7 +51,7 @@ Low level API:
         self.key = key
 
     def charge(self,
-               amount, # in cents
+               amount,  # in cents
                currency='usd',
                card_number='4242424242424242',
                card_exp_month='5',
@@ -88,19 +89,20 @@ Low level API:
                            params)
         return json.loads(u.read())
 
+
 class StripeForm(object):
     def __init__(self,
                  pk, sk,
-                 amount, # in cents
+                 amount,  # in cents
                  description,
-                 currency = 'usd',
-                 currency_symbol = '$',
-                 security_notice = True,
-                 disclosure_notice = True,
-                 template = None):
+                 currency='usd',
+                 currency_symbol='$',
+                 security_notice=True,
+                 disclosure_notice=True,
+                 template=None):
         from gluon import current, redirect, URL
         if not (current.request.is_local or current.request.is_https):
-            redirect(URL(args=current.request.args,scheme='https'))
+            redirect(URL(args=current.request.args, scheme='https'))
         self.pk = pk
         self.sk = sk
         self.amount = amount
@@ -112,7 +114,7 @@ class StripeForm(object):
         self.template = template or TEMPLATE
         self.accepted = None
         self.errors = None
-        self.signature = sha1(repr((self.amount,self.description))).hexdigest()
+        self.signature = sha1(repr((self.amount, self.description))).hexdigest()
 
     def process(self):
         from gluon import current
@@ -124,7 +126,7 @@ class StripeForm(object):
                     amount=self.amount,
                     description=self.description,
                     currency=self.currency)
-                if self.response.get('paid',False):
+                if self.response.get('paid', False):
                     self.accepted = True
                     return self
             self.errors = True

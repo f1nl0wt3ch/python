@@ -19,9 +19,9 @@ from matplotlib import pyplot as plt
 import random
 
 # Add your code below:
-numbers_a = range(1,13)
+numbers_a = range(1, 13)
 print(numbers_a)
-numbers_b = [ random.randint(0, 1000) for i in range(12) ]
+numbers_b = [random.randint(0, 1000) for i in range(12)]
 print(numbers_b)
 plt.plot(numbers_a, numbers_b)
 plt.show()

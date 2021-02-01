@@ -10,6 +10,7 @@ a user against the Pluggable Authentication Modules (PAM) on the system.
 Implemented using ctypes, so no compilation is necessary.
 """
 from __future__ import print_function
+
 __all__ = ['authenticate']
 
 from ctypes import CDLL, POINTER, Structure, CFUNCTYPE, cast, pointer, sizeof
@@ -66,6 +67,7 @@ class PamResponse(Structure):
     def __repr__(self):
         return "<PamResponse %i '%s'>" % (self.resp_retcode, self.resp)
 
+
 CONV_FUNC = CFUNCTYPE(c_int,
                       c_int, POINTER(POINTER(PamMessage)),
                       POINTER(POINTER(PamResponse)), c_void_p)
@@ -77,6 +79,7 @@ class PamConv(Structure):
         ("conv", CONV_FUNC),
         ("appdata_ptr", c_void_p)
     ]
+
 
 PAM_START = LIBPAM.pam_start
 PAM_START.restype = c_int
@@ -98,6 +101,7 @@ def authenticate(username, password, service='login'):
 
     ``service``: the PAM service to authenticate against.
                  Defaults to 'login'"""
+
     @CONV_FUNC
     def my_conv(n_messages, messages, p_response, app_data):
         """Simple conversation function that responds to any
@@ -124,6 +128,8 @@ def authenticate(username, password, service='login'):
     retval = PAM_AUTHENTICATE(handle, 0)
     return retval == 0
 
+
 if __name__ == "__main__":
     import getpass
+
     print(authenticate(getpass.getuser(), getpass.getpass()))

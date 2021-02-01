@@ -61,7 +61,7 @@ class TestStorage(unittest.TestCase):
 
         self.assertEqual(s.d, None)
         self.assertEqual(s['d'], None)
-        #self.assertRaises(KeyError, lambda x: s[x], 'd')   # old Storage
+        # self.assertRaises(KeyError, lambda x: s[x], 'd')   # old Storage
         s.a = 1
         s['a'] = None
         self.assertEqual(s.a, None)
@@ -117,7 +117,6 @@ class TestStorageList(unittest.TestCase):
 
 
 class TestList(unittest.TestCase):
-
     """ Tests Storage.List (fast-check for request.args()) """
 
     def test_listcall(self):

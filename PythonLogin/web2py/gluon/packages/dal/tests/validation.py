@@ -53,15 +53,15 @@ class TestValidateAndInsert(unittest.TestCase):
             self.assertEqual(isinstance(rtn.id, long), True)
         else:
             self.assertEqual(rtn.id, 1)
-        #errors should be empty
+        # errors should be empty
         self.assertEqual(len(rtn.errors.keys()), 0)
-        #this insert won't pass
+        # this insert won't pass
         rtn = db.val_and_insert.validate_and_insert(bb="a")
-        #the returned id should be None
+        # the returned id should be None
         self.assertEqual(rtn.id, None)
-        #an error message should be in rtn.errors.bb
+        # an error message should be in rtn.errors.bb
         self.assertNotEqual(rtn.errors.bb, None)
-        #cleanup table
+        # cleanup table
         drop(db.val_and_insert)
 
 

@@ -56,14 +56,13 @@ def cleanup(text):
 
 def assert_filter_fields(*fields):
     for field in fields:
-        if isinstance(field, (Field, Expression)) and field.type\
+        if isinstance(field, (Field, Expression)) and field.type \
                 in ['text', 'blob']:
             raise SyntaxError('AppEngine does not index by: %s'
                               % field.type)
 
 
 def dateobj_to_datetime(object):
-
     # convert dates,times to datetimes for AppEngine
 
     if isinstance(object, datetime.date):
@@ -104,7 +103,6 @@ def sqlhtml_validators(field_type, length):
 
 
 class DALStorage(dict):
-
     """
     a dictionary that let you do d['a'] as well as d.a
     """
@@ -129,7 +127,6 @@ class SQLCallableList(list):
 
 
 class MEMDB(DALStorage):
-
     """
     an instance of this class represents a database connection
 
@@ -148,10 +145,10 @@ class MEMDB(DALStorage):
         self.client = client
 
     def define_table(
-        self,
-        tablename,
-        *fields,
-        **args
+            self,
+            tablename,
+            *fields,
+            **args
     ):
         tablename = cleanup(tablename)
         if tablename in dir(self) or tablename[0] == '_':
@@ -175,7 +172,6 @@ class SQLALL(object):
 
 
 class Table(DALStorage):
-
     """
     an instance of this class represents a database table
 
@@ -187,10 +183,10 @@ class Table(DALStorage):
     """
 
     def __init__(
-        self,
-        db,
-        tablename,
-        *fields
+            self,
+            db,
+            tablename,
+            *fields
     ):
         self._db = db
         self._tablename = tablename
@@ -235,7 +231,7 @@ class Table(DALStorage):
                                           self._tablename, referenced))
                 self._db[referenced]._referenced_by.append((self._tablename,
                                                             field.name))
-            elif not field.type in self._db._translator\
+            elif not field.type in self._db._translator \
                     or not self._db._translator[field.type]:
                 raise SyntaxError('Field: unknown field type %s' % field.type)
         self._tableobj = self._db.client
@@ -252,7 +248,6 @@ class Table(DALStorage):
         # nothing to do, here for backward compatibility
 
         self._db(self.id > 0).delete()
-
 
     def insert(self, **fields):
         # Checks 3 times that the id is new. 3 times is enough!
@@ -272,7 +267,7 @@ class Table(DALStorage):
 
     def update(self, id, **fields):
         for field in fields:
-            if not field in fields and self[field].default\
+            if not field in fields and self[field].default \
                     is not None:
                 fields[field] = self[field].default
             if field in fields:
@@ -287,7 +282,7 @@ class Table(DALStorage):
         return '__memdb__/t/%s/k/%s' % (self._tablename, str(id))
 
     def _create_id(self):
-        return long(web2py_uuid().replace('-',''),16)
+        return long(web2py_uuid().replace('-', ''), 16)
 
     def __str__(self):
         return self._tablename
@@ -295,18 +290,19 @@ class Table(DALStorage):
     def __call__(self, id, **kwargs):
         record = self.get(id)
         if record is None:
-          return None
-        if kwargs and any(record[key]!=kwargs[key] for key in kwargs):
+            return None
+        if kwargs and any(record[key] != kwargs[key] for key in kwargs):
             return None
         return record
+
 
 class Expression(object):
 
     def __init__(
-        self,
-        name,
-        type='string',
-        db=None,
+            self,
+            name,
+            type='string',
+            db=None,
     ):
         (self.name, self.type, self._db) = (name, type, db)
 
@@ -359,7 +355,6 @@ class Expression(object):
 
 
 class Field(Expression):
-
     """
     an instance of this class represents a database field
 
@@ -382,17 +377,17 @@ class Field(Expression):
     """
 
     def __init__(
-        self,
-        fieldname,
-        type='string',
-        length=None,
-        default=None,
-        required=False,
-        requires=sqlhtml_validators,
-        ondelete='CASCADE',
-        notnull=False,
-        unique=False,
-        uploadfield=True,
+            self,
+            fieldname,
+            type='string',
+            length=None,
+            default=None,
+            required=False,
+            requires=sqlhtml_validators,
+            ondelete='CASCADE',
+            notnull=False,
+            unique=False,
+            uploadfield=True,
     ):
 
         self.name = cleanup(fieldname)
@@ -480,7 +475,6 @@ class QueryException:
 
 
 class Query(object):
-
     """
     A query object necessary to define a set.
     It can be stored or can be passed to GQLDB.__call__() to obtain a Set
@@ -492,10 +486,10 @@ class Query(object):
     """
 
     def __init__(
-        self,
-        left,
-        op=None,
-        right=None,
+            self,
+            left,
+            op=None,
+            right=None,
     ):
         if isinstance(right, (Field, Expression)):
             raise SyntaxError(
@@ -514,7 +508,6 @@ class Query(object):
 
 
 class Set(object):
-
     """
     As Set represents a set of records in the database,
     the records are identified by the where=Query(...) object.
@@ -622,10 +615,10 @@ class Set(object):
 
 
 def update_record(
-    t,
-    s,
-    id,
-    a,
+        t,
+        s,
+        id,
+        a,
 ):
     item = s.get(id)
     for (key, value) in a.items():
@@ -635,7 +628,6 @@ def update_record(
 
 
 class Rows(object):
-
     """
     A wrapper for the return value of a select. It basically represents a table.
     It has an iterator and each row is represented as a dictionary.
@@ -644,10 +636,10 @@ class Rows(object):
     # ## this class still needs some work to care for ID/OID
 
     def __init__(
-        self,
-        db,
-        response,
-        *colnames
+            self,
+            db,
+            response,
+            *colnames
     ):
         self._db = db
         self.colnames = colnames
@@ -690,12 +682,12 @@ class Rows(object):
                     row[tablename][fieldname] = True
                 else:
                     row[tablename][fieldname] = False
-            elif field.type == 'date' and value is not None\
+            elif field.type == 'date' and value is not None \
                     and not isinstance(value, datetime.date):
                 (y, m, d) = [int(x) for x in
                              str(value).strip().split('-')]
                 row[tablename][fieldname] = datetime.date(y, m, d)
-            elif field.type == 'time' and value is not None\
+            elif field.type == 'time' and value is not None \
                     and not isinstance(value, datetime.time):
                 time_items = [int(x) for x in
                               str(value).strip().split(':')[:3]]
@@ -704,7 +696,7 @@ class Rows(object):
                 else:
                     (h, mi, s) = time_items + [0]
                 row[tablename][fieldname] = datetime.time(h, mi, s)
-            elif field.type == 'datetime' and value is not None\
+            elif field.type == 'datetime' and value is not None \
                     and not isinstance(value, datetime.datetime):
                 (y, m, d) = [int(x) for x in
                              str(value)[:10].strip().split('-')]
@@ -726,9 +718,9 @@ class Rows(object):
                 row[tablename][fieldname] = value
             if fieldname == 'id':
                 id = row[tablename].id
-                row[tablename].update_record = lambda t = row[tablename], \
-                    s = self._db[tablename], id = id, **a: update_record(t,
-                                                                         s, id, a)
+                row[tablename].update_record = lambda t=row[tablename], \
+                                                      s=self._db[tablename], id=id, **a: update_record(t,
+                                                                                                       s, id, a)
                 for (referee_table, referee_name) in \
                         table._referenced_by:
                     s = self._db[referee_table][referee_name]
@@ -892,6 +884,7 @@ def test_all():
 
     """
 
+
 SQLField = Field
 SQLTable = Table
 SQLXorable = Expression
@@ -902,4 +895,5 @@ SQLStorage = DALStorage
 
 if __name__ == '__main__':
     import doctest
+
     doctest.testmod()

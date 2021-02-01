@@ -34,8 +34,8 @@ from gluon.globals import current
 
 locker = thread.allocate_lock()
 
-def AppConfig(*args, **vars):
 
+def AppConfig(*args, **vars):
     locker.acquire()
     reload_ = vars.pop('reload', False)
     try:
@@ -60,16 +60,16 @@ class AppConfigDict(dict):
     def get(self, path, default=None):
         try:
             value = self.take(path).strip()
-            if value.lower() in ('none','null',''):
+            if value.lower() in ('none', 'null', ''):
                 return None
             elif value.lower() == 'true':
                 return True
             elif value.lower() == 'false':
                 return False
-            elif value.isdigit() or (value[0]=='-' and value[1:].isdigit()):
+            elif value.isdigit() or (value[0] == '-' and value[1:].isdigit()):
                 return int(value)
             elif ',' in value:
-                return map(lambda x:x.strip(),value.split(','))
+                return map(lambda x: x.strip(), value.split(','))
             else:
                 try:
                     return float(value)
@@ -87,7 +87,7 @@ class AppConfigDict(dict):
         for part in parts:
             if part not in value:
                 raise BaseException("%s not in config [%s]" %
-                    (part, '-->'.join(walking)))
+                                    (part, '-->'.join(walking)))
             value = value[part]
             walking.append(part)
         if cast is None:
@@ -98,7 +98,7 @@ class AppConfigDict(dict):
                 self.int_cache[path] = value
             except (ValueError, TypeError):
                 raise BaseException("%s can't be converted to %s" %
-                 (value, cast))
+                                    (value, cast))
         return value
 
 

@@ -2,6 +2,7 @@ from __future__ import print_function
 # Only Python 2.6 and up, because of NamedTuple.
 import time
 from collections import namedtuple
+
 Score = namedtuple('Score', ['tag', 'stamp'])
 
 
@@ -57,7 +58,7 @@ class TimeCollector(object):
         headerData = ('Start(ms)', 'End(ms)', 'Delta(ms)', 'Time Cost',
                       'Description')
         bodyTemplate = '%(start)10.0f | %(end)10.0f | %(delta)10.0f |' \
-            + ' %(perc)10.0f%% | %(tag)-30s'
+                       + ' %(perc)10.0f%% | %(tag)-30s'
         return [headerTemplate % headerData] + [bodyTemplate % d for d in data]
 
     def getReportText(self, **kwargs):
@@ -65,6 +66,7 @@ class TimeCollector(object):
 
     def restart(self):
         self.scores = [Score(tag='start', stamp=time.clock())]
+
 
 if __name__ == '__main__':
     print('')

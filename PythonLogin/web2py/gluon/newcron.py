@@ -20,6 +20,7 @@ import re
 import datetime
 import platform
 from functools import reduce
+
 try:
     import cPickle as pickle
 except:
@@ -359,14 +360,14 @@ def crondance(applications_parent, ctype='soft', startup=False, apps=None):
                 action = False
 
             if action and command.endswith('.py'):
-                commands.extend(('-J',                # cron job
-                                 models,              # import models?
-                                 '-S', app,           # app name
+                commands.extend(('-J',  # cron job
+                                 models,  # import models?
+                                 '-S', app,  # app name
                                  '-a', '"<recycle>"',  # password
-                                 '-R', command))      # command
+                                 '-R', command))  # command
             elif action:
-                commands.extend(('-J',                  # cron job
-                                 models,                # import models?
+                commands.extend(('-J',  # cron job
+                                 models,  # import models?
                                  '-S', app + '/' + command,  # app name
                                  '-a', '"<recycle>"'))  # password
             else:

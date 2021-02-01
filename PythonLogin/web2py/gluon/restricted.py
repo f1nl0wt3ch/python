@@ -27,15 +27,14 @@ __all__ = ['RestrictedError', 'restricted', 'TicketStorage', 'compile2']
 
 
 class TicketStorage(Storage):
-
     """
     Defines the ticket object and the default values of its members (None)
     """
 
     def __init__(
-        self,
-        db=None,
-        tablename='web2py_ticket'
+            self,
+            db=None,
+            tablename='web2py_ticket'
     ):
         Storage.__init__(self)
         self.db = db
@@ -61,7 +60,7 @@ class TicketStorage(Storage):
             message = 'In FILE: %(layer)s\n\n%(traceback)s\n'
         except Exception:
             self.db.rollback()
-            message =' Unable to store in FILE: %(layer)s\n\n%(traceback)s\n'
+            message = ' Unable to store in FILE: %(layer)s\n\n%(traceback)s\n'
         self.db.close()
         logger.error(message % ticket_data)
 
@@ -92,10 +91,10 @@ class TicketStorage(Storage):
         return table
 
     def load(
-        self,
-        request,
-        app,
-        ticket_id,
+            self,
+            request,
+            app,
+            ticket_id,
     ):
         if not self.db:
             try:
@@ -119,11 +118,11 @@ class RestrictedError(Exception):
     """
 
     def __init__(
-        self,
-        layer='',
-        code='',
-        output='',
-        environment=None,
+            self,
+            layer='',
+            code='',
+            output='',
+            environment=None,
     ):
         """
         Layer here is some description of where in the system the exception
@@ -173,7 +172,6 @@ class RestrictedError(Exception):
         except:
             logger.error(self.traceback)
             return None
-
 
     def load(self, request, app, ticket_id):
         """
@@ -256,7 +254,7 @@ def snapshot(info=None, context=5, code=None, environment=None):
 
     # start to process frames
     records = inspect.getinnerframes(etb, context)
-    del etb # Prevent circular references that would cause memory leaks
+    del etb  # Prevent circular references that would cause memory leaks
     s['frames'] = []
     for frame, file, lnum, func, lines, index in records:
         file = file and os.path.abspath(file) or '?'
@@ -278,6 +276,7 @@ def snapshot(info=None, context=5, code=None, environment=None):
                 return linecache.getline(file, lnum[0])
             finally:
                 lnum[0] += 1
+
         vars = cgitb.scanvars(reader, frame, locals)
 
         # if it is a view, replace with generated code

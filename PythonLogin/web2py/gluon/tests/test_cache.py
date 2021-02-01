@@ -38,7 +38,6 @@ class TestCache(unittest.TestCase):
     # TODO: test_CacheAbstract(self):
 
     def test_CacheInRam(self):
-
         # defaults to mode='http'
         cache = CacheInRam()
         self.assertEqual(cache('a', lambda: 1, 0), 1)
@@ -65,7 +64,6 @@ class TestCache(unittest.TestCase):
         self.assertEqual(cache('b', lambda: 'x', 100), 1)
 
     def test_CacheOnDisk(self):
-
         # defaults to mode='http'
         s = Storage({'application': 'admin',
                      'folder': 'applications/admin'})
@@ -142,4 +140,3 @@ class TestCache(unittest.TestCase):
         self.assertEqual(a.as_csv(), h.as_csv())
         db.t_a.drop()
         db.close()
-

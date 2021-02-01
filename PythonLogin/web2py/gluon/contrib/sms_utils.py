@@ -110,6 +110,7 @@ def sms_email(number, provider):
         number = number[1:]
     elif number[0] == '+':
         number = number[3:]
-    elif number[:2] == '00': number = number[3:]
+    elif number[:2] == '00':
+        number = number[3:]
     number = re.sub('[^\d]', '', number)
     return number + SMSCODES[provider]

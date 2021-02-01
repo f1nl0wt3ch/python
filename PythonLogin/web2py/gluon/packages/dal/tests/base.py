@@ -8,7 +8,7 @@ from pydal._compat import PY2
 
 @unittest.skipIf(IS_IMAP, "Reference not Null unsupported on IMAP")
 class TestReferenceNOTNULL(unittest.TestCase):
-    #1:N not null
+    # 1:N not null
 
     def testRun(self):
         for ref, bigint in [('reference', False), ('big-reference', True)]:
@@ -133,6 +133,7 @@ class TestParseDateTime(unittest.TestCase):
         self.assertEqual(dt.microsecond, 123456)
         db.close()
 
+
 @unittest.skipIf(IS_IMAP, "chained join unsupported on IMAP")
 @unittest.skipIf(IS_TERADATA, "chained join unsupported on TERADATA")
 class TestChainedJoinUNIQUE(unittest.TestCase):
@@ -140,12 +141,12 @@ class TestChainedJoinUNIQUE(unittest.TestCase):
 
     def testRun(self):
         db = DAL(DEFAULT_URI, check_reserved=['all'])
-        db.define_table('aa',Field('name'))
-        db.define_table('bb',Field('aa','reference aa'),Field('name'))
-        for k in ('x','y','z'):
+        db.define_table('aa', Field('name'))
+        db.define_table('bb', Field('aa', 'reference aa'), Field('name'))
+        for k in ('x', 'y', 'z'):
             i = db.aa.insert(name=k)
-            for j in ('u','v','w'):
-                db.bb.insert(aa=i,name=k+j)
+            for j in ('u', 'v', 'w'):
+                db.bb.insert(aa=i, name=k + j)
         db.commit()
         rows = db(db.aa).select()
         rows.join(db.bb.aa, fields=[db.bb.name], orderby=[db.bb.name])
@@ -161,7 +162,7 @@ class TestChainedJoinUNIQUE(unittest.TestCase):
 
         rows = db(db.bb).select()
         rows.join(db.aa.id, fields=[db.aa.name])
-        
+
         self.assertEqual(rows[0].aa.name, 'x')
         self.assertEqual(rows[1].aa.name, 'x')
         self.assertEqual(rows[2].aa.name, 'x')
@@ -176,6 +177,7 @@ class TestChainedJoinUNIQUE(unittest.TestCase):
         drop(db.bb)
         drop(db.aa)
         db.close()
+
 
 class TestNullAdapter(unittest.TestCase):
     # Test that NullAdapter can define tables

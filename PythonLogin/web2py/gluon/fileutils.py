@@ -223,7 +223,7 @@ def tar(file, dir, expression='^.+$',
     try:
         if filenames is None:
             filenames = listdir(dir, expression, add_dirs=True,
-                exclude_content_from=exclude_content_from)
+                                exclude_content_from=exclude_content_from)
         for file in filenames:
             tar.add(os.path.join(dir, file), file, False)
     finally:
@@ -281,7 +281,6 @@ def create_welcome_w2p():
 
 
 def w2p_unpack(filename, path, delete_tar=True):
-
     if filename == 'welcome.w2p':
         create_welcome_w2p()
     filename = abspath(filename)
@@ -402,7 +401,7 @@ def check_credentials(request, other_application='admin',
             return True
         elif gae_login:
             login_html = '<a href="%s">Sign in with your google account</a>.' \
-                % users.create_login_url(request.env.path_info)
+                         % users.create_login_url(request.env.path_info)
             raise HTTP(200, '<html><body>%s</body></html>' % login_html)
         else:
             return False
@@ -429,10 +428,10 @@ def fix_newlines(path):
 
 
 def copystream(
-    src,
-    dest,
-    size,
-    chunk_size=10 ** 5,
+        src,
+        dest,
+        size,
+        chunk_size=10 ** 5,
 ):
     """
     this is here because I think there is a bug in shutil.copyfileobj
@@ -462,11 +461,14 @@ def make_fake_file_like_object():
 
         def close(self):
             pass
+
     return LogFile()
 
 
 from gluon.settings import global_settings  # we need to import settings here because
-                                      # settings imports fileutils too
+
+
+# settings imports fileutils too
 
 
 def abspath(*relpath, **base):

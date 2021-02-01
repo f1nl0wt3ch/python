@@ -14,14 +14,14 @@ import codecs
 
 # None represents a potentially variable byte. "##" in the XML spec...
 autodetect_dict = {  # bytepattern     : ("name",
-                                         (0x00, 0x00, 0xFE, 0xFF): ("ucs4_be"),
-                                         (0xFF, 0xFE, 0x00, 0x00): ("ucs4_le"),
-                                         (0xFE, 0xFF, None, None): ("utf_16_be"),
-                                         (0xFF, 0xFE, None, None): ("utf_16_le"),
-                                         (0x00, 0x3C, 0x00, 0x3F): ("utf_16_be"),
-                                         (0x3C, 0x00, 0x3F, 0x00): ("utf_16_le"),
-                                         (0x3C, 0x3F, 0x78, 0x6D): ("utf_8"),
-                                         (0x4C, 0x6F, 0xA7, 0x94): ("EBCDIC")
+    (0x00, 0x00, 0xFE, 0xFF): ("ucs4_be"),
+    (0xFF, 0xFE, 0x00, 0x00): ("ucs4_le"),
+    (0xFE, 0xFF, None, None): ("utf_16_be"),
+    (0xFF, 0xFE, None, None): ("utf_16_le"),
+    (0x00, 0x3C, 0x00, 0x3F): ("utf_16_be"),
+    (0x3C, 0x00, 0x3F, 0x00): ("utf_16_le"),
+    (0x3C, 0x3F, 0x78, 0x6D): ("utf_8"),
+    (0x4C, 0x6F, 0xA7, 0x94): ("EBCDIC")
 }
 
 
@@ -63,7 +63,7 @@ def autoDetectXMLEncoding(buffer):
                 # look for double quote
                 quote_pos = first_line.find('"', encoding_pos)
 
-                if quote_pos == -1:                 # look for single quote
+                if quote_pos == -1:  # look for single quote
                     quote_pos = first_line.find("'", encoding_pos)
 
                 if quote_pos > -1:

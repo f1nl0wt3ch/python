@@ -37,8 +37,10 @@ PY3K = sys.version_info[0] > 2
 
 class NullHandler(logging.Handler):
     """A Logging handler to prevent library errors."""
+
     def emit(self, record):
         pass
+
 
 if PY3K:
     def b(val):
@@ -48,6 +50,7 @@ if PY3K:
             return val.encode()
         else:
             return val
+
 
     def u(val, encoding="us-ascii"):
         """ Convert bytes into string/unicode.  This allows for the
@@ -65,6 +68,7 @@ else:
             return val.encode()
         else:
             return val
+
 
     def u(val, encoding="us-ascii"):
         """ Convert bytes into string/unicode.  This allows for the
@@ -88,11 +92,15 @@ __all__ = ['VERSION', 'SERVER_SOFTWARE', 'HTTP_SERVER_SOFTWARE', 'BUF_SIZE',
 import sys
 import time
 import socket
+
 try:
     import ssl
+
     has_ssl = True
 except ImportError:
     has_ssl = False
+
+
 # Import Package Modules
 # package imports removed in monolithic build
 # TODO - This part is still very experimental.
@@ -162,9 +170,9 @@ class Connection(object):
                     raise
         return offset
 
-# FIXME - this is not ready for prime-time yet.
-#    def makefile(self, buf_size=BUF_SIZE):
-#        return FileLikeSocket(self, buf_size)
+    # FIXME - this is not ready for prime-time yet.
+    #    def makefile(self, buf_size=BUF_SIZE):
+    #        return FileLikeSocket(self, buf_size)
 
     def close(self):
         if hasattr(self.socket, '_sock'):
@@ -178,11 +186,14 @@ class Connection(object):
                     pass
         self.socket.close()
 
+
 # Monolithic build...end of module: rocket/connection.py
 # Monolithic build...start of module: rocket/filelike.py
 
 # Import System Modules
 import socket
+
+
 # Import Package Modules
 # package imports removed in monolithic build
 
@@ -295,23 +306,29 @@ class FileLikeSocket(object):
         self.conn = None
         self.content_length = None
 
+
 # Monolithic build...end of module: rocket/filelike.py
 # Monolithic build...start of module: rocket/futures.py
 
 # Import System Modules
 import time
+
 try:
     from concurrent.futures import Future, ThreadPoolExecutor
     from concurrent.futures.thread import _WorkItem
+
     has_futures = True
 except ImportError:
     has_futures = False
 
+
     class Future(object):
         pass
 
+
     class ThreadPoolExecutor(object):
         pass
+
 
     class _WorkItem(object):
         pass
@@ -400,6 +417,7 @@ class WSGIExecutor(ThreadPoolExecutor):
 
 class FuturesMiddleware(object):
     """Futures middleware that adds a Futures Executor to the environment"""
+
     def __init__(self, app, threads=5):
         self.app = app
         self.executor = WSGIExecutor(threads)
@@ -408,6 +426,7 @@ class FuturesMiddleware(object):
         environ["wsgiorg.executor"] = self.executor
         environ["wsgiorg.futures"] = self.executor.futures
         return self.app(environ, start_response)
+
 
 # Monolithic build...end of module: rocket/futures.py
 # Monolithic build...start of module: rocket/listener.py
@@ -422,12 +441,16 @@ from threading import Thread
 try:
     import ssl
     from ssl import SSLError
+
     has_ssl = True
 except ImportError:
     has_ssl = False
 
+
     class SSLError(socket.error):
         pass
+
+
 # Import Package Modules
 # package imports removed in monolithic build
 
@@ -603,6 +626,7 @@ class Listener(Thread):
             except:
                 self.err_log.error(traceback.format_exc())
 
+
 # Monolithic build...end of module: rocket/listener.py
 # Monolithic build...start of module: rocket/main.py
 
@@ -613,6 +637,7 @@ import socket
 import logging
 import traceback
 from threading import Lock
+
 try:
     from queue import Queue
 except ImportError:
@@ -814,6 +839,7 @@ def CherryPyWSGIServer(bind_addr,
                   queue_size=request_queue_size,
                   timeout=timeout)
 
+
 # Monolithic build...end of module: rocket/main.py
 # Monolithic build...start of module: rocket/monitor.py
 
@@ -822,6 +848,7 @@ import time
 import logging
 import select
 from threading import Thread
+
 
 # Import Package Modules
 # package imports removed in monolithic build
@@ -885,7 +912,7 @@ class Monitor(Thread):
                 self.log.debug('Received a timed out connection.')
 
                 if __debug__:
-                    assert(c not in self.connections)
+                    assert (c not in self.connections)
 
                 if IS_JYTHON:
                     # Jython requires a socket to be in Non-blocking mode in
@@ -996,11 +1023,13 @@ class Monitor(Thread):
         # Place a None sentry value to cause the monitor to die.
         self.monitor_queue.put(None)
 
+
 # Monolithic build...end of module: rocket/monitor.py
 # Monolithic build...start of module: rocket/threadpool.py
 
 # Import System Modules
 import logging
+
 # Import Package Modules
 # package imports removed in monolithic build
 
@@ -1158,6 +1187,7 @@ class ThreadPool:
             elif queueSize > self.grow_threshold:
 
                 self.grow(queueSize)
+
 
 # Monolithic build...end of module: rocket/threadpool.py
 # Monolithic build...start of module: rocket/worker.py
@@ -1564,6 +1594,7 @@ def get_method(method):
     methods = dict(wsgi=WSGIWorker)
     return methods[method.lower()]
 
+
 # Monolithic build...end of module: rocket/worker.py
 # Monolithic build...start of module: rocket/methods/__init__.py
 
@@ -1851,20 +1882,21 @@ class WSGIWorker(Worker):
 
             sock_file.close()
 
+
 # Monolithic build...end of module: rocket/methods/wsgi.py
 def demo_app(environ, start_response):
     global static_folder
     import os
-    types = {'htm': 'text/html','html': 'text/html','gif': 'image/gif',
-             'jpg': 'image/jpeg','png': 'image/png','pdf': 'applications/pdf'}
+    types = {'htm': 'text/html', 'html': 'text/html', 'gif': 'image/gif',
+             'jpg': 'image/jpeg', 'png': 'image/png', 'pdf': 'applications/pdf'}
     if static_folder:
         if not static_folder.startswith('/'):
-            static_folder = os.path.join(os.getcwd(),static_folder)
+            static_folder = os.path.join(os.getcwd(), static_folder)
         path = os.path.join(static_folder, environ['PATH_INFO'][1:] or 'index.html')
-        type = types.get(path.split('.')[-1],'text')
+        type = types.get(path.split('.')[-1], 'text')
         if os.path.exists(path):
             try:
-                data = open(path,'rb').read()
+                data = open(path, 'rb').read()
                 start_response('200 OK', [('Content-Type', type)])
             except IOError:
                 start_response('404 NOT FOUND', [])
@@ -1877,21 +1909,23 @@ def demo_app(environ, start_response):
         data = '<html><body><h1>Hello from Rocket Web Server</h1></body></html>'
     return [data]
 
+
 def demo():
     from optparse import OptionParser
     parser = OptionParser()
-    parser.add_option("-i", "--ip", dest="ip",default="127.0.0.1",
+    parser.add_option("-i", "--ip", dest="ip", default="127.0.0.1",
                       help="ip address of the network interface")
-    parser.add_option("-p", "--port", dest="port",default="8000",
+    parser.add_option("-p", "--port", dest="port", default="8000",
                       help="post where to run web server")
-    parser.add_option("-s", "--static", dest="static",default=None,
+    parser.add_option("-s", "--static", dest="static", default=None,
                       help="folder containing static files")
     (options, args) = parser.parse_args()
     global static_folder
     static_folder = options.static
     print('Rocket running on %s:%s' % (options.ip, options.port))
-    r=Rocket((options.ip,int(options.port)),'wsgi', {'wsgi_app':demo_app})
+    r = Rocket((options.ip, int(options.port)), 'wsgi', {'wsgi_app': demo_app})
     r.start()
 
-if __name__=='__main__':
+
+if __name__ == '__main__':
     demo()

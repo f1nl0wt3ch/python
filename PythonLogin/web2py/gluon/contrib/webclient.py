@@ -20,13 +20,13 @@ from gluon._compat import urllib2, cookielib, iteritems, to_native, urlencode, t
 import re
 import time
 
-
 DEFAULT_HEADERS = {
     'user-agent': 'Mozilla/4.0',  # some servers are picky
     'accept-language': 'en',
 }
 
-FORM_REGEX = re.compile('(\<input name\="_formkey" type\="hidden" value\="(?P<formkey>.+?)" \/\>)?\<input name\="_formname" type\="hidden" value\="(?P<formname>.+?)" \/\>')
+FORM_REGEX = re.compile(
+    '(\<input name\="_formkey" type\="hidden" value\="(?P<formkey>.+?)" \/\>)?\<input name\="_formname" type\="hidden" value\="(?P<formname>.+?)" \/\>')
 
 SESSION_REGEX = 'session_id_(?P<name>.+)'
 
@@ -56,7 +56,7 @@ class WebClient(object):
                 cookie = item[:item.find(';')]
                 pos = cookie.find('=')
                 key = cookie[:pos]
-                value = cookie[pos+1:]
+                value = cookie[pos + 1:]
                 self.cookies[key.strip()] = value.strip()
 
     def get(self, url, cookies=None, headers=None, auth=None):
@@ -83,7 +83,7 @@ class WebClient(object):
         args = [
             urllib2.HTTPCookieProcessor(self.cookiejar),
             urllib2.HTTPHandler(debuglevel=0)
-            ]
+        ]
         # if required do basic auth
         if auth:
             auth_handler = urllib2.HTTPBasicAuthHandler()
@@ -116,9 +116,9 @@ class WebClient(object):
         error = None
         try:
             if isinstance(data, str):
-                self.method = 'POST' if method=='auto' else method
+                self.method = 'POST' if method == 'auto' else method
             elif isinstance(data, dict):
-                self.method = 'POST' if method=='auto' else method
+                self.method = 'POST' if method == 'auto' else method
                 # if there is only one form, set _formname automatically
                 if not '_formname' in data and len(self.forms) == 1:
                     data['_formname'] = self.forms.keys()[0]
@@ -131,7 +131,7 @@ class WebClient(object):
                 # time the POST request
                 data = urlencode(data, doseq=True)
             else:
-                self.method = 'GET' if method=='auto' else method
+                self.method = 'GET' if method == 'auto' else method
                 data = None
             t0 = time.time()
             self.response = opener.open(self.url, to_bytes(data))
@@ -144,7 +144,7 @@ class WebClient(object):
 
         if hasattr(self.response, 'getcode'):
             self.status = self.response.getcode()
-        else:#python2.5
+        else:  # python2.5
             self.status = None
 
         self.text = to_native(self.response.read())
@@ -218,6 +218,7 @@ def test_web2py_registration_and_login():
     print()
     for method, url, status, t in client.history:
         print(method, url, status, t)
+
 
 if __name__ == '__main__':
     test_web2py_registration_and_login()

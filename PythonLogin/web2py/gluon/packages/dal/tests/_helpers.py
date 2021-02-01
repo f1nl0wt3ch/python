@@ -2,6 +2,7 @@ from ._compat import unittest
 from ._adapt import DEFAULT_URI, drop
 from pydal import DAL
 
+
 class DALtest(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(DALtest, self).__init__(*args, **kwargs)

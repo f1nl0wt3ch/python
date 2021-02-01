@@ -19,9 +19,9 @@ class PyMySQLTestCase(unittest2.TestCase):
             databases = json.load(f)
     else:
         databases = [
-            {"host":"localhost","user":"root",
-             "passwd":"","db":"test_pymysql", "use_unicode": True, 'local_infile': True},
-            {"host":"localhost","user":"root","passwd":"","db":"test_pymysql2"}]
+            {"host": "localhost", "user": "root",
+             "passwd": "", "db": "test_pymysql", "use_unicode": True, 'local_infile': True},
+            {"host": "localhost", "user": "root", "passwd": "", "db": "test_pymysql2"}]
 
     def mysql_server_is(self, conn, version_tuple):
         """Return True if the given connection is on the version given or

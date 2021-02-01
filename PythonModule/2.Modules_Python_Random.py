@@ -20,8 +20,8 @@ random_list = []
 # Create randomer_number below:
 random_list = [random.randint(1, 101) for i in range(101)]
 print(random_list)
-#for i in range(0,101):
-    #print(random.randint(1, 100))
+# for i in range(0,101):
+# print(random.randint(1, 100))
 #    random_list.append(random.randint(1, 100))
 
 # Print randomer_number below:

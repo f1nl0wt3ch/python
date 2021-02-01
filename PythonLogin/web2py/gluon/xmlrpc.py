@@ -14,6 +14,7 @@ if PY2:
 else:
     from xmlrpc.server import SimpleXMLRPCDispatcher
 
+
 def handler(request, response, methods):
     response.session_id = None  # no sessions for xmlrpc
     dispatcher = SimpleXMLRPCDispatcher(allow_none=True, encoding=None)

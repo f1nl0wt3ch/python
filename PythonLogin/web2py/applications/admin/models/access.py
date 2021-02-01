@@ -5,6 +5,7 @@ from gluon.admin import apath
 from gluon.fileutils import read_file
 from gluon.utils import web2py_uuid
 from pydal.contrib import portalocker
+
 # ###########################################################
 # ## make sure administrator is on localhost or https
 # ###########################################################
@@ -15,7 +16,7 @@ http_host = request.env.http_host.split(':')[0]
 if request.env.web2py_runtime_gae:
     session_db = DAL('gae')
     session.connect(request, response, db=session_db)
-    hosts = (http_host, )
+    hosts = (http_host,)
     is_gae = True
 else:
     is_gae = False
@@ -35,6 +36,7 @@ try:
         raise HTTP(200, T('admin disabled because no admin password'))
 except IOError:
     import gluon.fileutils
+
     if is_gae:
         if gluon.fileutils.check_credentials(request):
             session.authorized = True
@@ -87,8 +89,8 @@ def read_hosts_deny():
             if len(fields) > 2:
                 hosts[fields[0].strip()] = (  # ip
                     int(fields[1].strip()),  # n attemps
-                    int(fields[2].strip())   # last attempts
-                    )
+                    int(fields[2].strip())  # last attempts
+                )
         portalocker.unlock(f)
         f.close()
     return hosts
@@ -104,6 +106,7 @@ def write_hosts_deny(denied_hosts):
     portalocker.unlock(f)
     f.close()
 
+
 def login_record(success=True):
     denied_hosts = read_hosts_deny()
     val = (0, 0)
@@ -112,13 +115,14 @@ def login_record(success=True):
     elif not success:
         val = denied_hosts.get(request.client, (0, 0))
         if time.time() - val[1] < expiration_failed_logins \
-            and val[0] >= allowed_number_of_attempts:
+                and val[0] >= allowed_number_of_attempts:
             return val[0]  # locked out
         time.sleep(2 ** val[0])
         val = (val[0] + 1, int(time.time()))
         denied_hosts[request.client] = val
     write_hosts_deny(denied_hosts)
     return val[0]
+
 
 def failed_login_count():
     denied_hosts = read_hosts_deny()
@@ -139,7 +143,6 @@ if session.authorized:
     else:
         session.last_time = t0
 
-
 if request.vars.is_mobile in ('true', 'false', 'auto'):
     session.is_mobile = request.vars.is_mobile or 'auto'
 if request.controller == 'default' and request.function == 'index':
@@ -152,7 +155,7 @@ if session.is_mobile == 'true':
 elif session.is_mobile == 'false':
     is_mobile = False
 else:
-    is_mobile = request.user_agent().get('is_mobile',False)
+    is_mobile = request.user_agent().get('is_mobile', False)
 
 if DEMO_MODE:
     session.authorized = True
@@ -167,8 +170,8 @@ if request.controller == "webservices":
         time.sleep(10)
         raise HTTP(403, "Not authorized")
 elif not session.authorized and not \
-    (request.controller + '/' + request.function in
-     ('default/index', 'default/user', 'plugin_jqmobile/index', 'plugin_jqmobile/about')):
+        (request.controller + '/' + request.function in
+         ('default/index', 'default/user', 'plugin_jqmobile/index', 'plugin_jqmobile/about')):
 
     if request.env.query_string:
         query_string = '?' + request.env.query_string
@@ -181,8 +184,8 @@ elif not session.authorized and not \
         url = request.env.path_info + query_string
     redirect(URL(request.application, 'default', 'index', vars=dict(send=url)))
 elif session.authorized and \
-     request.controller == 'default' and \
-     request.function == 'index':
+        request.controller == 'default' and \
+        request.function == 'index':
     redirect(URL(request.application, 'default', 'site'))
 
 if request.controller == 'appadmin' and DEMO_MODE:

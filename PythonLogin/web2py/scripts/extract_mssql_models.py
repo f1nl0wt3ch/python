@@ -45,6 +45,7 @@ KWARGS = ('type', 'length', 'default', 'required', 'ondelete',
 
 import sys
 import re
+
 # This is from pydal/helpers/regex.py as of 2016-06-16
 # Use this to recognize if a field name need to have an rname representation
 REGEX_VALID_TB_FLD = re.compile(r'^[^\d_][_0-9a-zA-Z]*\Z')
@@ -116,7 +117,7 @@ def define_field(conn, table, field, pks):
         f.update(ref)
     elif field['column_default'] and \
             field['column_default'].startswith("nextval") and \
-                    field['column_name'] in pks:
+            field['column_name'] in pks:
         f['type'] = "'id'"
     elif field['data_type'].startswith('character'):
         f['type'] = "'string'"
@@ -271,7 +272,8 @@ def define_table(conn, table):
     "Output single table definition"
     fields = get_fields(conn, table)
     pks = primarykeys(conn, table)
-    print "db.define_table('%s'," % (table,)
+    print
+    "db.define_table('%s'," % (table,)
     for field in fields:
         fname = field['column_name']
         fdef = define_field(conn, table, field, pks)
@@ -279,22 +281,27 @@ def define_table(conn, table):
             fdef['unique'] = "True"
         if fdef['type'] == "'id'" and fname in pks:
             pks.pop(pks.index(fname))
-        print "    Field('%s', %s)," % (get_valid_column_name(fname),
-                                        ', '.join(["%s=%s" % (k, fdef[k]) for k in KWARGS
-                                                   if k in fdef and fdef[k]]))
+        print
+        "    Field('%s', %s)," % (get_valid_column_name(fname),
+                                  ', '.join(["%s=%s" % (k, fdef[k]) for k in KWARGS
+                                             if k in fdef and fdef[k]]))
     if pks:
-        print "    primarykey=[%s]," % ", ".join(["'%s'" % pk for pk in pks])
-    print     "    migrate=migrate)"
+        print
+        "    primarykey=[%s]," % ", ".join(["'%s'" % pk for pk in pks])
+    print
+    "    migrate=migrate)"
     print
 
 
 def define_db(conn, db, host, port, user, passwd):
     "Output database definition (model)"
     dal = 'db = DAL("mssql4://%s:%s@%s:%s/%s", pool_size=10, decode_credentials=True)'
-    print dal % (
+    print
+    dal % (
         user.replace('@', '%40').replace(':', '%3A'), passwd.replace('@', '%40').replace(':', '%3A'), host, port, db)
     print
-    print "migrate = False"
+    print
+    "migrate = False"
     print
     for table in get_tables(conn):
         define_table(conn, table)
@@ -303,7 +310,8 @@ def define_db(conn, db, host, port, user, passwd):
 if __name__ == "__main__":
     # Parse arguments from command line:
     if len(sys.argv) < 6 and COMMAND_LINE_MODE:
-        print HELP
+        print
+        HELP
     else:
         # Parse arguments from command line:
         if COMMAND_LINE_MODE:
@@ -317,6 +325,7 @@ if __name__ == "__main__":
 
         # Make the database connection (change driver if required)
         import pyodbc
+
         # cnn = pyodbc.connect(database=db, host=host, port=port,
         #                        user=user, password=passwd,
         #                        )

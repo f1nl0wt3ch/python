@@ -23,7 +23,7 @@ class SQLiteDialect(SQLDialect):
 
     def extract(self, field, what, query_env={}):
         return "web2py_extract('%s', %s)" % (what,
-            self.expand(field, query_env=query_env))
+                                             self.expand(field, query_env=query_env))
 
     def regexp(self, first, second, query_env={}):
         return '(%s REGEXP %s)' % (

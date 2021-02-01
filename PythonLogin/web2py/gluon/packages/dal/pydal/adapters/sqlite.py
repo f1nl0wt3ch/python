@@ -18,7 +18,7 @@ class SQLite(SQLAdapter):
         self.pool_size = 0
         super(SQLite, self)._initialize_(do_connect)
         path_encoding = sys.getfilesystemencoding() \
-            or locale.getdefaultlocale()[1] or 'utf8'
+                        or locale.getdefaultlocale()[1] or 'utf8'
         if ':memory' in self.uri.split('://', 1)[0]:
             self.dbpath = ':memory:'
         else:
@@ -88,7 +88,7 @@ class SQLite(SQLAdapter):
         if counter:
             for field in table._referenced_by:
                 if field.type == 'reference ' + table._dalname \
-                   and field.ondelete == 'CASCADE':
+                        and field.ondelete == 'CASCADE':
                     db(field.belongs(deleted)).delete()
         return counter
 
@@ -116,7 +116,7 @@ class JDBCSQLite(SQLite):
 
     def connector(self):
         return self.driver.connect(
-            self.driver.getConnection('jdbc:sqlite:'+self.dbpath),
+            self.driver.getConnection('jdbc:sqlite:' + self.dbpath),
             **self.driver_args)
 
     def after_connection(self):

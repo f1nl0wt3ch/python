@@ -52,6 +52,7 @@ else:
 
 if SOFTCRON:
     from gluon.settings import global_settings
+
     global_settings.web2py_crontype = 'soft'
 
 fcgi.WSGIServer(application, bindAddress='/tmp/fcgi.sock').run()

@@ -12,5 +12,5 @@ This script also creates a file object called sonnet_doc that points to the file
 
 """
 with open('welcome.txt') as first_line_doc:
-     first_line = first_line_doc.readline()
-     print(first_line)
+    first_line = first_line_doc.readline()
+    print(first_line)

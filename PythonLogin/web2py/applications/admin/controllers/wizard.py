@@ -36,6 +36,7 @@ def reset(session):
         'page_error': '# Error: the document does not exist',
     }
 
+
 if not session.app:
     reset(session)
 
@@ -83,19 +84,19 @@ def step1():
     from json import loads
     import urllib
     if not session.themes:
-        #url = LAYOUTS_APP + '/default/layouts.json'
-        #try:
+        # url = LAYOUTS_APP + '/default/layouts.json'
+        # try:
         #    data = urllib.urlopen(url).read()
         #    session.themes = ['Default'] + loads(data)['layouts']
-        #except:
+        # except:
         session.themes = ['Default']
     themes = session.themes
     if not session.plugins:
-        #url = PLUGINS_APP + '/default/plugins.json'
-        #try:
+        # url = PLUGINS_APP + '/default/plugins.json'
+        # try:
         #    data = urllib.urlopen(url).read()
         #    session.plugins = loads(data)['plugins']
-        #except:
+        # except:
         session.plugins = []
     plugins = [x.split('.')[2] for x in session.plugins]
     response.view = 'wizard/step.html'
@@ -131,7 +132,7 @@ def step1():
     if form.accepts(request.vars):
         session.app['params'] = [(key, form.vars.get(key, None))
                                  for key, value in session.app['params']]
-        redirect(URL('step2')  + '/#xwizard_form')
+        redirect(URL('step2') + '/#xwizard_form')
     return dict(step='1: Setting Parameters', form=form)
 
 
@@ -143,7 +144,7 @@ def step2():
         table_names = [clean(t) for t in listify(form.vars.table_names)
                        if t.strip()]
         if [t for t in table_names if t.startswith('auth_') and
-                not t == 'auth_user']:
+                                      not t == 'auth_user']:
             form.error.table_names = \
                 T('invalid table names (auth_* tables already defined)')
         else:
@@ -192,7 +193,7 @@ def step3():
             else:
                 redirect(URL('step4') + '/#xwizard_form')
     return dict(step='3: Fields for table "%s" (%s of %s)'
-                % (table, n + 1, m), table=table, form=form)
+                     % (table, n + 1, m), table=table, form=form)
 
 
 def step4():
@@ -280,6 +281,7 @@ def sort_tables(tables):
             append(t, trail=trail + [table])
         if not table in tables:
             tables.append(table)
+
     for table in d:
         append(table)
     return tables
@@ -365,7 +367,7 @@ def make_table(table, fields):
 
         ### make up a label
         s += ",\n          label=T('%s')),\n" % \
-            ' '.join(x.capitalize() for x in barename.split('_'))
+             ' '.join(x.capitalize() for x in barename.split('_'))
     if table == 'auth_user':
         s += "    Field('created_on','datetime',default=request.now,\n"
         s += "          label=T('Created On'),writable=False,readable=False),\n"
@@ -396,7 +398,8 @@ db.auth_user.email.requires = (
                                IS_NOT_IN_DB(db, db.auth_user.email))
 """
     else:
-        s += "db.define_table('%s_archive',db.%s,Field('current_record','reference %s',readable=False,writable=False))\n" % (table, table, table)
+        s += "db.define_table('%s_archive',db.%s,Field('current_record','reference %s',readable=False,writable=False))\n" % (
+        table, table, table)
     return s
 
 
@@ -443,7 +446,7 @@ def make_menu(pages):
                 page_name = page
             page_name = ' '.join(x.capitalize() for x in page_name.split('_'))
             s += "(T('%s'),URL('default','%s')==URL(),URL('default','%s'),[]),\n" \
-                % (page_name, page, page)
+                 % (page_name, page, page)
     s += ']'
     return s
 

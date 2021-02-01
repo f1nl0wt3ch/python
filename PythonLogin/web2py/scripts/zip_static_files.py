@@ -38,6 +38,7 @@ def zip_static(filelist=[]):
 
     print('saved %s KB' % (int(tsave) / 1000.0))
 
+
 if __name__ == '__main__':
     ALLOWED_EXTS = ['.css', '.js']
     static_path = os.path.abspath(os.path.join(request.folder, 'static'))

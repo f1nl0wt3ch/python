@@ -56,7 +56,7 @@ sys.path = [path] + [p for p in sys.path if not p == path]
 import gluon.main
 
 # uncomment one of the two imports below depending on the SCGIWSGI server installed
-#import paste.util.scgiserver as scgi
+# import paste.util.scgiserver as scgi
 from wsgitools.scgi.forkpool import SCGIServer
 from wsgitools.filters import WSGIFilterMiddleware, GzipWSGIFilter
 
@@ -71,8 +71,9 @@ else:
 
 if SOFTCRON:
     from gluon.settings import global_settings
+
     global_settings.web2py_crontype = 'soft'
 
 # uncomment one of the two rows below depending on the SCGIWSGI server installed
-#scgi.serve_application(application, '', 4000).run()
+# scgi.serve_application(application, '', 4000).run()
 SCGIServer(application, port=4000).enable_sighandler().run()

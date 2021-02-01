@@ -4,7 +4,6 @@ from unittest import TestCase
 from pymysql._compat import PY2
 from pymysql import converters
 
-
 __all__ = ["TestConverter"]
 
 

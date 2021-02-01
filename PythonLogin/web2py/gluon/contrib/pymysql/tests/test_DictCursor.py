@@ -39,7 +39,7 @@ class TestDictCursor(base.PyMySQLTestCase):
 
     def test_DictCursor(self):
         bob, jim, fred = self.bob.copy(), self.jim.copy(), self.fred.copy()
-        #all assert test compare to the structure as would come out from MySQLdb
+        # all assert test compare to the structure as would come out from MySQLdb
         conn = self.conn
         c = conn.cursor(self.cursor_type)
 
@@ -63,11 +63,11 @@ class TestDictCursor(base.PyMySQLTestCase):
         # get all 3 row via fetchall
         c.execute("SELECT * from dictcursor")
         r = c.fetchall()
-        self.assertEqual([bob,jim,fred], r, "fetchall failed via DictCursor")
-        #same test again but do a list comprehension
+        self.assertEqual([bob, jim, fred], r, "fetchall failed via DictCursor")
+        # same test again but do a list comprehension
         c.execute("SELECT * from dictcursor")
         r = list(c)
-        self.assertEqual([bob,jim,fred], r, "DictCursor should be iterable")
+        self.assertEqual([bob, jim, fred], r, "DictCursor should be iterable")
         # get all 2 row via fetchmany
         c.execute("SELECT * from dictcursor")
         r = c.fetchmany(2)
@@ -114,6 +114,8 @@ class TestSSDictCursor(TestDictCursor):
     def _ensure_cursor_expired(self, cursor):
         list(cursor.fetchall_unbuffered())
 
+
 if __name__ == "__main__":
     import unittest
+
     unittest.main()

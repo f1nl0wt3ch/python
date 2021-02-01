@@ -16,9 +16,9 @@ from gluon._compat import builtin as __builtin__, unicodeT, iteritems, to_unicod
 __all__ = ['Utf8']
 
 repr_escape_tab = {}
-#FIXME PY3
+# FIXME PY3
 for i in range(1, 32):
-    repr_escape_tab[i] = to_unicode("\\"+"x%02x" % i)
+    repr_escape_tab[i] = to_unicode("\\" + "x%02x" % i)
 repr_escape_tab[7] = u'\\a'
 repr_escape_tab[8] = u'\\b'
 repr_escape_tab[9] = u'\\t'
@@ -118,6 +118,7 @@ class Utf8(str):
 
     You can see the benefit of this class in doctests() below
     """
+
     def __new__(cls, content='', codepage='utf-8'):
         if isinstance(content, unicodeT):
             return str.__new__(cls, to_native(content, 'utf-8'))
@@ -175,7 +176,7 @@ class Utf8(str):
 
     def __add__(self, other):
         return str.__new__(Utf8, str.__add__(self, unicode.encode(other, 'utf-8')
-                                             if isinstance(other, unicode) else other))
+        if isinstance(other, unicode) else other))
 
     def __len__(self):
         return len(to_unicode(self, 'utf-8'))
@@ -270,7 +271,7 @@ class Utf8(str):
 
     def ljust(self, width, fillchar=' '):
         return str.__new__(Utf8, unicode(self, 'utf-8').ljust(width, unicode(fillchar, 'utf-8')
-                                                              if isinstance(fillchar, str) else fillchar).encode('utf-8'))
+        if isinstance(fillchar, str) else fillchar).encode('utf-8'))
 
     def partition(self, sep):
         (head, sep, tail) = str.partition(self, Utf8(sep))
@@ -291,7 +292,7 @@ class Utf8(str):
 
     def rjust(self, width, fillchar=' '):
         return str.__new__(Utf8, unicode(self, 'utf-8').rjust(width, unicode(fillchar, 'utf-8')
-                                                              if isinstance(fillchar, str) else fillchar).encode('utf-8'))
+        if isinstance(fillchar, str) else fillchar).encode('utf-8'))
 
     def rpartition(self, sep):
         (head, sep, tail) = str.rpartition(self, Utf8(sep))
@@ -333,6 +334,7 @@ class Utf8(str):
         elif isinstance(prefix, str):
             prefix = unicode(prefix, 'utf-8')
         return unistr.endswith(prefix, start, len(unistr) if end is None else end)
+
     if hasattr(str, 'format'):  # Python 2.5 hasn't got str.format() method
         def format(self, *args, **kwargs):
             args = [unicode(
@@ -754,5 +756,6 @@ if __name__ == '__main__':
         print("DOCTESTS STARTED...")
         doctest.testmod()
         print("DOCTESTS FINISHED")
+
 
     doctests()

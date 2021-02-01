@@ -39,34 +39,34 @@ class IngresDialect(SQLDialect):
     @sqltype_for('id')
     def type_id(self):
         return 'int not null unique with default next value for %s' % \
-            self.INGRES_SEQNAME
+               self.INGRES_SEQNAME
 
     @sqltype_for('big-id')
     def type_big_id(self):
         return 'bigint not null unique with default next value for %s' % \
-            self.INGRES_SEQNAME
+               self.INGRES_SEQNAME
 
     @sqltype_for('reference')
     def type_reference(self):
         return 'INT, FOREIGN KEY (%(field_name)s) REFERENCES ' + \
-            '%(foreign_key)s ON DELETE %(on_delete_action)s'
+               '%(foreign_key)s ON DELETE %(on_delete_action)s'
 
     @sqltype_for('big-reference')
     def type_big_reference(self):
         return 'BIGINT, FOREIGN KEY (%(field_name)s) REFERENCES ' + \
-            '%(foreign_key)s ON DELETE %(on_delete_action)s'
+               '%(foreign_key)s ON DELETE %(on_delete_action)s'
 
     @sqltype_for('reference FK')
     def type_reference_fk(self):
         return ', CONSTRAINT FK_%(constraint_name)s FOREIGN KEY ' + \
-            '(%(field_name)s) REFERENCES %(foreign_key)s ' + \
-            'ON DELETE %(on_delete_action)s'
+               '(%(field_name)s) REFERENCES %(foreign_key)s ' + \
+               'ON DELETE %(on_delete_action)s'
 
     @sqltype_for('reference TFK')
     def type_reference_tfk(self):
         return ' CONSTRAINT FK_%(constraint_name)s_PK FOREIGN KEY ' + \
-            '(%(field_name)s) REFERENCES %(foreign_table)s' + \
-            '(%(foreign_key)s) ON DELETE %(on_delete_action)s'
+               '(%(field_name)s) REFERENCES %(foreign_table)s' + \
+               '(%(foreign_key)s) ON DELETE %(on_delete_action)s'
 
     def left_join(self, val, query_env={}):
         # Left join must always have an ON clause

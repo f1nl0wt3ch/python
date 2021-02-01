@@ -12,9 +12,9 @@
 
 """Pythonic simple SOAP Client plugins"""
 
-
 from __future__ import unicode_literals
 import sys
+
 if sys.version > '3':
     basestring = unicode = str
 
@@ -25,7 +25,6 @@ import logging
 import hashlib
 import warnings
 
-
 from . import __author__, __copyright__, __license__, __version__
 
 
@@ -33,7 +32,6 @@ class WSSE:
 
     def preprocess(self, request):
         header = request('Header')
-        
-    
+
     def postprocess(response):
         return response

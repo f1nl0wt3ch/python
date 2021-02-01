@@ -1,5 +1,7 @@
 import os
 from gluon.settings import global_settings, read_file
+
+
 #
 
 
@@ -16,7 +18,7 @@ def profiler():
     filename = global_settings.cmd_options.profiler_filename
     data = 'profiler disabled'
     if filename:
-        if  KEY in request.cookies:
+        if KEY in request.cookies:
             size = int(request.cookies[KEY].value)
         else:
             size = 0

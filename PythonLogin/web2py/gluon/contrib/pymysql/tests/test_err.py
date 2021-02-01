@@ -2,7 +2,6 @@ import unittest2
 
 from pymysql import err
 
-
 __all__ = ["TestRaiseException"]
 
 

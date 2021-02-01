@@ -82,8 +82,8 @@ class TaskBarIcon:
                 print("Can't load web2py icons - using default")
                 hicon = win32gui.LoadIcon(0, win32con.IDI_APPLICATION)
 
-        flags = win32gui.NIF_ICON | win32gui.NIF_MESSAGE\
-            | win32gui.NIF_TIP
+        flags = win32gui.NIF_ICON | win32gui.NIF_MESSAGE \
+                | win32gui.NIF_TIP
         nid = (
             self.hwnd,
             0,
@@ -107,30 +107,30 @@ class TaskBarIcon:
                 # but keep running anyway - when explorer starts, we get the
 
     def OnRestart(
-        self,
-        hwnd,
-        msg,
-        wparam,
-        lparam,
+            self,
+            hwnd,
+            msg,
+            wparam,
+            lparam,
     ):
         self._DoCreateIcons()
 
     def OnDestroy(
-        self,
-        hwnd,
-        msg,
-        wparam,
-        lparam,
+            self,
+            hwnd,
+            msg,
+            wparam,
+            lparam,
     ):
         nid = (self.hwnd, 0)
         win32gui.Shell_NotifyIcon(win32gui.NIM_DELETE, nid)
 
     def OnTaskbarNotify(
-        self,
-        hwnd,
-        msg,
-        wparam,
-        lparam,
+            self,
+            hwnd,
+            msg,
+            wparam,
+            lparam,
     ):
         if lparam == win32con.WM_LBUTTONUP:
             pass
@@ -179,11 +179,11 @@ class TaskBarIcon:
         return 1
 
     def OnCommand(
-        self,
-        hwnd,
-        msg,
-        wparam,
-        lparam,
+            self,
+            hwnd,
+            msg,
+            wparam,
+            lparam,
     ):
         id = win32api.LOWORD(wparam)
         if id == 1023:

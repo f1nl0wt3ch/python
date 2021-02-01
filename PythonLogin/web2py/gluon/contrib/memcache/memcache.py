@@ -62,8 +62,10 @@ import six
 
 def cmemcache_hash(key):
     return (
-        (((binascii.crc32(key.encode('ascii')) & 0xffffffff)
-          >> 16) & 0x7fff) or 1)
+            (((binascii.crc32(key.encode('ascii')) & 0xffffffff)
+              >> 16) & 0x7fff) or 1)
+
+
 serverHashFunction = cmemcache_hash
 
 
@@ -72,11 +74,15 @@ def useOldServerHashFunction():
     global serverHashFunction
     serverHashFunction = binascii.crc32
 
+
 try:
     from zlib import compress, decompress
+
     _supports_compress = True
 except ImportError:
     _supports_compress = False
+
+
     # quickly define a decompress just in case we recv compressed data.
 
     def decompress(val):
@@ -85,6 +91,7 @@ except ImportError:
             "compression (import error)")
 
 from io import BytesIO
+
 try:
     unicode
 except NameError:
@@ -98,7 +105,6 @@ except NameError:
     _str_cls = str
 
 valid_key_chars_re = re.compile('[\x21-\x7e\x80-\xff]+$')
-
 
 #  Original author: Evan Martin of Danga Interactive
 __author__ = "Sean Reifschneider <jafo-memcached@tummy.com>"
@@ -320,7 +326,7 @@ class Client(threading.local):
                 stats = line.split(' ', 2)
                 serverData[stats[1]] = stats[2]
 
-        return(data)
+        return (data)
 
     def get_slabs(self):
         data = []
@@ -830,7 +836,7 @@ class Client(threading.local):
 
         #  short-circuit if there are no servers, just return all keys
         if not server_keys:
-            return(mapping.keys())
+            return (mapping.keys())
 
         for server, keys in six.iteritems(server_keys):
             try:
@@ -892,7 +898,7 @@ class Client(threading.local):
         #  silently do not store if value length exceeds maximum
         if (self.server_max_value_length != 0 and
                 len(val) > self.server_max_value_length):
-            return(0)
+            return (0)
 
         return (flags, len(val), val)
 
@@ -908,7 +914,7 @@ class Client(threading.local):
 
             store_info = self._val_to_store_info(val, min_compress_len)
             if not store_info:
-                return(0)
+                return (0)
 
             if cmd == 'cas':
                 if key not in self.cas_ids:
@@ -924,8 +930,8 @@ class Client(threading.local):
 
             try:
                 server.send_cmd(fullcmd)
-                return(server.expect("STORED", raise_exception=True)
-                       == "STORED")
+                return (server.expect("STORED", raise_exception=True)
+                        == "STORED")
             except socket.error as msg:
                 if isinstance(msg, tuple):
                     msg = msg[1]
@@ -1375,6 +1381,7 @@ def _doctest():
     globs = {"mc": mc}
     return doctest.testmod(memcache, globs=globs)
 
+
 if __name__ == "__main__":
     failures = 0
     print("Testing docstrings...")
@@ -1388,10 +1395,12 @@ if __name__ == "__main__":
     for servers in serverList:
         mc = Client(servers, debug=1)
 
+
         def to_s(val):
             if not isinstance(val, _str_cls):
                 return "%s (%s)" % (val, type(val))
             return "%s" % val
+
 
         def test_setget(key, val):
             global failures
@@ -1407,6 +1416,7 @@ if __name__ == "__main__":
                 failures += 1
                 return 0
 
+
         class FooStruct(object):
 
             def __init__(self):
@@ -1419,6 +1429,7 @@ if __name__ == "__main__":
                 if isinstance(other, FooStruct):
                     return self.bar == other.bar
                 return 0
+
 
         test_setget("a_string", "some random string")
         test_setget("an_integer", 42)
@@ -1435,7 +1446,7 @@ if __name__ == "__main__":
             else:
                 print("FAIL")
                 failures += 1
-        print("Testing get_multi ...",)
+        print("Testing get_multi ...", )
         print(mc.get_multi(["a_string", "an_integer"]))
 
         #  removed from the protocol
@@ -1498,14 +1509,14 @@ if __name__ == "__main__":
 
         print("Testing using insanely long key...", end=" ")
         try:
-            x = mc.set('a'*SERVER_MAX_KEY_LENGTH, 1)
+            x = mc.set('a' * SERVER_MAX_KEY_LENGTH, 1)
         except Client.MemcachedKeyLengthError as msg:
             print("FAIL")
             failures += 1
         else:
             print("OK")
         try:
-            x = mc.set('a'*SERVER_MAX_KEY_LENGTH + 'a', 1)
+            x = mc.set('a' * SERVER_MAX_KEY_LENGTH + 'a', 1)
         except Client.MemcachedKeyLengthError as msg:
             print("OK")
         else:
@@ -1521,7 +1532,7 @@ if __name__ == "__main__":
             print("FAIL", end=" ")
             failures += 1
         try:
-            x = mc.set((unicode('a')*SERVER_MAX_KEY_LENGTH).encode('utf-8'), 1)
+            x = mc.set((unicode('a') * SERVER_MAX_KEY_LENGTH).encode('utf-8'), 1)
         except Client.MemcachedKeyError:
             print("FAIL", end=" ")
             failures += 1
@@ -1538,13 +1549,13 @@ if __name__ == "__main__":
 
         print("Testing using a value larger than the memcached value limit...")
         print('NOTE: "MemCached: while expecting[...]" is normal...')
-        x = mc.set('keyhere', 'a'*SERVER_MAX_VALUE_LENGTH)
+        x = mc.set('keyhere', 'a' * SERVER_MAX_VALUE_LENGTH)
         if mc.get('keyhere') is None:
             print("OK", end=" ")
         else:
             print("FAIL", end=" ")
             failures += 1
-        x = mc.set('keyhere', 'a'*SERVER_MAX_VALUE_LENGTH + 'aaa')
+        x = mc.set('keyhere', 'a' * SERVER_MAX_VALUE_LENGTH + 'aaa')
         if mc.get('keyhere') is None:
             print("OK")
         else:
@@ -1573,6 +1584,5 @@ if __name__ == "__main__":
         print('*** THERE WERE FAILED TESTS')
         sys.exit(1)
     sys.exit(0)
-
 
 # vim: ts=4 sw=4 et :

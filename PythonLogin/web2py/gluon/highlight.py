@@ -15,15 +15,14 @@ __all__ = ['highlight']
 
 
 class Highlighter(object):
-
     """Does syntax highlighting.
     """
 
     def __init__(
-        self,
-        mode,
-        link=None,
-        styles=None,
+            self,
+            mode,
+            link=None,
+            styles=None,
     ):
         """
         Initialize highlighter:
@@ -54,10 +53,10 @@ class Highlighter(object):
         self.mode = mode
 
     def c_tokenizer(
-        self,
-        token,
-        match,
-        style,
+            self,
+            token,
+            match,
+            style,
     ):
         """
         Callback for C specific highlighting.
@@ -68,10 +67,10 @@ class Highlighter(object):
         self.output.append(value)
 
     def python_tokenizer(
-        self,
-        token,
-        match,
-        style,
+            self,
+            token,
+            match,
+            style,
     ):
         """
         Callback for python specific highlighting.
@@ -105,10 +104,10 @@ class Highlighter(object):
         return None
 
     def html_tokenizer(
-        self,
-        token,
-        match,
-        style,
+            self,
+            token,
+            match,
+            style,
     ):
         """
         Callback for HTML specific highlighting.
@@ -128,7 +127,7 @@ class Highlighter(object):
             ('MULTILINECOMMENT', re.compile(r'/\*.*?\*/', re.DOTALL),
              'color: green; font-style: italic'),
             ('PREPROCESSOR', re.compile(r'\s*#.*?[^\\]\s*\n',
-             re.DOTALL), 'color: magenta; font-style: italic'),
+                                        re.DOTALL), 'color: magenta; font-style: italic'),
             ('PUNC', re.compile(r'[-+*!&|^~/%\=<>\[\]{}(),.:]'),
              'font-weight: bold'),
             ('NUMBER',
@@ -166,8 +165,9 @@ class Highlighter(object):
                         + r'from|True|False)(?![a-zA-Z0-9_])'),
              'color:#185369; font-weight: bold'),
             ('WEB2PY',
-             re.compile(r'(request|response|session|cache|redirect|local_import|HTTP|TR|XML|URL|BEAUTIFY|A|BODY|BR|B|CAT|CENTER|CODE|COL|COLGROUP|DIV|EM|EMBED|FIELDSET|LEGEND|FORM|H1|H2|H3|H4|H5|H6|IFRAME|HEAD|HR|HTML|I|IMG|INPUT|LABEL|LI|LINK|MARKMIN|MENU|META|OBJECT|OL|ON|OPTION|P|PRE|SCRIPT|SELECT|SPAN|STYLE|TABLE|THEAD|TBODY|TFOOT|TAG|TD|TEXTAREA|TH|TITLE|TT|T|UL|XHTML|IS_SLUG|IS_STRONG|IS_LOWER|IS_UPPER|IS_ALPHANUMERIC|IS_DATETIME|IS_DATETIME_IN_RANGE|IS_DATE|IS_DATE_IN_RANGE|IS_DECIMAL_IN_RANGE|IS_EMAIL|IS_EXPR|IS_FLOAT_IN_RANGE|IS_IMAGE|IS_INT_IN_RANGE|IS_IN_SET|IS_IPV4|IS_LIST_OF|IS_LENGTH|IS_MATCH|IS_EQUAL_TO|IS_EMPTY_OR|IS_NULL_OR|IS_NOT_EMPTY|IS_TIME|IS_UPLOAD_FILENAME|IS_URL|CLEANUP|CRYPT|IS_IN_DB|IS_NOT_IN_DB|DAL|Field|SQLFORM|SQLTABLE|xmlescape|embed64)(?![a-zA-Z0-9_])'
-                        ), 'link:%(link)s;text-decoration:None;color:#FF5C1F;'),
+             re.compile(
+                 r'(request|response|session|cache|redirect|local_import|HTTP|TR|XML|URL|BEAUTIFY|A|BODY|BR|B|CAT|CENTER|CODE|COL|COLGROUP|DIV|EM|EMBED|FIELDSET|LEGEND|FORM|H1|H2|H3|H4|H5|H6|IFRAME|HEAD|HR|HTML|I|IMG|INPUT|LABEL|LI|LINK|MARKMIN|MENU|META|OBJECT|OL|ON|OPTION|P|PRE|SCRIPT|SELECT|SPAN|STYLE|TABLE|THEAD|TBODY|TFOOT|TAG|TD|TEXTAREA|TH|TITLE|TT|T|UL|XHTML|IS_SLUG|IS_STRONG|IS_LOWER|IS_UPPER|IS_ALPHANUMERIC|IS_DATETIME|IS_DATETIME_IN_RANGE|IS_DATE|IS_DATE_IN_RANGE|IS_DECIMAL_IN_RANGE|IS_EMAIL|IS_EXPR|IS_FLOAT_IN_RANGE|IS_IMAGE|IS_INT_IN_RANGE|IS_IN_SET|IS_IPV4|IS_LIST_OF|IS_LENGTH|IS_MATCH|IS_EQUAL_TO|IS_EMPTY_OR|IS_NULL_OR|IS_NOT_EMPTY|IS_TIME|IS_UPLOAD_FILENAME|IS_URL|CLEANUP|CRYPT|IS_IN_DB|IS_NOT_IN_DB|DAL|Field|SQLFORM|SQLTABLE|xmlescape|embed64)(?![a-zA-Z0-9_])'
+                 ), 'link:%(link)s;text-decoration:None;color:#FF5C1F;'),
             ('MAGIC', re.compile(r'self|None'),
              'color:#185369; font-weight: bold'),
             ('MULTILINESTRING', re.compile(r'r?u?(\'\'\'|""")'),
@@ -183,7 +183,7 @@ class Highlighter(object):
         'PYTHONMultilineString': (python_tokenizer,
                                   (('ENDMULTILINESTRING',
                                     re.compile(r'.*?("""|\'\'\')',
-                                               re.DOTALL), 'color: darkred'), )),
+                                               re.DOTALL), 'color: darkred'),)),
         'HTML': (html_tokenizer, (
             ('GOTOPYTHON', re.compile(r'\{\{'), 'color: red'),
             ('COMMENT', re.compile(r'<!--[^>]*-->|<!>'),
@@ -249,14 +249,14 @@ class Highlighter(object):
 
 
 def highlight(
-    code,
-    language,
-    link='/examples/globals/vars/',
-    counter=1,
-    styles=None,
-    highlight_line=None,
-    context_lines=None,
-    attributes=None,
+        code,
+        language,
+        link='/examples/globals/vars/',
+        counter=1,
+        styles=None,
+        highlight_line=None,
+        context_lines=None,
+        attributes=None,
 ):
     styles = styles or {}
     attributes = attributes or {}
@@ -280,7 +280,7 @@ border: none;
 color: #A0A0A0;
 '''
     linehighlight_style = styles.get('LINEHIGHLIGHT', None) or \
-        'background-color: #EBDDE2;'
+                          'background-color: #EBDDE2;'
 
     if language and language.upper() in ['PYTHON', 'C', 'CPP', 'HTML',
                                          'WEB2PY']:
@@ -325,8 +325,8 @@ color: #A0A0A0;
     fa = ' '.join([key[1:].lower() for (key, value) in items if key[:1]
                    == '_' and value is None] + ['%s="%s"'
                                                 % (key[1:].lower(), str(value).replace('"', "'"))
-                  for (key, value) in attributes.items() if key[:1]
-                  == '_' and value])
+                                                for (key, value) in attributes.items() if key[:1]
+                                                == '_' and value])
     if fa:
         fa = ' ' + fa
     return '<table%s><tr style="vertical-align:top;">' \
@@ -336,6 +336,7 @@ color: #A0A0A0;
 
 if __name__ == '__main__':
     import sys
+
     argfp = open(sys.argv[1])
     data = argfp.read()
     argfp.close()

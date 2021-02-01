@@ -18,7 +18,9 @@ sys.path = [path] + [p for p in sys.path if not p == path]
 from gevent import pywsgi
 from gevent.pool import Pool
 from gevent import monkey
+
 monkey.patch_all()
+
 
 def run(options):
     import gluon.main
@@ -39,16 +41,17 @@ def run(options):
     if options.ssl_certificate:
         ssl_args['certfile'] = options.ssl_certificate
     server = pywsgi.WSGIServer(
-                    address, application,
-                    spawn=spawn, log=None,
-                    **ssl_args
-                    )
+        address, application,
+        spawn=spawn, log=None,
+        **ssl_args
+    )
     server.serve_forever()
+
 
 def main():
     usage = 'python web2py_gevent.py -i 127.0.0.1 -p 8000 -a "<recycle>"'
     try:
-        version = open('VERSION','r')
+        version = open('VERSION', 'r')
     except IOError:
         version = ''
     parser = optparse.OptionParser(usage, None, optparse.Option, version)
@@ -104,9 +107,11 @@ def main():
                       help='number of workers')
 
     (options, args) = parser.parse_args()
-    print 'starting on %s:%s...' % (
+    print
+    'starting on %s:%s...' % (
         options.ip, options.port)
     run(options)
+
 
 if __name__ == '__main__':
     main()

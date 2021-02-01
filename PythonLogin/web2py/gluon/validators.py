@@ -73,6 +73,7 @@ __all__ = [
 
 try:
     from gluon.globals import current
+
     have_current = True
 except ImportError:
     have_current = False
@@ -193,13 +194,13 @@ class IS_MATCH(Validator):
             self.regex = re.compile(expression)
         self.error_message = error_message
         self.extract = extract
-        self.is_unicode = is_unicode or (not(PY2))
+        self.is_unicode = is_unicode or (not (PY2))
 
     def __call__(self, value):
-        if not(PY2):  # PY3 convert bytes to unicode
+        if not (PY2):  # PY3 convert bytes to unicode
             value = to_unicode(value)
 
-        if self.is_unicode or not(PY2):
+        if self.is_unicode or not (PY2):
             if not isinstance(value, unicodeT):
                 match = self.regex.search(str(value).decode('utf8'))
             else:
@@ -426,13 +427,13 @@ class IS_IN_SET(Validator):
     """
 
     def __init__(
-        self,
-        theset,
-        labels=None,
-        error_message='Value not allowed',
-        multiple=False,
-        zero='',
-        sort=False,
+            self,
+            theset,
+            labels=None,
+            error_message='Value not allowed',
+            multiple=False,
+            zero='',
+            sort=False,
     ):
         self.multiple = multiple
         if isinstance(theset, dict):
@@ -499,22 +500,22 @@ class IS_IN_DB(Validator):
     """
 
     def __init__(
-        self,
-        dbset,
-        field,
-        label=None,
-        error_message='Value not in database',
-        orderby=None,
-        groupby=None,
-        distinct=None,
-        cache=None,
-        multiple=False,
-        zero='',
-        sort=False,
-        _and=None,
-        left=None,
-        delimiter=None,
-        auto_add=False,
+            self,
+            dbset,
+            field,
+            label=None,
+            error_message='Value not in database',
+            orderby=None,
+            groupby=None,
+            distinct=None,
+            cache=None,
+            multiple=False,
+            zero='',
+            sort=False,
+            _and=None,
+            left=None,
+            delimiter=None,
+            auto_add=False,
     ):
         from pydal.objects import Table
         if hasattr(dbset, 'define_table'):
@@ -587,8 +588,8 @@ class IS_IN_DB(Validator):
             records = self.dbset(table).select(*fields, **dd)
         else:
             orderby = self.orderby or \
-                reduce(lambda a, b: a | b, (
-                    f for f in fields if not f.name == 'id'))
+                      reduce(lambda a, b: a | b, (
+                          f for f in fields if not f.name == 'id'))
             dd = dict(orderby=orderby, cache=self.cache, cacheable=True)
             records = self.dbset(table).select(table.ALL, **dd)
         self.theset = [str(r[self.kfield]) for r in records]
@@ -698,12 +699,12 @@ class IS_NOT_IN_DB(Validator):
     """
 
     def __init__(
-        self,
-        dbset,
-        field,
-        error_message='Value already in database or empty',
-        allowed_override=[],
-        ignore_common_filters=False,
+            self,
+            dbset,
+            field,
+            error_message='Value already in database or empty',
+            allowed_override=[],
+            ignore_common_filters=False,
     ):
 
         from pydal.objects import Table
@@ -803,10 +804,10 @@ class IS_INT_IN_RANGE(Validator):
     """
 
     def __init__(
-        self,
-        minimum=None,
-        maximum=None,
-        error_message=None,
+            self,
+            minimum=None,
+            maximum=None,
+            error_message=None,
     ):
         self.minimum = int(minimum) if minimum is not None else None
         self.maximum = int(maximum) if maximum is not None else None
@@ -872,11 +873,11 @@ class IS_FLOAT_IN_RANGE(Validator):
     """
 
     def __init__(
-        self,
-        minimum=None,
-        maximum=None,
-        error_message=None,
-        dot='.'
+            self,
+            minimum=None,
+            maximum=None,
+            error_message=None,
+            dot='.'
     ):
         self.minimum = float(minimum) if minimum is not None else None
         self.maximum = float(maximum) if maximum is not None else None
@@ -958,11 +959,11 @@ class IS_DECIMAL_IN_RANGE(Validator):
     """
 
     def __init__(
-        self,
-        minimum=None,
-        maximum=None,
-        error_message=None,
-        dot='.'
+            self,
+            minimum=None,
+            maximum=None,
+            error_message=None,
+            dot='.'
     ):
         self.minimum = decimal.Decimal(str(minimum)) if minimum is not None else None
         self.maximum = decimal.Decimal(str(maximum)) if maximum is not None else None
@@ -1184,7 +1185,9 @@ class IS_EMAIL(Validator):
        )$
     ''', re.VERBOSE | re.IGNORECASE)
 
-    regex_proposed_but_failed = re.compile('^([\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]+\.)*[\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]+@((((([a-z0-9]{1}[a-z0-9\-]{0,62}[a-z0-9]{1})|[a-z])\.)+[a-z]{2,6})|(\d{1,3}\.){3}\d{1,3}(\:\d{1,5})?)$', re.VERBOSE | re.IGNORECASE)
+    regex_proposed_but_failed = re.compile(
+        '^([\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]+\.)*[\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]+@((((([a-z0-9]{1}[a-z0-9\-]{0,62}[a-z0-9]{1})|[a-z])\.)+[a-z]{2,6})|(\d{1,3}\.){3}\d{1,3}(\:\d{1,5})?)$',
+        re.VERBOSE | re.IGNORECASE)
 
     def __init__(self,
                  banned=None,
@@ -1199,7 +1202,7 @@ class IS_EMAIL(Validator):
         self.error_message = error_message
 
     def __call__(self, value):
-        if not(isinstance(value, (basestring, unicodeT))) or not value or '@' not in value:
+        if not (isinstance(value, (basestring, unicodeT))) or not value or '@' not in value:
             return (value, translate(self.error_message))
 
         body, domain = value.rsplit('@', 1)
@@ -1580,10 +1583,10 @@ class IS_GENERIC_URL(Validator):
     """
 
     def __init__(
-        self,
-        error_message='Enter a valid URL',
-        allowed_schemes=None,
-        prepend_scheme=None,
+            self,
+            error_message='Enter a valid URL',
+            allowed_schemes=None,
+            prepend_scheme=None,
     ):
 
         self.error_message = error_message
@@ -1596,7 +1599,8 @@ class IS_GENERIC_URL(Validator):
             raise SyntaxError("prepend_scheme='%s' is not in allowed_schemes=%s"
                               % (self.prepend_scheme, self.allowed_schemes))
 
-    GENERIC_URL = re.compile(r"%[^0-9A-Fa-f]{2}|%[^0-9A-Fa-f][0-9A-Fa-f]|%[0-9A-Fa-f][^0-9A-Fa-f]|%$|%[0-9A-Fa-f]$|%[^0-9A-Fa-f]$")
+    GENERIC_URL = re.compile(
+        r"%[^0-9A-Fa-f]{2}|%[^0-9A-Fa-f][0-9A-Fa-f]|%[0-9A-Fa-f][^0-9A-Fa-f]|%$|%[0-9A-Fa-f]$|%[^0-9A-Fa-f]$")
     GENERIC_URL_VALID = re.compile(r"[A-Za-z0-9;/?:@&=+$,\-_\.!~*'\(\)%]+$")
     URL_FRAGMENT_VALID = re.compile(r"[|A-Za-z0-9;/?:@&=+$,\-_\.!~*'\(\)%]+$")
 
@@ -1655,6 +1659,7 @@ class IS_GENERIC_URL(Validator):
                 return (value, None)
         # else the URL is not valid
         return (value, translate(self.error_message))
+
 
 # Sources (obtained 2017-Nov-11):
 #    http://data.iana.org/TLD/tlds-alpha-by-domain.txt
@@ -1998,14 +2003,15 @@ class IS_HTTP_URL(Validator):
 
     GENERIC_VALID_IP = re.compile(
         "([\w.!~*'|;:&=+$,-]+@)?\d+\.\d+\.\d+\.\d+(:\d*)*$")
-    GENERIC_VALID_DOMAIN = re.compile("([\w.!~*'|;:&=+$,-]+@)?(([A-Za-z0-9]+[A-Za-z0-9\-]*[A-Za-z0-9]+\.)*([A-Za-z0-9]+\.)*)*([A-Za-z]+[A-Za-z0-9\-]*[A-Za-z0-9]+)\.?(:\d*)*$")
+    GENERIC_VALID_DOMAIN = re.compile(
+        "([\w.!~*'|;:&=+$,-]+@)?(([A-Za-z0-9]+[A-Za-z0-9\-]*[A-Za-z0-9]+\.)*([A-Za-z0-9]+\.)*)*([A-Za-z]+[A-Za-z0-9\-]*[A-Za-z0-9]+)\.?(:\d*)*$")
 
     def __init__(
-        self,
-        error_message='Enter a valid URL',
-        allowed_schemes=None,
-        prepend_scheme='http',
-        allowed_tlds=None
+            self,
+            error_message='Enter a valid URL',
+            allowed_schemes=None,
+            prepend_scheme='http',
+            allowed_tlds=None
     ):
 
         self.error_message = error_message
@@ -2058,7 +2064,7 @@ class IS_HTTP_URL(Validator):
                             authority)
                         if domainMatch:
                             # if the top-level domain really exists
-                            if domainMatch.group(5).lower()\
+                            if domainMatch.group(5).lower() \
                                     in self.allowed_tlds:
                                 # Then this HTTP URL is valid
                                 return (value, None)
@@ -2179,12 +2185,12 @@ class IS_URL(Validator):
     """
 
     def __init__(
-        self,
-        error_message='Enter a valid URL',
-        mode='http',
-        allowed_schemes=None,
-        prepend_scheme='http',
-        allowed_tlds=None
+            self,
+            error_message='Enter a valid URL',
+            mode='http',
+            allowed_schemes=None,
+            prepend_scheme='http',
+            allowed_tlds=None
     ):
 
         self.error_message = error_message
@@ -2338,6 +2344,8 @@ class UTC(datetime.tzinfo):
 
     def dst(self, dt):
         return UTC.ZERO
+
+
 utc = UTC()
 
 
@@ -2568,7 +2576,7 @@ class IS_DATETIME_IN_RANGE(IS_DATETIME):
 
 class IS_LIST_OF(Validator):
 
-    def __init__(self, other=None, minimum=None, maximum=None, error_message=None):                 
+    def __init__(self, other=None, minimum=None, maximum=None, error_message=None):
         self.other = other
         self.minimum = minimum
         self.maximum = maximum
@@ -2581,10 +2589,10 @@ class IS_LIST_OF(Validator):
         ivalue = [i for i in ivalue if str(i).strip()]
         if self.minimum is not None and len(ivalue) < self.minimum:
             return (ivalue, translate(self.error_message or
-                                'Minimum length is %(min)s') % dict(min=self.minimum, max=self.maximum))
+                                      'Minimum length is %(min)s') % dict(min=self.minimum, max=self.maximum))
         if self.maximum is not None and len(ivalue) > self.maximum:
             return (ivalue, translate(self.error_message or
-                                'Maximum length is %(max)s') % dict(min=self.minimum, max=self.maximum))
+                                      'Maximum length is %(max)s') % dict(min=self.minimum, max=self.maximum))
         new_value = []
         other = self.other
         if self.other:
@@ -2649,21 +2657,21 @@ def urlify(s, maxlen=80, keep_underscores=False):
     if (keep_underscores): underscores are retained in the string
     else: underscores are translated to hyphens (default)
     """
-    s = to_unicode(s)                     # to unicode
-    s = s.lower()                         # to lowercase
+    s = to_unicode(s)  # to unicode
+    s = s.lower()  # to lowercase
     s = unicodedata.normalize('NFKD', s)  # replace special characters
-    s = to_native(s, charset='ascii', errors='ignore')       # encode as ASCII
-    s = re.sub('&\w+?;', '', s)           # strip html entities
+    s = to_native(s, charset='ascii', errors='ignore')  # encode as ASCII
+    s = re.sub('&\w+?;', '', s)  # strip html entities
     if keep_underscores:
-        s = re.sub('\s+', '-', s)         # whitespace to hyphens
+        s = re.sub('\s+', '-', s)  # whitespace to hyphens
         s = re.sub('[^\w\-]', '', s)
         # strip all but alphanumeric/underscore/hyphen
     else:
-        s = re.sub('[\s_]+', '-', s)      # whitespace & underscores to hyphens
+        s = re.sub('[\s_]+', '-', s)  # whitespace & underscores to hyphens
         s = re.sub('[^a-z0-9\-]', '', s)  # strip all but alphanumeric/hyphen
-    s = re.sub('[-_][-_]+', '-', s)       # collapse strings of hyphens
-    s = s.strip('-')                      # remove leading and trailing hyphens
-    return s[:maxlen]                     # enforce maximum length
+    s = re.sub('[-_][-_]+', '-', s)  # collapse strings of hyphens
+    s = s.strip('-')  # remove leading and trailing hyphens
+    return s[:maxlen]  # enforce maximum length
 
 
 class IS_SLUG(Validator):
@@ -2824,6 +2832,7 @@ class IS_EMPTY_OR(Validator):
         if hasattr(self.other, 'formatter'):
             return self.other.formatter(value)
         return value
+
 
 IS_NULL_OR = IS_EMPTY_OR  # for backward compatibility
 
@@ -3044,6 +3053,7 @@ class CRYPT(object):
             return (value, None)
         return (LazyCrypt(self, value), None)
 
+
 #  entropy calculator for IS_STRONG
 #
 lowerset = frozenset(u'abcdefghijklmnopqrstuvwxyz')
@@ -3058,7 +3068,7 @@ otherset = frozenset(
 def calc_entropy(string):
     """ calculates a simple entropy for a given string """
     import math
-    alphabet = 0    # alphabet size
+    alphabet = 0  # alphabet size
     other = set()
     seen = set()
     lastset = None
@@ -3075,10 +3085,10 @@ def calc_entropy(string):
             seen.add(inset)
             alphabet += len(inset)  # credit for a new character set
         elif c not in other:
-            alphabet += 1   # credit for unique characters
+            alphabet += 1  # credit for unique characters
             other.add(c)
         if inset is not lastset:
-            alphabet += 1   # credit for set transitions
+            alphabet += 1  # credit for set transitions
             lastset = cset
     entropy = len(
         string) * math.log(alphabet) / 0.6931471805599453  # math.log(2)
@@ -3141,7 +3151,7 @@ class IS_STRONG(object):
         self.specials = specials
         self.invalid = invalid
         self.error_message = error_message
-        self.estring = es   # return error message as string (for doctest)
+        self.estring = es  # return error message as string (for doctest)
 
     def __call__(self, value):
         failures = []
@@ -3280,7 +3290,7 @@ class IS_IMAGE(Validator):
                 width = -1
                 height = -1
             assert self.minsize[0] <= width <= self.maxsize[0] \
-                and self.minsize[1] <= height <= self.maxsize[1]
+                   and self.minsize[1] <= height <= self.maxsize[1]
             value.file.seek(0)
             return (value, None)
         except Exception as e:
@@ -3503,13 +3513,13 @@ class IS_IPV4(Validator):
     automatic = (2851995648, 2852061183)
 
     def __init__(
-        self,
-        minip='0.0.0.0',
-        maxip='255.255.255.255',
-        invert=False,
-        is_localhost=None,
-        is_private=None,
-        is_automatic=None,
+            self,
+            minip='0.0.0.0',
+            maxip='255.255.255.255',
+            invert=False,
+            is_localhost=None,
+            is_private=None,
+            is_automatic=None,
             error_message='Enter valid IPv4 address'):
         for n, value in enumerate((minip, maxip)):
             temp = []
@@ -3553,11 +3563,11 @@ class IS_IPV4(Validator):
                     self.is_localhost != (number == self.localhost):
                 ok = False
             if ok and self.is_private is not None and (self.is_private !=
-                    any([private_number[0] <= number <= private_number[1]
-                         for private_number in self.private])):
+                                                       any([private_number[0] <= number <= private_number[1]
+                                                            for private_number in self.private])):
                 ok = False
             if ok and self.is_automatic is not None and (self.is_automatic !=
-                    (self.automatic[0] <= number <= self.automatic[1])):
+                                                         (self.automatic[0] <= number <= self.automatic[1])):
                 ok = False
             if ok:
                 return (value, None)
@@ -3681,22 +3691,22 @@ class IS_IPV6(Validator):
             self.is_multicast = False
 
         if ok and self.is_private is not None and \
-                  self.is_private != ip.is_private:
+                self.is_private != ip.is_private:
             ok = False
         if ok and self.is_link_local is not None and \
-                  self.is_link_local != ip.is_link_local:
+                self.is_link_local != ip.is_link_local:
             ok = False
         if ok and self.is_reserved is not None and \
-                  self.is_reserved != ip.is_reserved:
+                self.is_reserved != ip.is_reserved:
             ok = False
         if ok and self.is_multicast is not None and \
-                  self.is_multicast != ip.is_multicast:
+                self.is_multicast != ip.is_multicast:
             ok = False
         if ok and self.is_6to4 is not None and \
-                  self.is_6to4 != bool(ip.sixtofour):
+                self.is_6to4 != bool(ip.sixtofour):
             ok = False
         if ok and self.is_teredo is not None and \
-                  self.is_teredo != bool(ip.teredo):
+                self.is_teredo != bool(ip.teredo):
             ok = False
 
         if ok:

@@ -19,6 +19,7 @@ from urllib import urlencode
 
 from gluon import current
 
+
 class OAuthAccount(object):
     """
     Login will be done via   OAuth Framework, instead of web2py's
@@ -100,7 +101,7 @@ class OAuthAccount(object):
             if str(resp['status']) != '200':
                 self.session.request_token = None
                 self.globals['redirect'](self.globals[
-                                         'URL'](f='user', args='logout'))
+                                             'URL'](f='user', args='logout'))
 
             self.session.access_token = oauth.Token.from_string(content)
 
@@ -165,7 +166,7 @@ class OAuthAccount(object):
             if resp['status'] != '200':
                 self.session.request_token = None
                 self.globals['redirect'](self.globals[
-                                         'URL'](f='user', args='logout'))
+                                             'URL'](f='user', args='logout'))
 
             # Store the request token in session.
             request_token = self.session.request_token = oauth.Token.from_string(content)

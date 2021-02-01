@@ -9,10 +9,11 @@ from collections import deque
 import math
 import re
 import cmd
+
 try:
-  import pyreadline as readline
+    import pyreadline as readline
 except ImportError:
-  import readline
+    import readline
 try:
     from gluon import DAL
     from gluon.fileutils import open_file
@@ -29,7 +30,7 @@ class refTable(object):
         return ' | '.join('**%s**' % item for item in colHeader)
 
     def wrapTable(
-        self, rows, hasHeader=False, headerChar='-', delim=' | ', justify='left',
+            self, rows, hasHeader=False, headerChar='-', delim=' | ', justify='left',
             separateRows=False, prefix='', postfix='', wrapfunc=lambda x: x):
 
         def rowWrapper(row):
@@ -54,13 +55,13 @@ class refTable(object):
         self.columns = columns
 
         maxWidths = [max(
-                     [len(str
-                        (item)) for
-                      item in column]
-                     ) for column
-                     in columns]
+            [len(str
+                 (item)) for
+             item in column]
+        ) for column
+            in columns]
 
-        rowSeparator = headerChar * (len(prefix) +len(postfix) + sum(maxWidths) +
+        rowSeparator = headerChar * (len(prefix) + len(postfix) + sum(maxWidths) +
                                      len(delim) * (len(maxWidths) - 1))
 
         justify = {'center': str.center,
@@ -75,11 +76,11 @@ class refTable(object):
 
         for physicalRows in logicalRows:
             for row in physicalRows:
-                print >> output,\
-                    prefix + delim.join([
-                                        justify(str(item), width) for (
-                                        item, width) in zip(row, maxWidths)]
-                                        ) + postfix
+                print >> output, \
+                prefix + delim.join([
+                    justify(str(item), width) for (
+                        item, width) in zip(row, maxWidths)]
+                ) + postfix
 
             if separateRows or hasHeader:
                 print >> output, rowSeparator
@@ -89,16 +90,15 @@ class refTable(object):
     def wrap_onspace(self, text, width):
         return reduce(lambda line, word, width=width: '%s%s%s' % (
             line,
-            ' ' if len(line.rsplit('\n')[-1]+word.split('\n')[0])>=width else '\n',
+            ' ' if len(line.rsplit('\n')[-1] + word.split('\n')[0]) >= width else '\n',
             word), text.split(' '))
-
 
     def wrap_onspace_strict(self, text, width):
         wordRegex = re.compile(r'\S{' + str(width) + r',}')
         return self.wrap_onspace(
             wordRegex.sub(
                 lambda m: self.
-                wrap_always(
+                    wrap_always(
                     m.group(), width), text
             ), width)
 
@@ -106,8 +106,8 @@ class refTable(object):
         return '\n'.join(
             [text[width * i:width * (i + 1
                                      )] for i in xrange(
-             int(math.ceil(1. * len(
-             text) / width)))])
+                int(math.ceil(1. * len(
+                    text) / width)))])
 
 
 class tableHelper():
@@ -138,7 +138,8 @@ class tableHelper():
             for wrapper in (self.oTable.wrap_always,
                             self.oTable.wrap_onspace,
                             self.oTable.wrap_onspace_strict):
-                return self.oTable.wrapTable(hRows, hasHeader=True, separateRows=True, prefix='| ', postfix=' |', wrapfunc=lambda x:
+                return self.oTable.wrapTable(hRows, hasHeader=True, separateRows=True, prefix='| ', postfix=' |',
+                                             wrapfunc=lambda x:
                                              wrapper(x, width))
         else:
             return self.getTable_noWrap(data, header)
@@ -162,7 +163,7 @@ class console:
                 try:
                     self.commandSort.append((int(self
                                                  .commands[cmd].__doc__.split(
-                                                 "|")[0]), cmd))
+                        "|")[0]), cmd))
                 except:
                     pass
 
@@ -183,7 +184,8 @@ class console:
 
     def execCmd(self, db):
         self.db = db
-        print self.banner
+        print
+        self.banner
         while True:
             try:
                 command = raw_input(self.prompt)
@@ -197,7 +199,7 @@ class console:
                 break
             except Exception, a:
                 self.printError(a)
-        print ("\r\n\r\nBye!...")
+        print("\r\n\r\nBye!...")
         sys.exit(0)
 
     def printError(self, err):
@@ -208,7 +210,8 @@ class console:
     def execute(self, cmd):
         try:
             if not '-table ' in cmd:
-                exec cmd
+                exec
+                cmd
             else:
                 file = None
                 table = None
@@ -228,7 +231,7 @@ class console:
                         if 'file=' in i:
                             file = os.path.abspath(i.split('=')[0].strip())
                         if 'fields=' in i:
-                            for field in  i.split('=')[1].split():
+                            for field in i.split('=')[1].split():
                                 if field in self.db[table].fields:
                                     fields.append(field.strip())
 
@@ -241,7 +244,7 @@ class console:
                     except Exception, err:
                         print('could not generate table for table %s\n%s' % (table, err))
         except Exception, err:
-            print('sorry, can not do that!\n%s'  % err)
+            print('sorry, can not do that!\n%s' % err)
 
     def getTable(self, tbl):
         for mTbl in db.tables:
@@ -265,6 +268,7 @@ class console:
     '''---
              DEFAULT COMMANDS (begins with cmd_)
                                                      ---'''
+
     def cmd_clear(self, numlines=100):
         """-5|clear|clear the screen"""
         if os.name == "posix":
@@ -281,7 +285,8 @@ class console:
             '''---
                      Fallback for other operating systems.
                                                              ---'''
-            print '\n' * numlines
+            print
+            '\n' * numlines
 
     def cmd_table(self, tbl, file=None, fields=[]):
         """-4|-table [TABLENAME] optional[file=None] [fields=None]|\
@@ -346,7 +351,6 @@ style choices:
         else:
             print('the following fields are not valid [%s]' % (','.join(filedNotFound)))
 
-
     def cmd_help(self, *args):
         '''-3|help|Show's help'''
         alldata = []
@@ -368,25 +372,25 @@ style choices:
                     lengths[j] = len(i[j])
                 j += 1
 
-        print ("-" * (lengths[0] + lengths[1] + 4))
+        print("-" * (lengths[0] + lengths[1] + 4))
         for i in alldata:
-            print (("%-" + str(lengths[0]) + "s  - %-" + str(
+            print(("%-" + str(lengths[0]) + "s  - %-" + str(
                 lengths[1]) + "s") % (i[0], i[1]))
             if len(i) > 2:
-                for j in i[2:]: print (("%" + str(lengths[
-                                       0] + 9) + "s* %s") % (" ", j))
+                for j in i[2:]: print(("%" + str(lengths[
+                                                     0] + 9) + "s* %s") % (" ", j))
         print
 
     def cmd_vars(self, *args):
         '''-2|vars|Show variables'''
-        print ("variables\r\n" + "-" * 79)
+        print("variables\r\n" + "-" * 79)
         for i, j in self.configvars.items():
             value = self.parfmt(repr(getattr(self, j)), 52)
-            print ("| %20s | %52s |" % (i, value[0]))
-            for k in value[1:]: print ("| %20s | %52s |" % ("", k))
+            print("| %20s | %52s |" % (i, value[0]))
+            for k in value[1:]: print("| %20s | %52s |" % ("", k))
             if len(value) > 1:
                 print("| %20s | %52s |" % ("", ""))
-        print ("-" * 79)
+        print("-" * 79)
 
     def parfmt(self, txt, width):
         res = []
@@ -423,7 +427,8 @@ style choices:
             '''---
                      Fallback for other operating systems.
                                                              ---'''
-            print '\n' * numlines
+            print
+            '\n' * numlines
 
 
 class dalShell(console):
@@ -477,7 +482,8 @@ class setCopyDB():
         return self.db
 
     def delete_DB_tables(self, storageFolder, storageType):
-        print 'delete_DB_tablesn\n\t%s\n\t%s' % (storageFolder, storageType)
+        print
+        'delete_DB_tablesn\n\t%s\n\t%s' % (storageFolder, storageType)
 
         dataFiles = [storageType, "sql.log"]
         try:
@@ -489,14 +495,15 @@ class setCopyDB():
             for dFile in dataFiles:
                 os.remove("%s/%s" % (storageFolder, dFile))
                 print('deleted %s' % (
-                    "%s/%s" % (storageFolder, dFile)))
+                        "%s/%s" % (storageFolder, dFile)))
         except Exception, errObj:
             print(str(errObj))
 
     def truncatetables(self, tables=[]):
         if len(tables) != 0:
             try:
-                print 'table value: %s' % (tables)
+                print
+                'table value: %s' % (tables)
                 for tbl in self.db.tables:
                     for mTbl in tables:
                         if mTbl.startswith(tbl):
@@ -514,7 +521,8 @@ class setCopyDB():
         other_db = DAL("%s://%s" % (
             self.targetdbType, self.targetdbName), folder=self.targetFolder)
 
-        print 'creating tables...'
+        print
+        'creating tables...'
 
         for table in self.db:
             other_db.define_table(
@@ -528,14 +536,18 @@ class setCopyDB():
                 other_db[table._tablename].truncate()
             '''
 
-        print 'exporting data...'
+        print
+        'exporting data...'
         self.db.export_to_csv_file(open('tmp.sql', 'wb'))
 
-        print 'importing data...'
+        print
+        'importing data...'
         other_db.import_from_csv_file(open_file('tmp.sql', 'rb'))
         other_db.commit()
-        print 'done!'
-        print 'Attention: do not run this program again or you end up with duplicate records'
+        print
+        'done!'
+        print
+        'Attention: do not run this program again or you end up with duplicate records'
 
     def createfolderPath(self, folder):
         try:
@@ -543,6 +555,7 @@ class setCopyDB():
                 os.makedirs(folder)
         except Exception, err:
             pass
+
 
 if __name__ == '__main__':
     oCopy = setCopyDB()
@@ -598,9 +611,12 @@ informix://username:password@test\n\
     miscGroup.add_argument('-i', '--interactive', required=False, action='store_true', help='run in interactive mode')
     miscGroup.add_argument(
         '-d', '--dal', required=False, help='path to dal.py')
-    miscGroup.add_argument('-t', '--truncate', choices=['True', 'False'], help='delete the records but *not* the table of the SOURCE DB')
-    miscGroup.add_argument('-b', '--tables', required=False, type=list, help='optional list (comma delimited) of SOURCE tables to truncate, defaults to all')
-    miscGroup.add_argument('-c', '--clean', required=False, help='delete the DB,tables and the log file, WARNING: this is unrecoverable')
+    miscGroup.add_argument('-t', '--truncate', choices=['True', 'False'],
+                           help='delete the records but *not* the table of the SOURCE DB')
+    miscGroup.add_argument('-b', '--tables', required=False, type=list,
+                           help='optional list (comma delimited) of SOURCE tables to truncate, defaults to all')
+    miscGroup.add_argument('-c', '--clean', required=False,
+                           help='delete the DB,tables and the log file, WARNING: this is unrecoverable')
 
     args = parser.parse_args()
     db = None
@@ -609,10 +625,10 @@ informix://username:password@test\n\
     try:
         oCopy.sourceFolder = args.sourceFolder
         oCopy.targetFolder = args.sourceFolder
-        sourceItems = args.sourceConnectionString.split('://',1)
+        sourceItems = args.sourceConnectionString.split('://', 1)
         oCopy.sourcedbType = sourceItems[0]
         oCopy.sourcedbName = sourceItems[1]
-        targetItems = args.targetConnectionString.split('://',1)
+        targetItems = args.targetConnectionString.split('://', 1)
         oCopy.targetdbType = targetItems[0]
         oCopy.targetdbName = targetItems[1]
     except Exception, err:
@@ -623,8 +639,8 @@ informix://username:password@test\n\
             autoImport = True
             if args.autoimport:
                 autoImport = args.autoimport
-            #sif not DAL in globals:
-            #if not sys.path.__contains__():
+            # sif not DAL in globals:
+            # if not sys.path.__contains__():
             oCopy.dalPath = args.dal
             mDal = oCopy._getDal()
             db = oCopy.instDB(args.sourceFolder, args.sourceConnectionString,

@@ -15,7 +15,8 @@ SLEEP_MINUTES = 5
 
 errors_path = os.path.join(request.folder, 'errors')
 try:
-    db_string = open(os.path.join(request.folder, 'private', 'ticket_storage.txt')).read().replace('\r', '').replace('\n', '').strip()
+    db_string = open(os.path.join(request.folder, 'private', 'ticket_storage.txt')).read().replace('\r', '').replace(
+        '\n', '').strip()
 except:
     db_string = 'sqlite://storage.db'
 
@@ -25,7 +26,6 @@ tk_db = DAL(db_string, folder=db_path, auto_import=True)
 ts = TicketStorage(db=tk_db)
 tk_table = ts._get_table(
     db=tk_db, tablename=ts.tablename, app=request.application)
-
 
 hashes = {}
 

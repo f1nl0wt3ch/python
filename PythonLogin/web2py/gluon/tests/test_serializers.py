@@ -35,7 +35,7 @@ class TestSerializers(unittest.TestCase):
             datetime.datetime(2014, 1, 1, 12, 15, 35),
             datetime.date(2014, 1, 1),
             datetime.time(12, 15, 35)
-            ]
+        ]
         iso_objs = [obj.isoformat()[:19].replace('T', ' ') for obj in objs]
         json_objs = [json(obj) for obj in objs]
         json_web2pyfied = [json(obj) for obj in iso_objs]

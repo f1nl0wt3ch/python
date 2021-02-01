@@ -10,8 +10,6 @@ import unittest
 import subprocess
 import time
 
-
-
 from gluon.contrib.webclient import WebClient
 from gluon._compat import urllib2, PY2
 
@@ -117,15 +115,15 @@ class TestWeb(LiveTest):
     def testStaticCache(self):
         s = WebClient('http://127.0.0.1:8000/welcome/')
         s.get('static/js/web2py.js')
-        assert('expires' not in s.headers)
-        assert(not s.headers['cache-control'].startswith('max-age'))
+        assert ('expires' not in s.headers)
+        assert (not s.headers['cache-control'].startswith('max-age'))
         text = s.text
         s.get('static/_1.2.3/js/web2py.js')
-        assert(text == s.text)
-        assert('expires' in s.headers)
-        assert(s.headers['cache-control'].startswith('max-age'))
+        assert (text == s.text)
+        assert ('expires' in s.headers)
+        assert (s.headers['cache-control'].startswith('max-age'))
 
-    @unittest.skipIf(not(PY2), 'skip PY3 testSoap')
+    @unittest.skipIf(not (PY2), 'skip PY3 testSoap')
     def testSoap(self):
         # test soap server implementation
         from gluon.contrib.pysimplesoap.client import SoapClient, SoapFault
@@ -133,15 +131,15 @@ class TestWeb(LiveTest):
         client = SoapClient(wsdl=url)
         ret = client.SubIntegers(a=3, b=2)
         # check that the value returned is ok
-        assert('SubResult' in ret)
-        assert(ret['SubResult'] == 1)
+        assert ('SubResult' in ret)
+        assert (ret['SubResult'] == 1)
 
         try:
             ret = client.Division(a=3, b=0)
         except SoapFault as sf:
             # verify the exception value is ok
             # assert(sf.faultstring == "float division by zero") # true only in 2.7
-            assert(sf.faultcode == "Server.ZeroDivisionError")
+            assert (sf.faultcode == "Server.ZeroDivisionError")
 
         # store sent and received xml for low level test
         xml_request = client.xml_request
@@ -152,7 +150,7 @@ class TestWeb(LiveTest):
         try:
             s.post('examples/soap_examples/call/soap', data=xml_request, method="POST")
         except urllib2.HTTPError as e:
-            assert(e.msg == 'INTERNAL SERVER ERROR')
+            assert (e.msg == 'INTERNAL SERVER ERROR')
         # check internal server error returned (issue 153)
-        assert(s.status == 500)
-        assert(s.text == xml_response)
+        assert (s.status == 500)
+        assert (s.text == xml_response)

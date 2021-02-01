@@ -11,13 +11,15 @@ Usage:
 
 import sys
 import os
+
 sys.path.append(os.path.join(*__file__.split(os.sep)[:-2] or ['.']))
 
 from gluon.languages import update_from_langfile
 import argparse
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Use to set untranslated messages in the translation file from another one.')
+    parser = argparse.ArgumentParser(
+        description='Use to set untranslated messages in the translation file from another one.')
     parser.add_argument(
         '-t', '--target',
         required=True,
@@ -41,4 +43,5 @@ if __name__ == '__main__':
 
     update_from_langfile(args.target, args.source, force_update=args.force_update)
 
-    print '%s was updated.' % args.target
+    print
+    '%s was updated.' % args.target

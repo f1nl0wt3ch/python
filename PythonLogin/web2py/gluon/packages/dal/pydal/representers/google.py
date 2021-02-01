@@ -12,7 +12,7 @@ class GoogleDatastoreRepresenter(NoSQLRepresenter):
     @pre(is_breaking=True)
     def _keep_lists_for_in_operator(self, obj, field_type):
         if isinstance(field_type, str) and isinstance(obj, list) and \
-           not field_type.startswith('list:'):
+                not field_type.startswith('list:'):
             return True, [self.adapter.represent(v, field_type) for v in obj]
         return False, obj
 

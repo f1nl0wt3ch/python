@@ -2,6 +2,7 @@ import time
 
 response.view = 'cache_examples/generic.html'
 
+
 def cache_in_ram():
     """cache the output of the lambda function in ram"""
 
@@ -20,7 +21,7 @@ def cache_in_ram_and_disk():
     """cache the output of the lambda function on disk and in ram"""
 
     t = cache.ram('time', lambda: cache.disk('time', lambda:
-                  time.ctime(), time_expire=5), time_expire=5)
+    time.ctime(), time_expire=5), time_expire=5)
     return dict(time=t, link=A('click to reload', _href=URL(r=request)))
 
 

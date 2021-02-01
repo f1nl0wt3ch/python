@@ -4,9 +4,9 @@
 # are used when the respective element is missing from the
 # (possibly rewritten) incoming URL
 #
-default_application = 'init'    # ordinarily set in base routes.py
+default_application = 'init'  # ordinarily set in base routes.py
 default_controller = 'default'  # ordinarily set in app-specific routes.py
-default_function = 'index'      # ordinarily set in app-specific routes.py
+default_function = 'index'  # ordinarily set in app-specific routes.py
 
 # routes_app is a tuple of tuples.  The first item in each is a regexp that will
 # be used to match the incoming request URL. The second item in the tuple is
@@ -75,6 +75,7 @@ routes_out = (
 #
 logging = 'debug'
 
+
 # Error-handling redirects all HTTP errors (status codes >= 400) to a specified
 # path.  If you wish to use error-handling redirects, uncomment the tuple
 # below.  You can customize responses by adding a tuple entry with the first
@@ -108,8 +109,8 @@ logging = 'debug'
 
 # specify a list of apps that bypass args-checking and use request.raw_args
 #
-#routes_apps_raw=['myapp']
-#routes_apps_raw=['myapp', 'myotherapp']
+# routes_apps_raw=['myapp']
+# routes_apps_raw=['myapp', 'myotherapp']
 
 
 def __routes_doctest():
@@ -194,6 +195,8 @@ def __routes_doctest():
     '''
     pass
 
+
 if __name__ == '__main__':
     import doctest
+
     doctest.testmod()

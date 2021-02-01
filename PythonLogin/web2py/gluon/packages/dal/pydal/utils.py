@@ -41,4 +41,5 @@ class deprecated(object):
                 self.old_method_name, self.new_method_name, self.class_name,
                 3 + self.additional_stack)
             return f(*args, **kwargs)
+
         return wrapped

@@ -9,7 +9,6 @@ import os
 import sys
 import unittest
 
-
 from gluon.compileapp import run_controller_in, run_view_in, compile_application, remove_compiled_application
 from gluon.languages import translator
 from gluon.storage import Storage, List
@@ -20,7 +19,6 @@ from gluon.fileutils import open_file
 from gluon.cache import CacheInRam
 
 DEFAULT_URI = os.getenv('DB', 'sqlite:memory')
-
 
 
 def fake_check_credentials(foo):
@@ -109,7 +107,7 @@ class TestAppAdmin(unittest.TestCase):
         # test for gluon/contrib/minify
         self.env['response'].optimize_css = 'concat|minify'
         self.env['response'].optimize_js = 'concat|minify'
-        self.env['current'].cache = Storage({'ram':CacheInRam()})
+        self.env['current'].cache = Storage({'ram': CacheInRam()})
         appname_path = os.path.join(os.getcwd(), 'applications', 'welcome')
         self._test_index()
         file_l = os.listdir(os.path.join(appname_path, 'static', 'temp'))
@@ -196,4 +194,3 @@ class TestAppAdmin(unittest.TestCase):
         data['id'] = '1'
         request._vars = data
         self.assertRaises(HTTP, self.run_function)
-

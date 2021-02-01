@@ -90,4 +90,5 @@ class TestLoadLocal(base.PyMySQLTestCase):
 
 if __name__ == "__main__":
     import unittest
+
     unittest.main()

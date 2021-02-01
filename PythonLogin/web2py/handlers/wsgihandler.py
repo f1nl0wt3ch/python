@@ -17,7 +17,6 @@ import os
 LOGGING = False
 SOFTCRON = False
 
-
 path = os.path.dirname(os.path.abspath(__file__))
 os.chdir(path)
 
@@ -37,4 +36,5 @@ else:
 
 if SOFTCRON:
     from gluon.settings import global_settings
+
     global_settings.web2py_crontype = 'soft'

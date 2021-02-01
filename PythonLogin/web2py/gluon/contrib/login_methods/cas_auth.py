@@ -14,6 +14,7 @@ import xml.parsers.expat as expat
 from gluon import current, redirect, URL
 from gluon._compat import urlopen, to_native
 
+
 class CasAuth(object):
     """
     Login will be done via Web2py's CAS application, instead of web2py's
@@ -42,6 +43,7 @@ class CasAuth(object):
     user's username.
 
     """
+
     def __init__(self, g=None,  # g for backward compatibility ###
                  urlbase="https://web2py.com/cas/cas",
                  actions=['login', 'validate', 'logout'],
@@ -50,7 +52,7 @@ class CasAuth(object):
                            user_id=lambda v: v['user']),
                  casversion=1,
                  casusername='cas:user',
-		 change_password_url=None
+                 change_password_url=None
                  ):
         self.urlbase = urlbase
         self.cas_login_url = "%s/%s" % (self.urlbase, actions[0])
@@ -62,10 +64,10 @@ class CasAuth(object):
         # vars commented because of
         # https://code.google.com/p/web2py/issues/detail?id=1774
         self.cas_my_url = URL(args=current.request.args,
-                              #vars=current.request.vars,
+                              # vars=current.request.vars,
                               scheme=True)
 
-	# URL to let users change their password in the IDP system
+        # URL to let users change their password in the IDP system
         self.cas_change_password_url = change_password_url
 
     def login_url(self, next="/"):

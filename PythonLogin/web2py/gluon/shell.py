@@ -40,6 +40,8 @@ if not PY2:
         with open(filename) as f:
             code = compile(f.read(), filename, 'exec')
             exec(code, global_vars, local_vars)
+
+
     raw_input = input
 
 
@@ -62,10 +64,10 @@ def enable_autocomplete_and_history(adir, env):
 
 
 def exec_environment(
-    pyfile='',
-    request=None,
-    response=None,
-    session=None,
+        pyfile='',
+        request=None,
+        response=None,
+        session=None,
 ):
     """Environment builder and module loader.
 
@@ -95,19 +97,19 @@ def exec_environment(
     if pyfile:
         pycfile = pyfile + 'c'
         if os.path.isfile(pycfile):
-            exec (read_pyc(pycfile), env)
+            exec(read_pyc(pycfile), env)
         else:
             execfile(pyfile, env)
     return Storage(env)
 
 
 def env(
-    a,
-    import_models=False,
-    c=None,
-    f=None,
-    dir='',
-    extra_request={},
+        a,
+        import_models=False,
+        c=None,
+        f=None,
+        dir='',
+        extra_request={},
 ):
     """
     Returns web2py execution environment for application (a), controller (c),
@@ -187,6 +189,7 @@ def exec_pythonrc():
         def execfile_getlocals(file):
             execfile(file)
             return locals()
+
         try:
             return execfile_getlocals(pythonrc)
         except NameError:
@@ -195,13 +198,13 @@ def exec_pythonrc():
 
 
 def run(
-    appname,
-    plain=False,
-    import_models=False,
-    startfile=None,
-    bpython=False,
-    python_code=False,
-    cronjob=False):
+        appname,
+        plain=False,
+        import_models=False,
+        startfile=None,
+        bpython=False,
+        python_code=False,
+        cronjob=False):
     """
     Start interactive shell or run Python script (startfile) in web2py
     controller environment. appname is formatted like:
@@ -210,7 +213,7 @@ def run(
     - a/c : exec the controller c into the application environment
     """
 
-    (a, c, f, args, vars) = parse_path_info(appname, av=True)    
+    (a, c, f, args, vars) = parse_path_info(appname, av=True)
     errmsg = 'invalid application name: %s' % appname
     if not a:
         die(errmsg)
@@ -252,9 +255,9 @@ def run(
     if c:
         pyfile = os.path.join('applications', a, 'controllers', c + '.py')
         pycfile = os.path.join('applications', a, 'compiled',
-                                 "controllers_%s_%s.pyc" % (c, f))
+                               "controllers_%s_%s.pyc" % (c, f))
         if ((cronjob and os.path.isfile(pycfile))
-            or not os.path.isfile(pyfile)):
+                or not os.path.isfile(pyfile)):
             exec(read_pyc(pycfile), _env)
         elif os.path.isfile(pyfile):
             execfile(pyfile, _env)
@@ -422,7 +425,6 @@ def test(testpath, import_models=True, verbose=False):
                                      name), verbose=verbose)
                 if type(obj) in (type, ClassType):
                     for attr_name in dir(obj):
-
                         # Execute . operator so decorators are executed.
 
                         o = eval('%s.%s' % (name, attr_name), globs)
@@ -448,7 +450,7 @@ def execute_from_command_line(argv=None):
 
     parser.add_option('-S', '--shell', dest='shell', metavar='APPNAME',
                       help='run web2py in interactive shell ' +
-                      'or IPython(if installed) with specified appname')
+                           'or IPython(if installed) with specified appname')
     msg = 'run web2py in interactive shell or bpython (if installed) with'
     msg += ' specified appname (if app does not exist it will be created).'
     msg += '\n Use combined with --shell'
@@ -475,7 +477,7 @@ def execute_from_command_line(argv=None):
         default=False,
         dest='import_models',
         help='auto import model files, default is False, ' +
-        ' should be used with --shell option',
+             ' should be used with --shell option',
     )
     parser.add_option(
         '-R',
@@ -484,7 +486,7 @@ def execute_from_command_line(argv=None):
         metavar='PYTHON_FILE',
         default='',
         help='run PYTHON_FILE in web2py environment, ' +
-        'should be used with --shell option',
+             'should be used with --shell option',
     )
 
     (options, args) = parser.parse_args(argv[1:])

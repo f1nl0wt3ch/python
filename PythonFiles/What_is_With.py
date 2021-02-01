@@ -16,7 +16,7 @@ fun_cities_file.close()
 In the above script we added “Montréal” as a new line in our file fun_cities.txt. However, since we used the older-style syntax, we had to remember to close the file afterwards. Since this is necessarily more verbose (requires at least one more line of code) without being any more expressive, using with is preferred.
 """
 with open('fun_file.txt') as close_this_file:
-     setup = close_this_file.readline()
-     punchline = close_this_file.readline()
+    setup = close_this_file.readline()
+    punchline = close_this_file.readline()
 
 print(setup)

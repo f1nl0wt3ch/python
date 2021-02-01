@@ -1,6 +1,7 @@
 from .regex import REGEX_SEARCH_PATTERN, REGEX_SQUARE_BRACKETS
 from .._compat import long
 
+
 def to_num(num):
     result = 0
     try:
@@ -8,6 +9,7 @@ def to_num(num):
     except NameError as e:
         result = int(num)
     return result
+
 
 class RestParser(object):
     def __init__(self, db):
@@ -25,47 +27,47 @@ class RestParser(object):
             if not f.readable:
                 continue
             if f.type == 'id' or 'slug' in field or \
-               f.type.startswith('reference'):
+                    f.type.startswith('reference'):
                 tag += '/{%s.%s}' % (table, field)
                 patterns.append(tag)
-                patterns.append(tag+'/:field')
+                patterns.append(tag + '/:field')
             elif f.type.startswith('boolean'):
                 tag += '/{%s.%s}' % (table, field)
                 patterns.append(tag)
-                patterns.append(tag+'/:field')
+                patterns.append(tag + '/:field')
             elif f.type in ('float', 'double', 'integer', 'bigint'):
                 tag += '/{%s.%s.ge}/{%s.%s.lt}' % (table, field, table, field)
                 patterns.append(tag)
-                patterns.append(tag+'/:field')
+                patterns.append(tag + '/:field')
             elif f.type.startswith('list:'):
                 tag += '/{%s.%s.contains}' % (table, field)
                 patterns.append(tag)
-                patterns.append(tag+'/:field')
+                patterns.append(tag + '/:field')
             elif f.type in ('date', 'datetime'):
                 tag += '/{%s.%s.year}' % (table, field)
                 patterns.append(tag)
-                patterns.append(tag+'/:field')
+                patterns.append(tag + '/:field')
                 tag += '/{%s.%s.month}' % (table, field)
                 patterns.append(tag)
-                patterns.append(tag+'/:field')
+                patterns.append(tag + '/:field')
                 tag += '/{%s.%s.day}' % (table, field)
                 patterns.append(tag)
-                patterns.append(tag+'/:field')
+                patterns.append(tag + '/:field')
             if f.type in ('datetime', 'time'):
                 tag += '/{%s.%s.hour}' % (table, field)
                 patterns.append(tag)
-                patterns.append(tag+'/:field')
+                patterns.append(tag + '/:field')
                 tag += '/{%s.%s.minute}' % (table, field)
                 patterns.append(tag)
-                patterns.append(tag+'/:field')
+                patterns.append(tag + '/:field')
                 tag += '/{%s.%s.second}' % (table, field)
                 patterns.append(tag)
-                patterns.append(tag+'/:field')
+                patterns.append(tag + '/:field')
             if depth > 0:
                 for f in self.db[table]._referenced_by:
                     tag += '/%s[%s.%s]' % (table, f.tablename, f.name)
                     patterns.append(tag)
-                    patterns += self.auto_table(table, base=tag, depth=depth-1)
+                    patterns += self.auto_table(table, base=tag, depth=depth - 1)
         return patterns
 
     def parse(self, patterns, args, vars, queries=None, nested_select=True):
@@ -125,9 +127,9 @@ class RestParser(object):
                 tokens = pattern.split('/')
                 if tokens[-1].startswith(':auto') and re2.match(tokens[-1]):
                     new_patterns = self.auto_table(
-                        tokens[-1][tokens[-1].find('[')+1:-1],
+                        tokens[-1][tokens[-1].find('[') + 1:-1],
                         '/'.join(tokens[:-1]))
-                    patterns = patterns[:i]+new_patterns+patterns[i+1:]
+                    patterns = patterns[:i] + new_patterns + patterns[i + 1:]
                     i += len(new_patterns)
                 else:
                     i += 1
@@ -199,7 +201,7 @@ class RestParser(object):
                         raise RuntimeError(
                             "missing relation in pattern: %s" % pattern)
                 elif re2.match(tag) and args[i] == tag[:tag.find('[')]:
-                    ref = tag[tag.find('[')+1:-1]
+                    ref = tag[tag.find('[') + 1:-1]
                     if '.' in ref and otable:
                         table, field = ref.split('.')
                         selfld = '_id'
@@ -287,7 +289,7 @@ class RestParser(object):
                         fields = [
                             field for field in self.db[table]
                             if str(field).split('.')[-1] in exposedfields and
-                            field.readable]
+                               field.readable]
                     else:
                         fields = [
                             field for field in self.db[table]

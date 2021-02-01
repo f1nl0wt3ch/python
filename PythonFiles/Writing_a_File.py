@@ -10,4 +10,4 @@ This code creates a new file in the same folder as script.py and gives it the te
 """
 
 with open('bad_bands.txt', 'w') as bad_bands_doc:
-     bad_bands_doc.write("Hello Python")
+    bad_bands_doc.write("Hello Python")

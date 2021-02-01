@@ -27,6 +27,7 @@ class NamedTupleBase(tuple):
     """Base class for named tuples with the __new__ operator set, named tuples
        yielded by the namedtuple() function will subclass this and add
        properties."""
+
     def __new__(cls, *args, **kws):
         """Create a new instance of this fielded tuple"""
         # May need to unpack named field values here
@@ -80,7 +81,6 @@ def namedtuple(typename, fieldnames):
 
 
 class AIM:
-
     class AIMError(Exception):
         def __init__(self, value):
             self.parameter = value
@@ -232,7 +232,7 @@ def test():
             creditcard, expiration, total, cvv, tax, invoice)
         payment.setParameter(
             'x_duplicate_window', 180)  # three minutes duplicate windows
-        payment.setParameter('x_cust_id', '1324')       # customer ID
+        payment.setParameter('x_cust_id', '1324')  # customer ID
         payment.setParameter('x_first_name', 'John')
         payment.setParameter('x_last_name', 'Conde')
         payment.setParameter('x_company', 'Test Company')
@@ -266,6 +266,7 @@ def test():
     print('approved', payment.isApproved())
     print('declined', payment.isDeclined())
     print('error', payment.isError())
+
 
 if __name__ == '__main__':
     test()

@@ -14,12 +14,14 @@ import os
 import hashlib
 import re
 import sys
+
 PY2 = sys.version_info[0] == 2
 
 if PY2:
     hashlib_md5 = hashlib.md5
 else:
     hashlib_md5 = lambda s: hashlib.md5(bytes(s, 'utf8'))
+
 
 def open_py23(filename, mode):
     if PY2:
@@ -28,24 +30,27 @@ def open_py23(filename, mode):
         f = open(filename, mode, encoding="utf8")
     return f
 
+
 def read_binary_file(filename):
     f = open_py23(filename, 'r')
     data = f.read()
     f.close()
     return data
 
+
 def write_binary_file(filename, data):
     f = open_py23(filename, 'w')
     f.write(data)
     f.close()
 
+
 def fix_links(css, static_path):
     return re.sub(r'url\((["\'])\.\./', 'url(\\1' + static_path, css)
+
 
 def minify(files, path_info, folder, optimize_css, optimize_js,
            ignore_concat=[],
            ignore_minify=['/jquery.js', '/anytime.js']):
-
     """
     Input:
     files: is a list of URLs to JS and CSS files (not repeated)

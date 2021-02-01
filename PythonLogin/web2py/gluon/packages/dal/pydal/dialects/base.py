@@ -108,7 +108,7 @@ class SQLDialect(CommonDialect):
     @sqltype_for('reference')
     def type_reference(self):
         return 'INTEGER REFERENCES %(foreign_key)s ' + \
-            'ON DELETE %(on_delete_action)s %(null)s %(unique)s'
+               'ON DELETE %(on_delete_action)s %(null)s %(unique)s'
 
     @sqltype_for('list:integer')
     def type_list_integer(self):
@@ -133,8 +133,8 @@ class SQLDialect(CommonDialect):
     @sqltype_for('reference FK')
     def type_reference_fk(self):
         return ', CONSTRAINT  "FK_%(constraint_name)s" FOREIGN KEY ' + \
-            '(%(field_name)s) REFERENCES %(foreign_key)s ' + \
-            'ON DELETE %(on_delete_action)s'
+               '(%(field_name)s) REFERENCES %(foreign_key)s ' + \
+               'ON DELETE %(on_delete_action)s'
 
     def alias(self, original, new):
         return ('%s AS ' + self.quote_template) % (original, new)
@@ -188,7 +188,7 @@ class SQLDialect(CommonDialect):
 
     def count(self, val, distinct=None, query_env={}):
         return ('COUNT(%s)' if not distinct else 'COUNT(DISTINCT %s)') % \
-            self.expand(val, query_env=query_env)
+               self.expand(val, query_env=query_env)
 
     def join(self, val, query_env={}):
         if isinstance(val, (Table, Select)):
@@ -225,11 +225,11 @@ class SQLDialect(CommonDialect):
 
     def _and(self, first, second, query_env={}):
         return '(%s AND %s)' % (self.expand(first, query_env=query_env),
-            self.expand(second, query_env=query_env))
+                                self.expand(second, query_env=query_env))
 
     def _or(self, first, second, query_env={}):
         return '(%s OR %s)' % (self.expand(first, query_env=query_env),
-            self.expand(second, query_env=query_env))
+                               self.expand(second, query_env=query_env))
 
     def belongs(self, first, second, query_env={}):
         ftype = first.type
@@ -245,7 +245,7 @@ class SQLDialect(CommonDialect):
         if not second:
             return '(1=0)'
         items = ','.join(self.expand(item, ftype, query_env=query_env)
-                for item in second)
+                         for item in second)
         return '(%s IN (%s))' % (first, items)
 
     # def regexp(self, first, second):
@@ -277,7 +277,7 @@ class SQLDialect(CommonDialect):
             second = self.expand(second, 'string', query_env=query_env).lower()
             if escape is None:
                 escape = '\\'
-                second = second.replace(escape, escape*2)
+                second = second.replace(escape, escape * 2)
         return "(%s LIKE %s ESCAPE '%s')" % (
             self.lower(first, query_env=query_env), second, escape)
 
@@ -291,14 +291,14 @@ class SQLDialect(CommonDialect):
     def startswith(self, first, second, query_env={}):
         return "(%s LIKE %s ESCAPE '\\')" % (
             self.expand(first, query_env=query_env),
-            self.expand(self._like_escaper_default(second)+'%', 'string',
-                query_env=query_env))
+            self.expand(self._like_escaper_default(second) + '%', 'string',
+                        query_env=query_env))
 
     def endswith(self, first, second, query_env={}):
         return "(%s LIKE %s ESCAPE '\\')" % (
             self.expand(first, query_env=query_env),
-            self.expand('%'+self._like_escaper_default(second), 'string',
-                query_env=query_env))
+            self.expand('%' + self._like_escaper_default(second), 'string',
+                        query_env=query_env))
 
     def replace(self, first, tup, query_env={}):
         second, third = tup
@@ -319,9 +319,9 @@ class SQLDialect(CommonDialect):
                     second.db,
                     self.concat('%', Expression(
                         second.db, self.replace(second, ('%', '\%'),
-                            query_env=query_env)), '%'))
+                                                query_env=query_env)), '%'))
             else:
-                second = '%'+self._like_escaper_default(str(second))+'%'
+                second = '%' + self._like_escaper_default(str(second)) + '%'
         elif first.type.startswith('list:'):
             if isinstance(second, Expression):
                 second = Expression(
@@ -329,10 +329,10 @@ class SQLDialect(CommonDialect):
                         second.db, self.replace(Expression(
                             second.db, self.replace(
                                 second, ('%', '\%'), query_env)),
-                                ('|', '||'))), '|%'))
+                            ('|', '||'))), '|%'))
             else:
                 second = str(second).replace('|', '||')
-                second = '%|'+self._like_escaper_default(second)+'|%'
+                second = '%|' + self._like_escaper_default(second) + '|%'
         op = case_sensitive and self.like or self.ilike
         return op(first, second, escape='\\', query_env=query_env)
 
@@ -380,8 +380,8 @@ class SQLDialect(CommonDialect):
 
     def _is_numerical(self, field_type):
         return field_type in \
-            ('integer', 'float', 'double', 'bigint', 'boolean') or \
-            field_type.startswith('decimal')
+               ('integer', 'float', 'double', 'bigint', 'boolean') or \
+               field_type.startswith('decimal')
 
     def add(self, first, second, query_env={}):
         if self._is_numerical(first.type) or isinstance(first.type, Field):
@@ -416,18 +416,18 @@ class SQLDialect(CommonDialect):
         if use_common_filters(second):
             second = self.adapter.common_filter(second, [first])
         return ('%s ON %s') % (table_rname,
-            self.expand(second, query_env=query_env))
+                               self.expand(second, query_env=query_env))
 
     def invert(self, first, query_env={}):
         return '%s DESC' % self.expand(first, query_env=query_env)
 
     def comma(self, first, second, query_env={}):
         return '%s, %s' % (self.expand(first, query_env=query_env),
-            self.expand(second, query_env=query_env))
+                           self.expand(second, query_env=query_env))
 
     def extract(self, first, what, query_env={}):
         return "EXTRACT(%s FROM %s)" % (what,
-            self.expand(first, query_env=query_env))
+                                        self.expand(first, query_env=query_env))
 
     def epoch(self, val, query_env={}):
         return self.extract(val, 'epoch', query_env)
@@ -440,7 +440,7 @@ class SQLDialect(CommonDialect):
 
     def not_null(self, default, field_type):
         return 'NOT NULL DEFAULT %s' % \
-            self.adapter.represent(default, field_type)
+               self.adapter.represent(default, field_type)
 
     @property
     def allow_null(self):
@@ -448,8 +448,8 @@ class SQLDialect(CommonDialect):
 
     def coalesce(self, first, second, query_env={}):
         expressions = [self.expand(first, query_env=query_env)] + \
-            [self.expand(val, first.type, query_env=query_env)
-                for val in second]
+                      [self.expand(val, first.type, query_env=query_env)
+                       for val in second]
         return 'COALESCE(%s)' % ','.join(expressions)
 
     def raw(self, val, query_env={}):

@@ -21,7 +21,6 @@ import json
 
 
 class RPXAccount(object):
-
     """
     from gluon.contrib.login_methods.rpx_account import RPXAccount
     auth.settings.actions_disabled=['register','change_password',
@@ -57,19 +56,19 @@ class RPXAccount(object):
         self.mappings = Storage()
 
         dn = {'givenName': '', 'familyName': ''}
-        self.mappings.Facebook = lambda profile, dn=dn:\
+        self.mappings.Facebook = lambda profile, dn=dn: \
             dict(registration_id=profile.get("identifier", ""),
                  username=profile.get("preferredUsername", ""),
                  email=profile.get("email", ""),
                  first_name=profile.get("name", dn).get("givenName", ""),
                  last_name=profile.get("name", dn).get("familyName", ""))
-        self.mappings.Google = lambda profile, dn=dn:\
+        self.mappings.Google = lambda profile, dn=dn: \
             dict(registration_id=profile.get("identifier", ""),
                  username=profile.get("preferredUsername", ""),
                  email=profile.get("email", ""),
                  first_name=profile.get("name", dn).get("givenName", ""),
                  last_name=profile.get("name", dn).get("familyName", ""))
-        self.mappings.default = lambda profile:\
+        self.mappings.default = lambda profile: \
             dict(registration_id=profile.get("identifier", ""),
                  username=profile.get("preferredUsername", ""),
                  email=profile.get("email", ""),
@@ -127,6 +126,7 @@ class RPXAccount(object):
         </script>
         <div id="janrainEngageEmbed"></div>""" % (self.token_url, self.domain, self.domain)
         return XML(rpxform)
+
 
 def use_janrain(auth, filename='private/janrain.key', **kwargs):
     path = os.path.join(current.request.folder, filename)

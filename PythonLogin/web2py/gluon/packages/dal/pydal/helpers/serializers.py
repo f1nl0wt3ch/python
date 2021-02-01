@@ -33,7 +33,7 @@ class Serializers(object):
     def __getattr__(self, name):
         if self._custom_.get(name) is not None:
             return self._custom_[name]
-        raise NotImplementedError("No "+str(name)+" serializer available.")
+        raise NotImplementedError("No " + str(name) + " serializer available.")
 
     def json(self, value):
         value = jsonlib.dumps(value, default=self._json_parse)

@@ -12,6 +12,7 @@ Generates names for cache and session files
 import os
 from gluon._compat import builtin
 
+
 def generate(filename, depth=2, base=512):
     if os.path.sep in filename:
         path, filename = os.path.split(filename)

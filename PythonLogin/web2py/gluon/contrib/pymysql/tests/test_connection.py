@@ -42,7 +42,6 @@ class TempUser:
 
 
 class TestAuthentication(base.PyMySQLTestCase):
-
     socket_auth = False
     socket_found = False
     two_questions_found = False
@@ -65,17 +64,17 @@ class TestAuthentication(base.PyMySQLTestCase):
     del db['user']
     cur.execute("SHOW PLUGINS")
     for r in cur:
-        if (r[1], r[2]) !=  (u'ACTIVE', u'AUTHENTICATION'):
+        if (r[1], r[2]) != (u'ACTIVE', u'AUTHENTICATION'):
             continue
-        if r[3] ==  u'auth_socket.so':
+        if r[3] == u'auth_socket.so':
             socket_plugin_name = r[0]
             socket_found = True
-        elif r[3] ==  u'dialog_examples.so':
+        elif r[3] == u'dialog_examples.so':
             if r[0] == 'two_questions':
-                two_questions_found =  True
+                two_questions_found = True
             elif r[0] == 'three_attempts':
-                three_attempts_found =  True
-        elif r[0] ==  u'pam':
+                three_attempts_found = True
+        elif r[0] == u'pam':
             pam_found = True
             pam_plugin_name = r[3].split('.')[0]
             if pam_plugin_name == 'auth_pam':
@@ -87,11 +86,11 @@ class TestAuthentication(base.PyMySQLTestCase):
             # https://mariadb.com/kb/en/mariadb/pam-authentication-plugin/
 
             # Names differ but functionality is close
-        elif r[0] ==  u'mysql_old_password':
+        elif r[0] == u'mysql_old_password':
             mysql_old_password_found = True
-        elif r[0] ==  u'sha256_password':
+        elif r[0] == u'sha256_password':
             sha256_password_found = True
-        #else:
+        # else:
         #    print("plugin: %r" % r[0])
 
     def test_plugin(self):
@@ -132,22 +131,22 @@ class TestAuthentication(base.PyMySQLTestCase):
             c = pymysql.connect(user=TestAuthentication.osuser, **self.db)
 
     class Dialog(object):
-        fail=False
+        fail = False
 
         def __init__(self, con):
-            self.fail=TestAuthentication.Dialog.fail
+            self.fail = TestAuthentication.Dialog.fail
             pass
 
         def prompt(self, echo, prompt):
             if self.fail:
-               self.fail=False
-               return b'bad guess at a password'
+                self.fail = False
+                return b'bad guess at a password'
             return self.m.get(prompt)
 
     class DialogHandler(object):
 
         def __init__(self, con):
-            self.con=con
+            self.con = con
 
         def authenticate(self, pkt):
             while True:
@@ -168,8 +167,7 @@ class TestAuthentication(base.PyMySQLTestCase):
 
     class DefectiveHandler(object):
         def __init__(self, con):
-            self.con=con
-
+            self.con = con
 
     @unittest2.skipUnless(socket_auth, "connection to unix_socket required")
     @unittest2.skipIf(two_questions_found, "two_questions plugin already installed")
@@ -192,7 +190,7 @@ class TestAuthentication(base.PyMySQLTestCase):
         self.realTestDialogAuthTwoQuestions()
 
     def realTestDialogAuthTwoQuestions(self):
-        TestAuthentication.Dialog.fail=False
+        TestAuthentication.Dialog.fail = False
         TestAuthentication.Dialog.m = {b'Password, please:': b'notverysecret',
                                        b'Are you sure ?': b'yes, of course'}
         with TempUser(self.connections[0].cursor(), 'pymysql_2q@localhost',
@@ -223,7 +221,7 @@ class TestAuthentication(base.PyMySQLTestCase):
 
     def realTestDialogAuthThreeAttempts(self):
         TestAuthentication.Dialog.m = {b'Password, please:': b'stillnotverysecret'}
-        TestAuthentication.Dialog.fail=True   # fail just once. We've got three attempts after all
+        TestAuthentication.Dialog.fail = True  # fail just once. We've got three attempts after all
         with TempUser(self.connections[0].cursor(), 'pymysql_3a@localhost',
                       self.databases[0]['db'], 'three_attempts', 'stillnotverysecret') as u:
             pymysql.connect(user='pymysql_3a', auth_plugin_map={b'dialog': TestAuthentication.Dialog}, **self.db)
@@ -232,9 +230,11 @@ class TestAuthentication(base.PyMySQLTestCase):
                 pymysql.connect(user='pymysql_3a', auth_plugin_map={b'dialog': object}, **self.db)
 
             with self.assertRaises(pymysql.err.OperationalError):
-                pymysql.connect(user='pymysql_3a', auth_plugin_map={b'dialog': TestAuthentication.DefectiveHandler}, **self.db)
+                pymysql.connect(user='pymysql_3a', auth_plugin_map={b'dialog': TestAuthentication.DefectiveHandler},
+                                **self.db)
             with self.assertRaises(pymysql.err.OperationalError):
-                pymysql.connect(user='pymysql_3a', auth_plugin_map={b'notdialogplugin': TestAuthentication.Dialog}, **self.db)
+                pymysql.connect(user='pymysql_3a', auth_plugin_map={b'notdialogplugin': TestAuthentication.Dialog},
+                                **self.db)
             TestAuthentication.Dialog.m = {b'Password, please:': b'I do not know'}
             with self.assertRaises(pymysql.err.OperationalError):
                 pymysql.connect(user='pymysql_3a', auth_plugin_map={b'dialog': TestAuthentication.Dialog}, **self.db)
@@ -258,7 +258,6 @@ class TestAuthentication(base.PyMySQLTestCase):
         finally:
             if TestAuthentication.pam_found:
                 cur.execute("uninstall plugin pam")
-
 
     @unittest2.skipUnless(socket_auth, "connection to unix_socket required")
     @unittest2.skipUnless(pam_found, "no pam plugin")
@@ -301,8 +300,8 @@ class TestAuthentication(base.PyMySQLTestCase):
             cur.execute(grants)
 
     # select old_password("crummy p\tassword");
-    #| old_password("crummy p\tassword") |
-    #| 2a01785203b08770                  |
+    # | old_password("crummy p\tassword") |
+    # | 2a01785203b08770                  |
     @unittest2.skipUnless(socket_auth, "connection to unix_socket required")
     @unittest2.skipUnless(mysql_old_password_found, "no mysql_old_password plugin")
     def testMySQLOldPasswordAuth(self):
@@ -316,7 +315,7 @@ class TestAuthentication(base.PyMySQLTestCase):
         db['password'] = "crummy p\tassword"
         with self.connections[0] as c:
             # deprecated in 5.6
-            if sys.version_info[0:2] >= (3,2) and self.mysql_server_is(self.connections[0], (5, 6, 0)):
+            if sys.version_info[0:2] >= (3, 2) and self.mysql_server_is(self.connections[0], (5, 6, 0)):
                 with self.assertWarns(pymysql.err.Warning) as cm:
                     c.execute("SELECT OLD_PASSWORD('%s')" % db['password'])
             else:
@@ -324,7 +323,7 @@ class TestAuthentication(base.PyMySQLTestCase):
             v = c.fetchone()[0]
             self.assertEqual(v, '2a01785203b08770')
             # only works in MariaDB and MySQL-5.6 - can't separate out by version
-            #if self.mysql_server_is(self.connections[0], (5, 5, 0)):
+            # if self.mysql_server_is(self.connections[0], (5, 5, 0)):
             #    with TempUser(c, 'old_pass_user@localhost',
             #                  self.databases[0]['db'], 'mysql_old_password', '2a01785203b08770') as u:
             #        cur = pymysql.connect(user='old_pass_user', **db).cursor()
@@ -333,7 +332,7 @@ class TestAuthentication(base.PyMySQLTestCase):
             secure_auth_setting = c.fetchone()[0]
             c.execute('set old_passwords=1')
             # pymysql.err.Warning: 'pre-4.1 password hash' is deprecated and will be removed in a future release. Please use post-4.1 password hash instead
-            if sys.version_info[0:2] >= (3,2) and self.mysql_server_is(self.connections[0], (5, 6, 0)):
+            if sys.version_info[0:2] >= (3, 2) and self.mysql_server_is(self.connections[0], (5, 6, 0)):
                 with self.assertWarns(pymysql.err.Warning) as cm:
                     c.execute('set global secure_auth=0')
             else:
@@ -361,6 +360,7 @@ class TestAuthentication(base.PyMySQLTestCase):
             with self.assertRaises(pymysql.err.OperationalError):
                 pymysql.connect(user='pymysql_256', **db)
 
+
 class TestConnection(base.PyMySQLTestCase):
 
     def test_utf8mb4(self):
@@ -373,10 +373,10 @@ class TestConnection(base.PyMySQLTestCase):
         """Large query and response (>=16MB)"""
         cur = self.connections[0].cursor()
         cur.execute("SELECT @@max_allowed_packet")
-        if cur.fetchone()[0] < 16*1024*1024 + 10:
+        if cur.fetchone()[0] < 16 * 1024 * 1024 + 10:
             print("Set max_allowed_packet to bigger than 17MB")
             return
-        t = 'a' * (16*1024*1024)
+        t = 'a' * (16 * 1024 * 1024)
         cur.execute("SELECT '" + t + "'")
         assert cur.fetchone()[0] == t
 
@@ -418,7 +418,7 @@ class TestConnection(base.PyMySQLTestCase):
         with self.assertRaises(pymysql.OperationalError) as cm:
             cur.execute("SELECT 1+1")
         # error occures while reading, not writing because of socket buffer.
-        #self.assertEqual(cm.exception.args[0], 2006)
+        # self.assertEqual(cm.exception.args[0], 2006)
         self.assertIn(cm.exception.args[0], (2006, 2013))
 
     def test_init_command(self):
@@ -456,7 +456,7 @@ class TestConnection(base.PyMySQLTestCase):
             cur.execute('insert into test values ((1))')
         with c as cur:
             cur.execute('select count(*) from test')
-            self.assertEqual(1,cur.fetchone()[0])
+            self.assertEqual(1, cur.fetchone()[0])
             cur.execute('drop table test')
 
     def test_set_charset(self):
@@ -473,7 +473,7 @@ class TestConnection(base.PyMySQLTestCase):
                 sock.connect(d['unix_socket'])
             except KeyError:
                 sock = socket.create_connection(
-                                (d.get('host', 'localhost'), d.get('port', 3306)))
+                    (d.get('host', 'localhost'), d.get('port', 3306)))
             for k in ['unix_socket', 'host', 'port']:
                 try:
                     del d[k]
@@ -486,10 +486,10 @@ class TestConnection(base.PyMySQLTestCase):
             c.close()
             sock.close()
 
-    @unittest2.skipUnless(sys.version_info[0:2] >= (3,2), "required py-3.2")
+    @unittest2.skipUnless(sys.version_info[0:2] >= (3, 2), "required py-3.2")
     def test_no_delay_warning(self):
         current_db = self.databases[0].copy()
-        current_db['no_delay'] =  True
+        current_db['no_delay'] = True
         with self.assertWarns(DeprecationWarning) as cm:
             conn = pymysql.connect(**current_db)
 

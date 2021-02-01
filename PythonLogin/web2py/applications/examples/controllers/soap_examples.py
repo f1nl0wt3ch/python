@@ -5,7 +5,9 @@
 # for more info see: https://code.google.com/p/pysimplesoap/wiki/Web2Py
 
 from gluon.tools import Service
+
 service = Service(globals())
+
 
 # define the procedures to be exposed:
 
@@ -13,26 +15,31 @@ service = Service(globals())
 @service.soap('AddIntegers', returns={'AddResult': int}, args={'a': int, 'b': int})
 def add(a, b):
     "Add two values"
-    return a+b
+    return a + b
+
 
 @service.soap('SubIntegers', returns={'SubResult': int}, args={'a': int, 'b': int})
 def sub(a, b):
     "Substract two values"
-    return a-b
+    return a - b
+
 
 @service.soap('Division', returns={'divisionResult': float}, args={'a': float, 'b': float})
 def division(a, b):
     "Divide two values "
     return a / b
 
+
 @service.soap('DummyCustomElement', returns={'out0': str}, args={'in0': str}, response_element_name='customResponseTag')
 def dummy(in0):
     return in0
+
 
 # expose the soap methods
 
 def call():
     return service()
+
 
 # sample function to test the SOAP RPC
 
@@ -50,9 +57,10 @@ def test_soap_sub():
     except SoapFault as sf:
         result = sf
     response.view = "soap_examples/generic.html"
-    return dict(xml_request=client.xml_request, 
+    return dict(xml_request=client.xml_request,
                 xml_response=client.xml_response,
                 result=result)
+
 
 def test_custom_response_element_name():
     from gluon.contrib.pysimplesoap.client import SoapClient, SoapFault
@@ -68,6 +76,6 @@ def test_custom_response_element_name():
     except SoapFault as sf:
         result = sf
     response.view = "soap_examples/generic.html"
-    return dict(xml_request=client.xml_request, 
+    return dict(xml_request=client.xml_request,
                 xml_response=client.xml_response,
                 result=result)

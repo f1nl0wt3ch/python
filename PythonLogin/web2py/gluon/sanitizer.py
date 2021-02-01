@@ -27,25 +27,25 @@ def xssescape(text):
 class XssCleaner(HTMLParser):
 
     def __init__(
-        self,
-        permitted_tags=[
-            'a',
-            'b',
-            'blockquote',
-            'br/',
-            'i',
-            'li',
-            'ol',
-            'ul',
-            'p',
-            'cite',
-            'code',
-            'pre',
-            'img/',
-        ],
-        allowed_attributes={'a': ['href', 'title'], 'img': ['src', 'alt'
-                                                            ], 'blockquote': ['type']},
-        strip_disallowed=False
+            self,
+            permitted_tags=[
+                'a',
+                'b',
+                'blockquote',
+                'br/',
+                'i',
+                'li',
+                'ol',
+                'ul',
+                'p',
+                'cite',
+                'code',
+                'pre',
+                'img/',
+            ],
+            allowed_attributes={'a': ['href', 'title'], 'img': ['src', 'alt'
+                                                                ], 'blockquote': ['type']},
+            strip_disallowed=False
     ):
 
         HTMLParser.__init__(self)
@@ -62,7 +62,7 @@ class XssCleaner(HTMLParser):
 
         self.allowed_schemes = ['http', 'https', 'ftp', 'mailto']
 
-        #to strip or escape disallowed tags?
+        # to strip or escape disallowed tags?
         self.strip_disallowed = strip_disallowed
         # there might be data after final closing tag, that is to be ignored
         self.in_disallowed = [False]
@@ -74,7 +74,7 @@ class XssCleaner(HTMLParser):
     def handle_charref(self, ref):
         if self.in_disallowed[-1]:
             return
-        elif len(ref) < 7 and (ref.isdigit() or ref == 'x27'): # x27 is a special case for apostrophe
+        elif len(ref) < 7 and (ref.isdigit() or ref == 'x27'):  # x27 is a special case for apostrophe
             self.result += '&#%s;' % ref
         else:
             self.result += xssescape('&#%s' % ref)
@@ -94,9 +94,9 @@ class XssCleaner(HTMLParser):
             self.result += xssescape('<!--%s-->' % comment)
 
     def handle_starttag(
-        self,
-        tag,
-        attrs
+            self,
+            tag,
+            attrs
     ):
         if tag not in self.permitted_tags:
             self.in_disallowed.append(True)
@@ -189,30 +189,30 @@ class XssCleaner(HTMLParser):
 
 
 def sanitize(text, permitted_tags=[
-        'a',
-        'b',
-        'blockquote',
-        'br/',
-        'i',
-        'li',
-        'ol',
-        'ul',
-        'p',
-        'cite',
-        'code',
-        'pre',
-        'img/',
-        'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-        'table', 'tbody', 'thead', 'tfoot', 'tr', 'td', 'div',
-        'strong', 'span',
+    'a',
+    'b',
+    'blockquote',
+    'br/',
+    'i',
+    'li',
+    'ol',
+    'ul',
+    'p',
+    'cite',
+    'code',
+    'pre',
+    'img/',
+    'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+    'table', 'tbody', 'thead', 'tfoot', 'tr', 'td', 'div',
+    'strong', 'span',
 ],
-    allowed_attributes={
-        'a': ['href', 'title'],
-        'img': ['src', 'alt'],
-        'blockquote': ['type'],
-        'td': ['colspan'],
-    },
-        escape=True):
+             allowed_attributes={
+                 'a': ['href', 'title'],
+                 'img': ['src', 'alt'],
+                 'blockquote': ['type'],
+                 'td': ['colspan'],
+             },
+             escape=True):
     if not isinstance(text, basestring):
         return str(text)
     return XssCleaner(permitted_tags=permitted_tags,

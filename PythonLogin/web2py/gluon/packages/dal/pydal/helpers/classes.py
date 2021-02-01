@@ -89,6 +89,7 @@ class BasicStorage(object):
 def pickle_basicstorage(s):
     return BasicStorage, (dict(s),)
 
+
 copyreg.pickle(BasicStorage, pickle_basicstorage)
 
 
@@ -256,6 +257,7 @@ def Reference_pickler(data):
         marshal_dump = 'i%s' % struct.pack('<i', long(data))
     return (Reference_unpickler, (marshal_dump,))
 
+
 copyreg.pickle(Reference, Reference_pickler, Reference_unpickler)
 
 
@@ -353,7 +355,7 @@ class RecordOperator(object):
 class RecordUpdater(RecordOperator):
     def __call__(self, **fields):
         colset, db, tablename, id = self.colset, self.db, self.tablename, \
-            self.id
+                                    self.id
         table = db[tablename]
         newfields = fields or dict(colset)
         for fieldname in list(newfields.keys()):
@@ -392,6 +394,7 @@ class MethodAdder(object):
             name = method_name or f.func_name
             setattr(instance, name, method)
             return f
+
         return _decorated
 
 
@@ -405,6 +408,7 @@ class FakeCursor(object):
 
     https://www.python.org/dev/peps/pep-0249/
     '''
+
     def warn_bad_usage(self, attr):
         raise Exception("FakeCursor.%s is not implemented" % attr)
 
@@ -483,7 +487,6 @@ class TimingHandler(ExecutionHandler):
 
 
 class DatabaseStoredFile:
-
     web2py_filesystems = set()
 
     def escape(self, obj):
@@ -512,7 +515,7 @@ class DatabaseStoredFile:
         self.data = ''
         if mode in ('r', 'rw', 'rb', 'a'):
             query = "SELECT content FROM web2py_filesystem WHERE path='%s'" \
-                % filename
+                    % filename
             rows = self.db.executesql(query)
             if rows:
                 self.data = rows[0][0]
@@ -528,12 +531,12 @@ class DatabaseStoredFile:
     def read(self, bytes=None):
         if bytes is None:
             bytes = len(self.data)
-        data = self.data[self.p:self.p+bytes]
+        data = self.data[self.p:self.p + bytes]
         self.p += len(data)
         return data
 
     def readline(self):
-        i = self.data.find('\n', self.p)+1
+        i = self.data.find('\n', self.p) + 1
         if i > 0:
             data, self.p = self.data[self.p:i], i
         else:
@@ -549,8 +552,8 @@ class DatabaseStoredFile:
                 "DELETE FROM web2py_filesystem WHERE path='%s'" %
                 self.filename
             )
-            query = "INSERT INTO web2py_filesystem(path,content) VALUES ('%s','%s')"\
-                % (self.filename, self.data.replace("'", "''"))
+            query = "INSERT INTO web2py_filesystem(path,content) VALUES ('%s','%s')" \
+                    % (self.filename, self.data.replace("'", "''"))
             self.db.executesql(query)
             self.db.commit()
             self.db = None

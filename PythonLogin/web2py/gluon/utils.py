@@ -33,9 +33,11 @@ _struct_2_long_long = struct.Struct('=QQ')
 
 try:
     from Crypto.Cipher import AES
+
     HAVE_AES = True
 except ImportError:
     import gluon.contrib.pyaes as PYAES
+
     HAVE_AES = False
 
 if hasattr(hashlib, "pbkdf2_hmac"):
@@ -44,6 +46,8 @@ if hasattr(hashlib, "pbkdf2_hmac"):
         hmac = hashlib.pbkdf2_hmac(hashfunc().name, to_bytes(data),
                                    to_bytes(salt), iterations, keylen)
         return binascii.hexlify(hmac)
+
+
     HAVE_PBKDF2 = True
 else:
     try:
@@ -55,6 +59,7 @@ else:
     except ImportError:
         try:
             from .pbkdf2 import pbkdf2_hex
+
             HAVE_PBKDF2 = True
         except (ImportError, ValueError):
             HAVE_PBKDF2 = False
@@ -154,6 +159,7 @@ def get_digest(value):
         return sha512
     else:
         raise ValueError("Invalid digest algorithm: %s" % value)
+
 
 DIGEST_ALG_BY_SIZE = {
     128 // 4: 'md5',
@@ -277,6 +283,7 @@ def secure_loads_deprecated(data, encryption_key, hash_key=None, compression_lev
     except Exception as e:
         return None
 
+
 ### compute constant CTOKENS
 
 
@@ -327,6 +334,8 @@ This is not specific to web2py; consider deploying on a different operating syst
         packed = bytes([]).join(bytes([x]) for x in ctokens)
     unpacked_ctokens = _struct_2_long_long.unpack(packed)
     return unpacked_ctokens, have_urandom
+
+
 UNPACKED_CTOKENS, HAVE_URANDOM = initialize_urandom()
 
 
@@ -364,6 +373,7 @@ def web2py_uuid(ctokens=UNPACKED_CTOKENS):
         byte_s = _struct_2_long_long.pack(rand_longs[0] ^ ctokens[0],
                                           rand_longs[1] ^ ctokens[1])
     return str(uuid.UUID(bytes=byte_s, version=4))
+
 
 REGEX_IPv4 = re.compile('(\d+)\.(\d+)\.(\d+)\.(\d+)')
 
@@ -423,7 +433,7 @@ def is_loopback_ip_address(ip=None, addrinfo=None):
     if ip.count('.') == 3:
         return ip.lower().startswith(('127', '::127', '0:0:0:0:0:0:127',
                                       '::ffff:127', '0:0:0:0:0:ffff:127'))
-    return ip == '::1' or ip == '0:0:0:0:0:0:0:1'   # IPv6 loopback
+    return ip == '::1' or ip == '0:0:0:0:0:0:0:1'  # IPv6 loopback
 
 
 def getipaddrinfo(host):

@@ -33,11 +33,11 @@ class Node:
 
     def xml(self):
         if self.select:
-            selectAttributes = dict(_name=self.name,_id=self.name,_size=self.size,
-                                    _onblur="ajax('%s/blur',['%s']);"%(self.url,self.name))
+            selectAttributes = dict(_name=self.name, _id=self.name, _size=self.size,
+                                    _onblur="ajax('%s/blur',['%s']);" % (self.url, self.name))
             #                        _onkeyup="ajax('%s/keyup',['%s'], ':eval');"%(self.url,self.name),
             #                        _onfocus="ajax('%s/focus',['%s'], ':eval');"%(self.url,self.name),
-            for k,v in selectAttributes.items():
+            for k, v in selectAttributes.items():
                 self.select[k] = v
             return self.select.xml()
         else:
@@ -258,8 +258,8 @@ class Sheet:
             r, c = int(r), int(c)
         except (ValueError, IndexError, TypeError) as e:
             error = "%s. %s" % \
-                ("Unexpected position parameter",
-                 "Must be a key of type 'rncn'")
+                    ("Unexpected position parameter",
+                     "Must be a key of type 'rncn'")
             raise ValueError(error)
         return r, c
 
@@ -344,22 +344,22 @@ class Sheet:
 
             if request.args(0) == 'focus':
                 return "jQuery('#%(cell)s').val('%(value)s');" % \
-                    dict(cell=cell, value=quote(self[cell].value))
+                       dict(cell=cell, value=quote(self[cell].value))
 
             value = request.vars[cell]
             self[cell] = value
 
             if request.args(0) == 'blur':
                 return "jQuery('#%(cell)s').val('%(value)s');" % \
-                    dict(cell=cell, value=quote(self[cell].computed_value))
+                       dict(cell=cell, value=quote(self[cell].computed_value))
 
             elif request.args(0) == 'keyup':
                 jquery = ''
                 for other_key in self.modified:
                     if other_key != cell:
                         jquery += "jQuery('#%(other_key)s').val('%(value)s');" % \
-                            dict(other_key=other_key,
-                                 value=quote(self[other_key].computed_value))
+                                  dict(other_key=other_key,
+                                       value=quote(self[other_key].computed_value))
 
         else:
             # spreadsheet db update
@@ -684,8 +684,8 @@ class Sheet:
                         v = value
                     key = "r%sc%s" % (r + starts_r, c + starts_c)
                     if (ends is None) or \
-                       ((ends_r >= r + starts_r) and
-                            (ends_c >= c + starts_c)):
+                            ((ends_r >= r + starts_r) and
+                             (ends_c >= c + starts_c)):
                         self.cell(key, v,
                                   active=active,
                                   onchange=onchange,
@@ -756,13 +756,13 @@ class Sheet:
             ok = False
             set_changed_nodes = set(changed_nodes)
             for (k, other_node) in enumerate(changed_nodes):
-                #print other_node, changed_nodes
-                if not set(other_node.incoming.keys()).\
+                # print other_node, changed_nodes
+                if not set(other_node.incoming.keys()). \
                         intersection(set_changed_nodes):
-                    #print 'ok'
+                    # print 'ok'
                     self.compute(other_node)
                     output[other_node.name] = other_node.computed_value
-                    #print other_node
+                    # print other_node
                     del changed_nodes[k]
                     ok = True
                     break
@@ -798,10 +798,10 @@ class Sheet:
 
         if not self.c_headers:
             header = TR(TH(), *[TH('c%s' % c)
-                            for c in range(self.cols)])
+                                for c in range(self.cols)])
         else:
             header = TR(TH(), *[TH('%s' % c)
-                            for c in self.c_headers])
+                                for c in self.c_headers])
 
         rows = []
         for r in range(self.rows):
@@ -812,13 +812,13 @@ class Sheet:
             for c in range(self.cols):
                 key = 'r%sc%s' % (r, c)
                 attributes = {"_class": "w2p_spreadsheet_col_%s" %
-                              self.even_or_odd(c)}
+                                        self.even_or_odd(c)}
                 if key in self.td_attributes:
                     attributes.update(self.td_attributes[key])
                 td = TD(self.nodes[key], **attributes)
                 tds.append(td)
             attributes = {"_class": "w2p_spreadsheet_row_%s" %
-                          self.even_or_odd(r)}
+                                    self.even_or_odd(r)}
             if str(r) in self.tr_attributes:
                 attributes.update(self.tr_attributes[str(r)])
             rows.append(TR(*tds, **attributes))
@@ -879,10 +879,10 @@ class Sheet:
                     unsorted_headers.append((c, fieldname))
 
             sorted_headers = [TH(), ] + \
-                [TH(header[1]) for header in sorted(unsorted_headers)]
+                             [TH(header[1]) for header in sorted(unsorted_headers)]
             table.insert(0, TR(*sorted_headers,
-                                **{'_class': "%s_fieldnames" %
-                                   attributes["_class"]}))
+                               **{'_class': "%s_fieldnames" %
+                                            attributes["_class"]}))
         else:
             data = SCRIPT(""" // web2py Spreadsheets: no db data.""")
 

@@ -49,7 +49,7 @@ class Storage(dict):
     __delattr__ = dict.__delitem__
     __getitem__ = dict.get
     __getattr__ = dict.get
-    __getnewargs__ = lambda self: getattr(dict,self).__getnewargs__(self)
+    __getnewargs__ = lambda self: getattr(dict, self).__getnewargs__(self)
     __repr__ = lambda self: '<Storage %s>' % dict.__repr__(self)
     # http://stackoverflow.com/questions/5247250/why-does-pickle-getstate-accept-as-a-return-value-the-very-instance-it-requi
     __getstate__ = lambda self: None
@@ -135,16 +135,19 @@ class Storage(dict):
 def pickle_storage(s):
     return Storage, (dict(s),)
 
+
 copyreg.pickle(Storage, pickle_storage)
 if PY2:
     PICKABLE = (str, int, long, float, bool, list, dict, tuple, set)
 else:
     PICKABLE = (str, int, float, bool, list, dict, tuple, set)
 
+
 class StorageList(Storage):
     """
     Behaves like Storage but missing elements defaults to [] instead of None
     """
+
     def __getitem__(self, key):
         return self.__getattr__(key)
 
@@ -234,6 +237,7 @@ class FastStorage(dict):
         >>> s['b']
 
     """
+
     def __init__(self, *args, **kwargs):
         dict.__init__(self, *args, **kwargs)
         self.__dict__ = self
@@ -266,7 +270,6 @@ class FastStorage(dict):
 
 
 class List(list):
-
     """
         Like a regular python list but callable.
         When  a(i) is called if i is out of bounds returns None
@@ -318,6 +321,8 @@ class List(list):
                 raise RuntimeError("invalid otherwise")
         return value
 
+
 if __name__ == '__main__':
     import doctest
+
     doctest.testmod()

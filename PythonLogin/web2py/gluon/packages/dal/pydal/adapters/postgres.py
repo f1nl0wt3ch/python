@@ -160,7 +160,7 @@ class PostgrePsyco(Postgre):
 
     def _config_json(self):
         use_json = self.driver.__version__ >= "2.0.12" and \
-            self.connection.server_version >= 90200
+                   self.connection.server_version >= 90200
         if use_json:
             self.dialect = self._get_json_dialect()(self)
             if self.driver.__version__ >= '2.5.0':

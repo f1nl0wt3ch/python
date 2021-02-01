@@ -11,6 +11,7 @@ import re
 from gluon.validators import *
 from gluon._compat import PY2, to_bytes
 
+
 class TestValidators(unittest.TestCase):
 
     def myassertRegex(self, *args, **kwargs):
@@ -138,10 +139,10 @@ class TestValidators(unittest.TestCase):
         self.assertEqual(rtn, (a, 'Enter from 4 to 255 characters'))
         urlencode_data = b"key2=value2x&key3=value3&key4=value4"
         urlencode_environ = {
-            'CONTENT_LENGTH':   str(len(urlencode_data)),
-            'CONTENT_TYPE':     'application/x-www-form-urlencoded',
-            'QUERY_STRING':     'key1=value1&key2=value2y',
-            'REQUEST_METHOD':   'POST',
+            'CONTENT_LENGTH': str(len(urlencode_data)),
+            'CONTENT_TYPE': 'application/x-www-form-urlencoded',
+            'QUERY_STRING': 'key1=value1&key2=value2y',
+            'REQUEST_METHOD': 'POST',
         }
         fake_stdin = BytesIO(urlencode_data)
         fake_stdin.seek(0)
@@ -229,7 +230,8 @@ class TestValidators(unittest.TestCase):
         self.assertEqual(rtn, (('%d,%d' % (george_id, costanza_id)).split(','), None))
         rtn = IS_IN_DB(db, 'person.id', '%(name)s', multiple=(1, 3), delimiter=',')('%d,%d' % (george_id, costanza_id))
         self.assertEqual(rtn, (('%d,%d' % (george_id, costanza_id)).split(','), None))
-        rtn = IS_IN_DB(db, 'person.id', '%(name)s', multiple=(1, 2), delimiter=',', error_message='oops')('%d,%d' % (george_id, costanza_id))
+        rtn = IS_IN_DB(db, 'person.id', '%(name)s', multiple=(1, 2), delimiter=',', error_message='oops')(
+            '%d,%d' % (george_id, costanza_id))
         self.assertEqual(rtn, (('%d,%d' % (george_id, costanza_id)).split(','), 'oops'))
         rtn = IS_IN_DB(db, db.person.id, '%(name)s', error_message='oops').options(zero=False)
         self.assertEqual(sorted(rtn), [('%d' % george_id, 'george'), ('%d' % costanza_id, 'costanza')])
@@ -253,7 +255,8 @@ class TestValidators(unittest.TestCase):
         self.assertEqual(rtn, (['george', 'costanza'], None))
         # Test it works with self reference
         db.define_table('category',
-                        Field('parent_id', 'reference category', requires=IS_EMPTY_OR(IS_IN_DB(db, 'category.id', '%(name)s'))),
+                        Field('parent_id', 'reference category',
+                              requires=IS_EMPTY_OR(IS_IN_DB(db, 'category.id', '%(name)s'))),
                         Field('name')
                         )
         ret = db.category.validate_and_insert(name='seinfeld')
@@ -263,14 +266,15 @@ class TestValidators(unittest.TestCase):
         rtn = IS_IN_DB(db, 'category.id', '%(name)s')(ret.id)
         self.assertEqual(rtn, (ret.id, None))
         # Test _and
-        vldtr = IS_IN_DB(db, 'person.name', '%(name)s', error_message='oops', _and=IS_LENGTH(maxsize=7, error_message='bad'))
+        vldtr = IS_IN_DB(db, 'person.name', '%(name)s', error_message='oops',
+                         _and=IS_LENGTH(maxsize=7, error_message='bad'))
         rtn = vldtr('george')
         self.assertEqual(rtn, ('george', None))
         rtn = vldtr('costanza')
         self.assertEqual(rtn, ('costanza', 'bad'))
         rtn = vldtr('jerry')
         self.assertEqual(rtn, ('jerry', 'oops'))
-        vldtr.options() # test theset with _and
+        vldtr.options()  # test theset with _and
         rtn = vldtr('jerry')
         self.assertEqual(rtn, ('jerry', 'oops'))
         # Test auto_add
@@ -315,31 +319,32 @@ class TestValidators(unittest.TestCase):
                         Field('person_list', 'list:reference person'))
         ret = db.list_ref_table.validate_and_insert(name='test list:reference table')
         self.assertFalse(list(ret.errors))
-        ret = db.list_ref_table.validate_and_insert(name='test list:reference table', person_list=[george_id,costanza_id])
+        ret = db.list_ref_table.validate_and_insert(name='test list:reference table',
+                                                    person_list=[george_id, costanza_id])
         self.assertFalse(list(ret.errors))
         vldtr = IS_IN_DB(db, 'list_ref_table.person_list')
         vldtr.options()
-        rtn = vldtr([george_id,costanza_id])
-        self.assertEqual(rtn, ([george_id,costanza_id], None))
+        rtn = vldtr([george_id, costanza_id])
+        self.assertEqual(rtn, ([george_id, costanza_id], None))
         # Test it works with list:reference table.field and keyed table
-        #db.define_table('list_ref_table_field',
+        # db.define_table('list_ref_table_field',
         #                Field('name'),
         #                Field('person_list', 'list:reference person_keyed.name'))
-        #ret = db.list_ref_table_field.validate_and_insert(name='test list:reference table.field')
-        #self.assertFalse(list(ret.errors))
-        #ret = db.list_ref_table_field.validate_and_insert(name='test list:reference table.field', person_list=['george','costanza'])
-        #self.assertFalse(list(ret.errors))
-        #vldtr = IS_IN_DB(db, 'list_ref_table_field.person_list')
-        #vldtr.options()
-        #rtn = vldtr(['george','costanza'])
-        #self.assertEqual(rtn, (['george','costanza'], None))
+        # ret = db.list_ref_table_field.validate_and_insert(name='test list:reference table.field')
+        # self.assertFalse(list(ret.errors))
+        # ret = db.list_ref_table_field.validate_and_insert(name='test list:reference table.field', person_list=['george','costanza'])
+        # self.assertFalse(list(ret.errors))
+        # vldtr = IS_IN_DB(db, 'list_ref_table_field.person_list')
+        # vldtr.options()
+        # rtn = vldtr(['george','costanza'])
+        # self.assertEqual(rtn, (['george','costanza'], None))
         db.person.drop()
         db.category.drop()
         db.person_keyed.drop()
         db.ref_table.drop()
         db.ref_table_field.drop()
         db.list_ref_table.drop()
-        #db.list_ref_table_field.drop()
+        # db.list_ref_table_field.drop()
 
     def test_IS_NOT_IN_DB(self):
         from gluon.dal import DAL, Field
@@ -540,25 +545,25 @@ class TestValidators(unittest.TestCase):
         self.assertEqual(rtn, ('abc@def.us', None))
         rtn = IS_EMAIL()('abc@d_-f.us')
         self.assertEqual(rtn, ('abc@d_-f.us', None))
-        rtn = IS_EMAIL()('@def.com')           # missing name
+        rtn = IS_EMAIL()('@def.com')  # missing name
         self.assertEqual(rtn, ('@def.com', 'Enter a valid email address'))
-        rtn = IS_EMAIL()('"abc@def".com')      # quoted name
+        rtn = IS_EMAIL()('"abc@def".com')  # quoted name
         self.assertEqual(rtn, ('"abc@def".com', 'Enter a valid email address'))
-        rtn = IS_EMAIL()('abc+def.com')        # no @
+        rtn = IS_EMAIL()('abc+def.com')  # no @
         self.assertEqual(rtn, ('abc+def.com', 'Enter a valid email address'))
-        rtn = IS_EMAIL()('abc@def.x')          # one-char TLD
+        rtn = IS_EMAIL()('abc@def.x')  # one-char TLD
         self.assertEqual(rtn, ('abc@def.x', 'Enter a valid email address'))
-        rtn = IS_EMAIL()('abc@def.12')         # numeric TLD
+        rtn = IS_EMAIL()('abc@def.12')  # numeric TLD
         self.assertEqual(rtn, ('abc@def.12', 'Enter a valid email address'))
-        rtn = IS_EMAIL()('abc@def..com')       # double-dot in domain
+        rtn = IS_EMAIL()('abc@def..com')  # double-dot in domain
         self.assertEqual(rtn, ('abc@def..com', 'Enter a valid email address'))
-        rtn = IS_EMAIL()('abc@.def.com')       # dot starts domain
+        rtn = IS_EMAIL()('abc@.def.com')  # dot starts domain
         self.assertEqual(rtn, ('abc@.def.com', 'Enter a valid email address'))
-        rtn = IS_EMAIL()('abc@def.c_m')        # underscore in TLD
+        rtn = IS_EMAIL()('abc@def.c_m')  # underscore in TLD
         self.assertEqual(rtn, ('abc@def.c_m', 'Enter a valid email address'))
-        rtn = IS_EMAIL()('NotAnEmail')         # missing @
+        rtn = IS_EMAIL()('NotAnEmail')  # missing @
         self.assertEqual(rtn, ('NotAnEmail', 'Enter a valid email address'))
-        rtn = IS_EMAIL()('abc@NotAnEmail')     # missing TLD
+        rtn = IS_EMAIL()('abc@NotAnEmail')  # missing TLD
         self.assertEqual(rtn, ('abc@NotAnEmail', 'Enter a valid email address'))
         rtn = IS_EMAIL()('customer/department@example.com')
         self.assertEqual(rtn, ('customer/department@example.com', None))
@@ -570,22 +575,22 @@ class TestValidators(unittest.TestCase):
         self.assertEqual(rtn, ('_Yosemite.Sam@example.com', None))
         rtn = IS_EMAIL()('~@example.com')
         self.assertEqual(rtn, ('~@example.com', None))
-        rtn = IS_EMAIL()('.wooly@example.com')       # dot starts name
+        rtn = IS_EMAIL()('.wooly@example.com')  # dot starts name
         self.assertEqual(rtn, ('.wooly@example.com', 'Enter a valid email address'))
-        rtn = IS_EMAIL()('wo..oly@example.com')      # adjacent dots in name
+        rtn = IS_EMAIL()('wo..oly@example.com')  # adjacent dots in name
         self.assertEqual(rtn, ('wo..oly@example.com', 'Enter a valid email address'))
         rtn = IS_EMAIL()('pootietang.@example.com')  # dot ends name
         self.assertEqual(rtn, ('pootietang.@example.com', 'Enter a valid email address'))
-        rtn = IS_EMAIL()('.@example.com')            # name is bare dot
+        rtn = IS_EMAIL()('.@example.com')  # name is bare dot
         self.assertEqual(rtn, ('.@example.com', 'Enter a valid email address'))
         rtn = IS_EMAIL()('Ima.Fool@example.com')
         self.assertEqual(rtn, ('Ima.Fool@example.com', None))
-        rtn = IS_EMAIL()('Ima Fool@example.com')     # space in name
+        rtn = IS_EMAIL()('Ima Fool@example.com')  # space in name
         self.assertEqual(rtn, ('Ima Fool@example.com', 'Enter a valid email address'))
-        rtn = IS_EMAIL()('localguy@localhost')       # localhost as domain
+        rtn = IS_EMAIL()('localguy@localhost')  # localhost as domain
         self.assertEqual(rtn, ('localguy@localhost', None))
         # test for banned
-        rtn = IS_EMAIL(banned='^.*\.com(|\..*)$')('localguy@localhost')       # localhost as domain
+        rtn = IS_EMAIL(banned='^.*\.com(|\..*)$')('localguy@localhost')  # localhost as domain
         self.assertEqual(rtn, ('localguy@localhost', None))
         rtn = IS_EMAIL(banned='^.*\.com(|\..*)$')('abc@example.com')
         self.assertEqual(rtn, ('abc@example.com', 'Enter a valid email address'))
@@ -601,7 +606,6 @@ class TestValidators(unittest.TestCase):
         # test for Internationalized Domain Names, see https://docs.python.org/2/library/codecs.html#module-encodings.idna
         rtn = IS_EMAIL()('web2py@Alliancefrançaise.nu')
         self.assertEqual(rtn, ('web2py@Alliancefrançaise.nu', None))
-
 
     def test_IS_LIST_OF_EMAILS(self):
         emails = ['localguy@localhost', '_Yosemite.Sam@example.com']
@@ -674,12 +678,12 @@ class TestValidators(unittest.TestCase):
         self.assertEqual(rtn, (datetime.datetime(2008, 3, 3, 12, 40), None))
         rtn = v('31/03/2008 29:40')
         self.assertEqual(rtn, ('31/03/2008 29:40', 'oops'))
+
         # Test timezone is removed and value is properly converted
         #
         # https://github.com/web2py/web2py/issues/1094
 
         class DummyTimezone(datetime.tzinfo):
-
             ONE = datetime.timedelta(hours=1)
 
             def utcoffset(self, dt):
@@ -693,6 +697,7 @@ class TestValidators(unittest.TestCase):
 
             def localize(self, dt, is_dst=False):
                 return dt.replace(tzinfo=self)
+
         v = IS_DATETIME(format="%Y-%m-%d %H:%M", error_message="oops", timezone=DummyTimezone())
         rtn = v('1982-12-14 08:00')
         self.assertEqual(rtn, (datetime.datetime(1982, 12, 14, 7, 0), None))
@@ -749,7 +754,8 @@ class TestValidators(unittest.TestCase):
                                  maximum=datetime.datetime(2009, 12, 31, 12, 20),
                                  format='%m/%d/%Y %H:%M:%S')
         rtn = v('03/03/2007 12:20:00')
-        self.assertEqual(rtn, ('03/03/2007 12:20:00', 'Enter date and time in range 01/01/2008 12:20:00 12/31/2009 12:20:00'))
+        self.assertEqual(rtn, (
+        '03/03/2007 12:20:00', 'Enter date and time in range 01/01/2008 12:20:00 12/31/2009 12:20:00'))
         v = IS_DATETIME_IN_RANGE(maximum=datetime.datetime(2009, 12, 31, 12, 20),
                                  format='%Y-%m-%d %H:%M:%S', error_message='oops')
         rtn = v('clearly not a date')
@@ -1025,12 +1031,13 @@ this is the content of the fake file
 ---123--
 """ % filename
             formdata_file_environ = {
-                'CONTENT_LENGTH':   str(len(formdata_file_data)),
-                'CONTENT_TYPE':     'multipart/form-data; boundary=-123',
-                'QUERY_STRING':     'key1=value1&key2=value2x',
-                'REQUEST_METHOD':   'POST',
+                'CONTENT_LENGTH': str(len(formdata_file_data)),
+                'CONTENT_TYPE': 'multipart/form-data; boundary=-123',
+                'QUERY_STRING': 'key1=value1&key2=value2x',
+                'REQUEST_METHOD': 'POST',
             }
-            return cgi.FieldStorage(fp=BytesIO(to_bytes(formdata_file_data)), environ=formdata_file_environ)['file_attach']
+            return cgi.FieldStorage(fp=BytesIO(to_bytes(formdata_file_data)), environ=formdata_file_environ)[
+                'file_attach']
 
         fake = gen_fake('example.pdf')
         rtn = IS_UPLOAD_FILENAME(extension='pdf')(fake)

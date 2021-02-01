@@ -21,4 +21,5 @@ def basic_auth(server="http://127.0.0.1"):
             return True
         except (urllib2.URLError, urllib2.HTTPError):
             return False
+
     return basic_login_aux

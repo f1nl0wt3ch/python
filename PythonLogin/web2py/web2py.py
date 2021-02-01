@@ -4,6 +4,7 @@
 import os
 import sys
 from multiprocessing import freeze_support
+
 # import gluon.import_all ##### This should be uncommented for py2exe.py
 
 if hasattr(sys, 'frozen'):
@@ -26,6 +27,7 @@ if __name__ == '__main__':
     if 'COVERAGE_PROCESS_START' in os.environ:
         try:
             import coverage
+
             coverage.process_startup()
         except:
             print('Coverage is not available')

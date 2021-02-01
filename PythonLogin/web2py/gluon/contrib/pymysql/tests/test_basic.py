@@ -11,7 +11,6 @@ import pymysql.cursors
 from pymysql.tests import base
 from pymysql.err import ProgrammingError
 
-
 __all__ = ["TestConversion", "TestCursor", "TestBulkInserts"]
 
 
@@ -20,12 +19,18 @@ class TestConversion(base.PyMySQLTestCase):
         """ test every data type """
         conn = self.connections[0]
         c = conn.cursor()
-        c.execute("create table test_datatypes (b bit, i int, l bigint, f real, s varchar(32), u varchar(32), bb blob, d date, dt datetime, ts timestamp, td time, t time, st datetime)")
+        c.execute(
+            "create table test_datatypes (b bit, i int, l bigint, f real, s varchar(32), u varchar(32), bb blob, d date, dt datetime, ts timestamp, td time, t time, st datetime)")
         try:
             # insert values
 
-            v = (True, -3, 123456789012, 5.7, "hello'\" world", u"Espa\xc3\xb1ol", "binary\x00data".encode(conn.charset), datetime.date(1988,2,2), datetime.datetime(2014, 5, 15, 7, 45, 57), datetime.timedelta(5,6), datetime.time(16,32), time.localtime())
-            c.execute("insert into test_datatypes (b,i,l,f,s,u,bb,d,dt,td,t,st) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", v)
+            v = (
+            True, -3, 123456789012, 5.7, "hello'\" world", u"Espa\xc3\xb1ol", "binary\x00data".encode(conn.charset),
+            datetime.date(1988, 2, 2), datetime.datetime(2014, 5, 15, 7, 45, 57), datetime.timedelta(5, 6),
+            datetime.time(16, 32), time.localtime())
+            c.execute(
+                "insert into test_datatypes (b,i,l,f,s,u,bb,d,dt,td,t,st) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+                v)
             c.execute("select b,i,l,f,s,u,bb,d,dt,td,t,st from test_datatypes")
             r = c.fetchone()
             self.assertEqual(util.int2byte(1), r[0])
@@ -36,7 +41,9 @@ class TestConversion(base.PyMySQLTestCase):
             c.execute("delete from test_datatypes")
 
             # check nulls
-            c.execute("insert into test_datatypes (b,i,l,f,s,u,bb,d,dt,td,t,st) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", [None] * 12)
+            c.execute(
+                "insert into test_datatypes (b,i,l,f,s,u,bb,d,dt,td,t,st) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+                [None] * 12)
             c.execute("select b,i,l,f,s,u,bb,d,dt,td,t,st from test_datatypes")
             r = c.fetchone()
             self.assertEqual(tuple([None] * 12), r)
@@ -46,10 +53,10 @@ class TestConversion(base.PyMySQLTestCase):
             # check sequences type
             for seq_type in (tuple, list, set, frozenset):
                 c.execute("insert into test_datatypes (i, l) values (2,4), (6,8), (10,12)")
-                seq = seq_type([2,6])
+                seq = seq_type([2, 6])
                 c.execute("select l from test_datatypes where i in %s order by i", (seq,))
                 r = c.fetchall()
-                self.assertEqual(((4,),(8,)), r)
+                self.assertEqual(((4,), (8,)), r)
                 c.execute("delete from test_datatypes")
 
         finally:
@@ -61,9 +68,9 @@ class TestConversion(base.PyMySQLTestCase):
         c = conn.cursor()
         c.execute("create table test_dict (a integer, b integer, c integer)")
         try:
-            c.execute("insert into test_dict (a,b,c) values (%(a)s, %(b)s, %(c)s)", {"a":1,"b":2,"c":3})
+            c.execute("insert into test_dict (a,b,c) values (%(a)s, %(b)s, %(c)s)", {"a": 1, "b": 2, "c": 3})
             c.execute("select a,b,c from test_dict")
-            self.assertEqual((1,2,3), c.fetchone())
+            self.assertEqual((1, 2, 3), c.fetchone())
         finally:
             c.execute("drop table test_dict")
 
@@ -108,15 +115,16 @@ class TestConversion(base.PyMySQLTestCase):
         conn = self.connections[0]
         c = conn.cursor()
         c.execute("select null,''")
-        self.assertEqual((None,u''), c.fetchone())
+        self.assertEqual((None, u''), c.fetchone())
         c.execute("select '',null")
-        self.assertEqual((u'',None), c.fetchone())
+        self.assertEqual((u'', None), c.fetchone())
 
     def test_timedelta(self):
         """ test timedelta conversion """
         conn = self.connections[0]
         c = conn.cursor()
-        c.execute("select time('12:30'), time('23:12:59'), time('23:12:59.05100'), time('-12:30'), time('-23:12:59'), time('-23:12:59.05100'), time('-00:30')")
+        c.execute(
+            "select time('12:30'), time('23:12:59'), time('23:12:59.05100'), time('-12:30'), time('-23:12:59'), time('-23:12:59.05100'), time('-00:30')")
         self.assertEqual((datetime.timedelta(0, 45000),
                           datetime.timedelta(0, 83579),
                           datetime.timedelta(0, 83579, 51000),
@@ -152,7 +160,7 @@ class TestCursor(base.PyMySQLTestCase):
     # compatible with the DB-API 2.0 spec and has not broken
     # any unit tests for anything we've tried.
 
-    #def test_description(self):
+    # def test_description(self):
     #    """ test description attribute """
     #    # result is from MySQLdb module
     #    r = (('Host', 254, 11, 60, 60, 0, 0),
@@ -222,7 +230,7 @@ class TestCursor(base.PyMySQLTestCase):
                 c.execute('insert into test_aggregates (i) values (%s)', (i,))
             c.execute('select sum(i) from test_aggregates')
             r, = c.fetchone()
-            self.assertEqual(sum(range(0,10)), r)
+            self.assertEqual(sum(range(0, 10)), r)
         finally:
             c.execute('drop table test_aggregates')
 
@@ -266,7 +274,6 @@ create table test_json (
 
 
 class TestBulkInserts(base.PyMySQLTestCase):
-
     cursor_type = pymysql.cursors.DictCursor
 
     def setUp(self):
@@ -302,8 +309,8 @@ PRIMARY KEY (id)
                            "values (%s,%s,%s,%s)", data)
         self.assertEqual(
             cursor._last_executed, bytearray(
-            b"insert into bulkinsert (id, name, age, height) values "
-            b"(0,'bob',21,123),(1,'jim',56,45),(2,'fred',100,180)"))
+                b"insert into bulkinsert (id, name, age, height) values "
+                b"(0,'bob',21,123),(1,'jim',56,45),(2,'fred',100,180)"))
         cursor.execute('commit')
         self._verify_records(data)
 

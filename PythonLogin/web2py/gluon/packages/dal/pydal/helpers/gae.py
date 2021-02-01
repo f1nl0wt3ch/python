@@ -2,7 +2,7 @@ import decimal
 from .._gae import ndb
 
 
-#TODO Needs more testing
+# TODO Needs more testing
 class NDBDecimalProperty(ndb.StringProperty):
     """
     NDB decimal implementation

@@ -10,14 +10,16 @@ from gluon import *
 from pydal.adapters import adapters, PostgrePsyco
 from pydal.helpers.classes import DatabaseStoredFile
 
+
 @adapters.register_for('postgres')
 class HerokuPostgresAdapter(DatabaseStoredFile, PostgrePsyco):
     uploads_in_blob = True
 
-def get_db(name = None, pool_size=10):
+
+def get_db(name=None, pool_size=10):
     if not name:
         names = [n for n in os.environ.keys()
-                 if n[:18]+n[-4:]=='HEROKU_POSTGRESQL__URL']
+                 if n[:18] + n[-4:] == 'HEROKU_POSTGRESQL__URL']
         if names:
             name = names[0]
     if name:

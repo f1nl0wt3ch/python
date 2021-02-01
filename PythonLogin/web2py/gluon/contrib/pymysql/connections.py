@@ -26,6 +26,7 @@ from . import err
 
 try:
     import ssl
+
     SSL_ENABLED = True
 except ImportError:
     ssl = None
@@ -33,17 +34,16 @@ except ImportError:
 
 try:
     import getpass
+
     DEFAULT_USER = getpass.getuser()
     del getpass
 except (ImportError, KeyError):
     # KeyError occurs when there's no entry in OS database for a current user.
     DEFAULT_USER = None
 
-
 DEBUG = False
 
 _py_version = sys.version_info[:2]
-
 
 # socket.makefile() in Python 2 is not usable because very inefficient and
 # bad behavior about timeout.
@@ -52,6 +52,7 @@ if _py_version == (2, 7) and not IRONPYTHON:
     # read method of file-like returned by sock.makefile() is very slow.
     # So we copy io-based one from Python 3.
     from ._socketio import SocketIO
+
 
     def _makefile(sock, mode):
         return io.BufferedReader(SocketIO(sock, mode))
@@ -67,12 +68,13 @@ elif _py_version == (2, 6):
             if len(read) == n:
                 return read
             while True:
-                data = self._sock.recv(n-len(read))
+                data = self._sock.recv(n - len(read))
                 if not data:
                     return read
                 read += data
                 if len(read) == n:
                     return read
+
 
     def _makefile(sock, mode):
         assert mode == 'rb'
@@ -81,7 +83,6 @@ else:
     # socket.makefile in Python 3 is nice.
     def _makefile(sock, mode):
         return sock.makefile(mode)
-
 
 TEXT_TYPES = set([
     FIELD_TYPE.BIT,
@@ -104,10 +105,10 @@ UNSIGNED_INT64_COLUMN = 254
 
 DEFAULT_CHARSET = 'latin1'
 
-MAX_PACKET_LEN = 2**24-1
+MAX_PACKET_LEN = 2 ** 24 - 1
 
 
-def dump_packet(data): # pragma: no cover
+def dump_packet(data):  # pragma: no cover
     def is_ascii(data):
         if 65 <= byte2int(data) <= 122:
             if isinstance(data, int):
@@ -123,7 +124,7 @@ def dump_packet(data): # pragma: no cover
         print("-" * 66)
     except ValueError:
         pass
-    dump_data = [data[i:i+16] for i in range_type(0, min(len(data), 256), 16)]
+    dump_data = [data[i:i + 16] for i in range_type(0, min(len(data), 256), 16)]
     for d in dump_data:
         print(' '.join(map(lambda x: "{:02X}".format(byte2int(x)), d)) +
               '   ' * (16 - len(d)) + ' ' * 2 +
@@ -149,10 +150,11 @@ def _my_crypt(message1, message2):
     length = len(message1)
     result = b''
     for i in range_type(length):
-        x = (struct.unpack('B', message1[i:i+1])[0] ^
-             struct.unpack('B', message2[i:i+1])[0])
+        x = (struct.unpack('B', message1[i:i + 1])[0] ^
+             struct.unpack('B', message2[i:i + 1])[0])
         result += struct.pack('B', x)
     return result
+
 
 # old_passwords support ported from libmysql/password.c
 SCRAMBLE_LENGTH_323 = 8
@@ -208,6 +210,7 @@ def _hash_password_323(password):
 def pack_int24(n):
     return struct.pack('<I', n)[:3]
 
+
 # https://dev.mysql.com/doc/internals/en/integer.html#packet-Protocol::LengthEncodedInteger
 def lenenc_int(i):
     if (i < 0):
@@ -222,6 +225,7 @@ def lenenc_int(i):
         return b'\xfe' + struct.pack('<Q', i)
     else:
         raise ValueError("Encoding %x is larger than %x - no representation in LengthEncodedInteger" % (i, (1 << 64)))
+
 
 class MysqlPacket(object):
     """Representation of a MySQL response packet.
@@ -239,7 +243,7 @@ class MysqlPacket(object):
 
     def read(self, size):
         """Read the first 'size' bytes in packet and advance cursor past them."""
-        result = self._data[self._position:(self._position+size)]
+        result = self._data[self._position:(self._position + size)]
         if len(result) != size:
             error = ('Result length not requested length:\n'
                      'Expected=%s.  Actual=%s.  Position: %s.  Data Length: %s'
@@ -283,7 +287,7 @@ class MysqlPacket(object):
         No error checking is done.  If requesting outside end of buffer
         an empty string (or string shorter than 'length') may be returned!
         """
-        return self._data[position:(position+length)]
+        return self._data[position:(position + length)]
 
     if PY2:
         def read_uint8(self):
@@ -533,7 +537,7 @@ class Connection(object):
                  connect_timeout=None, ssl=None, read_default_group=None,
                  compress=None, named_pipe=None, no_delay=None,
                  autocommit=False, db=None, passwd=None, local_infile=False,
-                 max_allowed_packet=16*1024*1024, defer_connect=False,
+                 max_allowed_packet=16 * 1024 * 1024, defer_connect=False,
                  auth_plugin_map={}, read_timeout=None, write_timeout=None):
         """
         Establish a connection to the MySQL database. Accepts several
@@ -927,9 +931,9 @@ class Connection(object):
 
             if isinstance(e, (OSError, IOError, socket.error)):
                 exc = err.OperationalError(
-                        2003,
-                        "Can't connect to MySQL server on %r (%s)" % (
-                            self.host, e))
+                    2003,
+                    "Can't connect to MySQL server on %r (%s)" % (
+                        self.host, e))
                 # Keep original exception and traceback to investigate error.
                 exc.original_exception = e
                 exc.traceback = traceback.format_exc()
@@ -965,7 +969,7 @@ class Connection(object):
             bytes_to_read = btrl + (btrh << 16)
             if packet_number != self._next_seq_id:
                 raise err.InternalError("Packet sequence number wrong - got %d expected %d" %
-                    (packet_number, self._next_seq_id))
+                                        (packet_number, self._next_seq_id))
             self._next_seq_id = (self._next_seq_id + 1) % 256
 
             recv_data = self._read_bytes(bytes_to_read)
@@ -1050,7 +1054,7 @@ class Connection(object):
         # tiny optimization: build first packet manually instead of
         # calling self..write_packet()
         prelude = struct.pack('<iB', packet_size, command)
-        packet = prelude + sql[:packet_size-1]
+        packet = prelude + sql[:packet_size - 1]
         self._write_bytes(packet)
         if DEBUG: dump_packet(packet)
         self._next_seq_id = 1
@@ -1058,7 +1062,7 @@ class Connection(object):
         if packet_size < MAX_PACKET_LEN:
             return
 
-        sql = sql[packet_size-1:]
+        sql = sql[packet_size - 1:]
         while True:
             packet_size = min(MAX_PACKET_LEN, len(sql))
             self.write_packet(sql[:packet_size])
@@ -1117,7 +1121,7 @@ class Connection(object):
         # will have the octet 254
         if auth_packet.is_auth_switch_request():
             # https://dev.mysql.com/doc/internals/en/connection-phase-packets.html#packet-Protocol::AuthSwitchRequest
-            auth_packet.read_uint8() # 0xfe packet identifier
+            auth_packet.read_uint8()  # 0xfe packet identifier
             plugin_name = auth_packet.read_string()
             if self.server_capabilities & CLIENT.PLUGIN_AUTH and plugin_name is not None:
                 auth_packet = self._process_auth(plugin_name, auth_packet)
@@ -1138,10 +1142,12 @@ class Connection(object):
             except AttributeError:
                 if plugin_name != b'dialog':
                     raise err.OperationalError(2059, "Authentication plugin '%s'" \
-                              " not loaded: - %r missing authenticate method" % (plugin_name, plugin_class))
+                                                     " not loaded: - %r missing authenticate method" % (
+                                               plugin_name, plugin_class))
             except TypeError:
                 raise err.OperationalError(2059, "Authentication plugin '%s'" \
-                    " not loaded: - %r cannot be constructed with connection object" % (plugin_name, plugin_class))
+                                                 " not loaded: - %r cannot be constructed with connection object" % (
+                                           plugin_name, plugin_class))
         else:
             handler = None
         if plugin_name == b"mysql_native_password":
@@ -1170,12 +1176,15 @@ class Connection(object):
                         self.write_packet(resp + b'\0')
                     except AttributeError:
                         raise err.OperationalError(2059, "Authentication plugin '%s'" \
-                                  " not loaded: - %r missing prompt method" % (plugin_name, handler))
+                                                         " not loaded: - %r missing prompt method" % (
+                                                   plugin_name, handler))
                     except TypeError:
                         raise err.OperationalError(2061, "Authentication plugin '%s'" \
-                                  " %r didn't respond with string. Returned '%r' to prompt %r" % (plugin_name, handler, resp, prompt))
+                                                         " %r didn't respond with string. Returned '%r' to prompt %r" % (
+                                                   plugin_name, handler, resp, prompt))
                 else:
-                    raise err.OperationalError(2059, "Authentication plugin '%s' (%r) not configured" % (plugin_name, handler))
+                    raise err.OperationalError(2059, "Authentication plugin '%s' (%r) not configured" % (
+                    plugin_name, handler))
                 pkt = self._read_packet()
                 pkt.check_error()
                 if pkt.is_ok_packet() or last:
@@ -1208,24 +1217,24 @@ class Connection(object):
         data = packet.get_all_data()
 
         if DEBUG: dump_packet(data)
-        self.protocol_version = byte2int(data[i:i+1])
+        self.protocol_version = byte2int(data[i:i + 1])
         i += 1
 
         server_end = data.find(b'\0', i)
         self.server_version = data[i:server_end].decode('latin1')
         i = server_end + 1
 
-        self.server_thread_id = struct.unpack('<I', data[i:i+4])
+        self.server_thread_id = struct.unpack('<I', data[i:i + 4])
         i += 4
 
-        self.salt = data[i:i+8]
+        self.salt = data[i:i + 8]
         i += 9  # 8 + 1(filler)
 
-        self.server_capabilities = struct.unpack('<H', data[i:i+2])[0]
+        self.server_capabilities = struct.unpack('<H', data[i:i + 2])[0]
         i += 2
 
         if len(data) >= i + 6:
-            lang, stat, cap_h, salt_len = struct.unpack('<BHHB', data[i:i+6])
+            lang, stat, cap_h, salt_len = struct.unpack('<BHHB', data[i:i + 6])
             i += 6
             self.server_language = lang
             self.server_charset = charset_by_id(lang).name
@@ -1242,10 +1251,10 @@ class Connection(object):
 
         if len(data) >= i + salt_len:
             # salt_len includes auth_plugin_data_part_1 and filler
-            self.salt += data[i:i+salt_len]
+            self.salt += data[i:i + salt_len]
             i += salt_len
 
-        i+=1
+        i += 1
         # AUTH PLUGIN NAME may appear here.
         if self.server_capabilities & CLIENT.PLUGIN_AUTH and len(data) >= i:
             # Due to Bug#59453 the auth-plugin-name is missing the terminating
@@ -1254,7 +1263,7 @@ class Connection(object):
             # didn't use version checks as mariadb is corrected and reports
             # earlier than those two.
             server_end = data.find(b'\0', i)
-            if server_end < 0: # pragma: no cover - very specific upstream bug
+            if server_end < 0:  # pragma: no cover - very specific upstream bug
                 # not found \0 and last field so take it all
                 self._auth_plugin_name = data[i:].decode('latin1')
             else:
@@ -1350,14 +1359,14 @@ class MySQLResult(object):
             raise
 
         ok_packet = self.connection._read_packet()
-        if not ok_packet.is_ok_packet(): # pragma: no cover - upstream induced protocol error
+        if not ok_packet.is_ok_packet():  # pragma: no cover - upstream induced protocol error
             raise err.OperationalError(2014, "Commands Out of Sync")
         self._read_ok_packet(ok_packet)
 
     def _check_packet_is_eof(self, packet):
         if not packet.is_eof_packet():
             return False
-        #TODO: Support CLIENT.DEPRECATE_EOF
+        # TODO: Support CLIENT.DEPRECATE_EOF
         # 1) Add DEPRECATE_EOF to CAPABILITIES
         # 2) Mask CAPABILITIES with server_capabilities
         # 3) if server_capabilities & CLIENT.DEPRECATE_EOF: use OKPacketWrapper instead of EOFPacketWrapper
@@ -1486,7 +1495,7 @@ class LoadLocalFile(object):
 
         try:
             with open(self.filename, 'rb') as open_file:
-                packet_size = min(conn.max_allowed_packet, 16*1024)  # 16KB is efficient enough
+                packet_size = min(conn.max_allowed_packet, 16 * 1024)  # 16KB is efficient enough
                 while True:
                     chunk = open_file.read(packet_size)
                     if not chunk:

@@ -35,12 +35,11 @@ EXAMPLE: python extract_oracle_models.py ORCL localhost 1521 user password
 """
 
 # Config options
-DEBUG = False       # print debug messages to STDERR
+DEBUG = False  # print debug messages to STDERR
 
 # Constant for Field keyword parameter order (and filter):
 KWARGS = ('type', 'length', 'default', 'required', 'ondelete',
           'notnull', 'unique', 'label', 'comment')
-
 
 import sys
 
@@ -51,7 +50,7 @@ def query(conn, sql, *args):
     ret = []
     try:
         if DEBUG:
-            print >> sys.stderr, "QUERY: ", sql , args
+            print >> sys.stderr, "QUERY: ", sql, args
         cur.execute(sql, args)
         for row in cur:
             dic = {}
@@ -109,7 +108,7 @@ def define_field(conn, table, field, pks):
     # Other data types
     elif field['DATA_TYPE'] in ('BINARY_DOUBLE'):
         f['type'] = "'double'"
-    elif field['DATA_TYPE'] in ('CHAR','NCHAR'):
+    elif field['DATA_TYPE'] in ('CHAR', 'NCHAR'):
         f['type'] = "'string'"
         f['comment'] = "'Alternative types: boolean, time'"
     elif field['DATA_TYPE'] in ('BLOB', 'CLOB'):
@@ -128,7 +127,7 @@ def define_field(conn, table, field, pks):
         f['type'] = "'decimal'"
         f['precision'] = field['NUMERIC_PRECISION']
         f['scale'] = field['NUMERIC_SCALE'] or 0
-    elif field['DATA_TYPE'] in ('VARCHAR2','NVARCHAR2'):
+    elif field['DATA_TYPE'] in ('VARCHAR2', 'NVARCHAR2'):
         f['type'] = "'string'"
         if field['CHARACTER_MAXIMUM_LENGTH']:
             f['length'] = field['CHARACTER_MAXIMUM_LENGTH']
@@ -136,7 +135,7 @@ def define_field(conn, table, field, pks):
     else:
         f['type'] = "'blob'"
         f['comment'] = "'WARNING: Oracle Data Type %s was not mapped." % \
-                str(field['DATA_TYPE']) + " Using 'blob' as fallback.'"
+                       str(field['DATA_TYPE']) + " Using 'blob' as fallback.'"
 
     try:
         if field['COLUMN_DEFAULT']:
@@ -269,7 +268,8 @@ def define_table(conn, table):
     "Output single table definition"
     fields = get_fields(conn, table)
     pks = primarykeys(conn, table)
-    print "db.define_table('%s'," % (table, )
+    print
+    "db.define_table('%s'," % (table,)
     for field in fields:
         fname = field['COLUMN_NAME']
         fdef = define_field(conn, table, field, pks)
@@ -277,21 +277,26 @@ def define_table(conn, table):
             fdef['unique'] = "True"
         if fdef['type'] == "'id'" and fname in pks:
             pks.pop(pks.index(fname))
-        print "    Field('%s', %s)," % (fname,
-                        ', '.join(["%s=%s" % (k, fdef[k]) for k in KWARGS
-                                   if k in fdef and fdef[k]]))
+        print
+        "    Field('%s', %s)," % (fname,
+                                  ', '.join(["%s=%s" % (k, fdef[k]) for k in KWARGS
+                                             if k in fdef and fdef[k]]))
     if pks:
-        print "    primarykey=[%s]," % ", ".join(["'%s'" % pk for pk in pks])
-    print     "    migrate=migrate)"
+        print
+        "    primarykey=[%s]," % ", ".join(["'%s'" % pk for pk in pks])
+    print
+    "    migrate=migrate)"
     print
 
 
 def define_db(conn, db, host, port, user, passwd):
     "Output database definition (model)"
     dal = 'db = DAL("oracle://%s/%s@%s:%s/%s", pool_size=10)'
-    print dal % (user, passwd, host, port, db)
     print
-    print "migrate = False"
+    dal % (user, passwd, host, port, db)
+    print
+    print
+    "migrate = False"
     print
     for table in get_tables(conn):
         define_table(conn, table)
@@ -299,13 +304,15 @@ def define_db(conn, db, host, port, user, passwd):
 
 if __name__ == "__main__":
     if len(sys.argv) < 6:
-        print HELP
+        print
+        HELP
     else:
         # Parse arguments from command line:
         db, host, port, user, passwd = sys.argv[1:6]
 
         # Make the database connection (change driver if required)
         import cx_Oracle
+
         dsn = cx_Oracle.makedsn(host, port, db)
         cnn = cx_Oracle.connect(user, passwd, dsn)
         # Start model code generation:

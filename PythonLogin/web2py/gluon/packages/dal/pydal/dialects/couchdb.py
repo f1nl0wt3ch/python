@@ -7,11 +7,11 @@ from . import dialects
 class CouchDBDialect(NoSQLDialect):
     def _and(self, first, second, query_env={}):
         return '(%s && %s)' % (self.expand(first, query_env=query_env),
-            self.expand(second, query_env=query_env))
+                               self.expand(second, query_env=query_env))
 
     def _or(self, first, second, query_env={}):
         return '(%s || %s)' % (self.expand(first, query_env=query_env),
-            self.expand(second, query_env=query_env))
+                               self.expand(second, query_env=query_env))
 
     def eq(self, first, second=None, query_env={}):
         if second is None:
@@ -29,4 +29,4 @@ class CouchDBDialect(NoSQLDialect):
 
     def comma(self, first, second, query_env={}):
         return '%s + %s' % (self.expand(first, query_env=query_env),
-            self.expand(second, query_env=query_env))
+                            self.expand(second, query_env=query_env))

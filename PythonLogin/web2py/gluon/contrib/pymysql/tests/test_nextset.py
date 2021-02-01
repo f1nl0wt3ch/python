@@ -64,5 +64,5 @@ class TestNextset(base.PyMySQLTestCase):
         except TypeError:
             self.fail()
 
-    #TODO: How about SSCursor and nextset?
+    # TODO: How about SSCursor and nextset?
     # It's very hard to implement correctly...

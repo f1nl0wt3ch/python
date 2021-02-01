@@ -69,6 +69,7 @@ def main():
             if filename.startswith(p):
                 return False
         return True
+
     pattern = os.path.join('gluon', '*.py')
     while True:
         newfiles = [x for x in glob.glob(pattern) if accept(x)]
@@ -92,6 +93,7 @@ def main():
                 target, f), 'w').write('def index(): return "hello"\n')
         else:
             shutil.copyfile(f, os.path.join(target, f))
+
 
 if __name__ == '__main__':
     main()

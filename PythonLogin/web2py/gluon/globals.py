@@ -43,7 +43,6 @@ import copy
 import tempfile
 import json as json_parser
 
-
 FMT = '%a, %d-%b-%Y %H:%M:%S PST'
 PAST = 'Sat, 1-Jan-1971 00:00:00'
 FUTURE = 'Tue, 1-Dec-2999 23:59:59'
@@ -51,10 +50,10 @@ FUTURE = 'Tue, 1-Dec-2999 23:59:59'
 try:
     # FIXME PY3
     from gluon.contrib.minify import minify
+
     have_minify = True
 except ImportError:
     have_minify = False
-
 
 regex_session_id = re.compile('^([\w\-]+/)?[\w\-\.]+$')
 
@@ -90,6 +89,7 @@ class SortingPickler(Pickler):
         self.memoize(obj)
         self._batch_setitems([(key, obj[key]) for key in sorted(obj)])
 
+
 if PY2:
     SortingPickler.dispatch = copy.copy(Pickler.dispatch)
     SortingPickler.dispatch[dict] = SortingPickler.save_dict
@@ -102,6 +102,8 @@ def sorting_dumps(obj, protocol=None):
     file = StringIO()
     SortingPickler(file, protocol).dump(obj)
     return file.getvalue()
+
+
 # END #####################################################################
 
 
@@ -153,7 +155,6 @@ def copystream_progress(request, chunk_size=10 ** 5):
 
 
 class Request(Storage):
-
     """
     Defines the request object and the default values of its members
 
@@ -253,6 +254,7 @@ class Request(Storage):
 
             def listify(a):
                 return (not isinstance(a, list) and [a]) or a
+
             try:
                 keys = sorted(dpost)
             except TypeError:
@@ -391,14 +393,15 @@ class Request(Storage):
                         raise HTTP(400, "invalid arguments")
                     else:
                         raise
+
             f.__doc__ = action.__doc__
             f.__name__ = action.__name__
             return f
+
         return wrapper
 
 
 class Response(Storage):
-
     """
     Defines the response object and the default values of its members
     response.write(   ) can be used to write in the output html
@@ -413,10 +416,10 @@ class Response(Storage):
         self.session_id = None
         self.cookies = Cookie.SimpleCookie()
         self.postprocessing = []
-        self.flash = ''            # used by the default view layout
-        self.meta = Storage()      # used by web2py_ajax.html
-        self.menu = []             # used by the default view layout
-        self.files = []            # used by web2py_ajax.html
+        self.flash = ''  # used by the default view layout
+        self.meta = Storage()  # used by web2py_ajax.html
+        self.menu = []  # used by the default view layout
+        self.files = []  # used by web2py_ajax.html
         self._vars = None
         self._caller = lambda f: f()
         self._view_environment = None
@@ -495,13 +498,14 @@ class Response(Storage):
         internal = List()
         internal.has_js = False
         internal.has_css = False
-        done = set() # to remove duplicates
+        done = set()  # to remove duplicates
         for item in self.files:
             if not isinstance(item, list):
                 if item in done:
                     continue
                 done.add(item)
-            if isinstance(item, (list, tuple)) or not item.startswith('/' + app): # also consider items in other web2py applications to be external
+            if isinstance(item, (list, tuple)) or not item.startswith(
+                    '/' + app):  # also consider items in other web2py applications to be external
                 if internal:
                     files.append(internal)
                     internal = List()
@@ -526,17 +530,19 @@ class Response(Storage):
                     # cache for 5 minutes by default
                     key = hashlib_md5(repr(f)).hexdigest()
                     cache = self.cache_includes or (current.cache.ram, 60 * 5)
+
                     def call_minify(files=f):
                         return List(minify.minify(files,
-                                             URL('static', 'temp'),
-                                             current.request.folder,
-                                             self.optimize_css,
-                                             self.optimize_js))
+                                                  URL('static', 'temp'),
+                                                  current.request.folder,
+                                                  self.optimize_css,
+                                                  self.optimize_js))
+
                     if cache:
                         cache_model, time_expire = cache
                         files[i] = cache_model('response.files.minified/' + key,
-                                            call_minify,
-                                            time_expire)
+                                               call_minify,
+                                               time_expire)
                     else:
                         files[i] = call_minify()
 
@@ -730,7 +736,7 @@ class Response(Storage):
         dbtables = {}
         infos = DAL.get_instances()
         for k, v in iteritems(infos):
-            dbstats.append(TABLE(*[TR(PRE(row[0]), '%.2fms' % (row[1]*1000))
+            dbstats.append(TABLE(*[TR(PRE(row[0]), '%.2fms' % (row[1] * 1000))
                                    for row in v['dbstats']]))
             dbtables[k] = dict(defined=v['dbtables']['defined'] or '[no defined tables]',
                                lazy=v['dbtables']['lazy'] or '[no lazy tables]')
@@ -1028,7 +1034,7 @@ class Session(Storage):
             if separate:
                 prefix = separate(response.session_id)
                 response.session_id = '%s/%s' % \
-                    (prefix, response.session_id)
+                                      (prefix, response.session_id)
             response.session_filename = \
                 os.path.join(up(request.folder), masterapp,
                              'sessions', response.session_id)
@@ -1253,8 +1259,8 @@ class Session(Storage):
     def _try_store_in_file(self, request, response):
         try:
             if (not response.session_id or
-                not response.session_filename or
-                self._forget
+                    not response.session_filename or
+                    self._forget
                     or self._unchanged(response)):
                 # self.clear_session_cookies()
                 return False
@@ -1296,5 +1302,6 @@ class Session(Storage):
 
 def pickle_session(s):
     return Session, (dict(s),)
+
 
 copyreg.pickle(Session, pickle_session)

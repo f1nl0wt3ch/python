@@ -185,17 +185,17 @@ def _make_jsmin(extended=True, python_only=True):
         id_literal_close = id_literal_(r'[a-zA-Z0-9_$}\])"\047+-]')
 
         space_sub = _re.compile((
-            r'([^\047"/\000-\040]+)'
-            r'|(%(strings)s[^\047"/\000-\040]*)'
-            r'|(?:(?<=%(preregex1)s)%(space)s*(%(regex)s[^\047"/\000-\040]*))'
-            r'|(?:(?<=%(preregex2)s)%(space)s*(%(regex)s[^\047"/\000-\040]*))'
-            r'|(?<=%(id_literal_close)s)'
-            r'%(space)s*(?:(%(newline)s)%(space)s*)+'
-            r'(?=%(id_literal_open)s)'
-            r'|(?<=%(id_literal)s)(%(space)s)+(?=%(id_literal)s)'
-            r'|%(space)s+'
-            r'|(?:%(newline)s%(space)s*)+'
-        ) % locals()).sub
+                                    r'([^\047"/\000-\040]+)'
+                                    r'|(%(strings)s[^\047"/\000-\040]*)'
+                                    r'|(?:(?<=%(preregex1)s)%(space)s*(%(regex)s[^\047"/\000-\040]*))'
+                                    r'|(?:(?<=%(preregex2)s)%(space)s*(%(regex)s[^\047"/\000-\040]*))'
+                                    r'|(?<=%(id_literal_close)s)'
+                                    r'%(space)s*(?:(%(newline)s)%(space)s*)+'
+                                    r'(?=%(id_literal_open)s)'
+                                    r'|(?<=%(id_literal)s)(%(space)s)+(?=%(id_literal)s)'
+                                    r'|%(space)s+'
+                                    r'|(?:%(newline)s%(space)s*)+'
+                                ) % locals()).sub
 
         def space_subber(match):
             """ Substitution callback """
@@ -242,11 +242,11 @@ def _make_jsmin(extended=True, python_only=True):
         not_id_literal_close = not_id_literal_(r'[a-zA-Z0-9_$}\])"\047+-]')
 
         space_norm_sub = _re.compile((
-            r'(%(strings)s)'
-            r'|(?:(%(pre_regex)s)%(space)s*(%(regex)s))'
-            r'|(%(space)s)+'
-            r'|(?:(%(newline)s)%(space)s*)+'
-        ) % locals()).sub
+                                         r'(%(strings)s)'
+                                         r'|(?:(%(pre_regex)s)%(space)s*(%(regex)s))'
+                                         r'|(%(space)s)+'
+                                         r'|(?:(%(newline)s)%(space)s*)+'
+                                     ) % locals()).sub
 
         def space_norm_subber(match):
             """ Substitution callback """
@@ -262,10 +262,10 @@ def _make_jsmin(extended=True, python_only=True):
                 return '\n'
 
         space_sub1 = _re.compile((
-            r'[\040\n]?(%(strings)s|%(pre_regex)s%(regex)s)'
-            r'|\040(%(not_id_literal)s)'
-            r'|\n(%(not_id_literal_open)s)'
-        ) % locals()).sub
+                                     r'[\040\n]?(%(strings)s|%(pre_regex)s%(regex)s)'
+                                     r'|\040(%(not_id_literal)s)'
+                                     r'|\n(%(not_id_literal_open)s)'
+                                 ) % locals()).sub
 
         def space_subber1(match):
             """ Substitution callback """
@@ -273,11 +273,11 @@ def _make_jsmin(extended=True, python_only=True):
             return groups[0] or groups[1] or groups[2]
 
         space_sub2 = _re.compile((
-            r'(%(strings)s)\040?'
-            r'|(%(pre_regex)s%(regex)s)[\040\n]?'
-            r'|(%(not_id_literal)s)\040'
-            r'|(%(not_id_literal_close)s)\n'
-        ) % locals()).sub
+                                     r'(%(strings)s)\040?'
+                                     r'|(%(pre_regex)s%(regex)s)[\040\n]?'
+                                     r'|(%(not_id_literal)s)\040'
+                                     r'|(%(not_id_literal_close)s)\n'
+                                 ) % locals()).sub
 
         def space_subber2(match):
             """ Substitution callback """
@@ -317,7 +317,9 @@ def _make_jsmin(extended=True, python_only=True):
                               ).strip()
     return jsmin
 
+
 jsmin = _make_jsmin()
+
 
 #####################
 #   EXAMPLE USAGE   #
@@ -350,17 +352,18 @@ def jsmin_for_posers(script):
     :Return: Minified script
     :Rtype: ``str``
     """
+
     def subber(match):
         """ Substitution callback """
         groups = match.groups()
         return (
-            groups[0] or
-            groups[1] or
-            groups[2] or
-            groups[3] or
-            (groups[4] and '\n') or
-            (groups[5] and ' ') or
-            ''
+                groups[0] or
+                groups[1] or
+                groups[2] or
+                groups[3] or
+                (groups[4] and '\n') or
+                (groups[5] and ' ') or
+                ''
         )
 
     return _re.sub(
@@ -388,4 +391,5 @@ def jsmin_for_posers(script):
 
 if __name__ == '__main__':
     import sys as _sys
+
     _sys.stdout.write(jsmin(_sys.stdin.read()))

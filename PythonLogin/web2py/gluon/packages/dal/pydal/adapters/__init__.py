@@ -10,6 +10,7 @@ class Adapters(Dispatcher):
             for uri in uris:
                 self._registry_[uri] = dispatch_class
             return dispatch_class
+
         return wrap
 
     def get_for(self, uri):
@@ -20,6 +21,7 @@ class Adapters(Dispatcher):
                 'Adapter not found for %s' % uri
             )
 
+
 adapters = Adapters('adapters')
 
 
@@ -28,6 +30,7 @@ class AdapterMeta(type):
 
     At the moment is used to intercept `entity_quoting` argument passed to DAL.
     """
+
     def __call__(cls, *args, **kwargs):
         uploads_in_blob = kwargs.get('adapter_args', {}).get(
             'uploads_in_blob', cls.uploads_in_blob)
@@ -55,6 +58,7 @@ def with_connection(f):
         if args[0].connection:
             return f(*args, **kwargs)
         return None
+
     return wrap
 
 
@@ -65,6 +69,7 @@ def with_connection_or_raise(f):
                 raise ValueError(args[1])
             raise RuntimeError('no connection available')
         return f(*args, **kwargs)
+
     return wrap
 
 

@@ -18,25 +18,23 @@ highlighted_poems_list = highlighted_poems.split(',')
 highlighted_poems_stripped = []
 
 for poem in highlighted_poems_list:
-  highlighted_poems_stripped.append(poem.strip())
-  
+    highlighted_poems_stripped.append(poem.strip())
+
 # print(highlighted_poems_stripped)
 
 highlighted_poems_details = []
 
 for poem in highlighted_poems_stripped:
-  highlighted_poems_details.append(poem.split(':'))
-  
+    highlighted_poems_details.append(poem.split(':'))
+
 titles = []
 poets = []
 dates = []
 
 for poem in highlighted_poems_details:
-  titles.append(poem[0])
-  poets.append(poem[1])
-  dates.append(poem[2])
-  
-for i in range(0,len(highlighted_poems_details)):
-    print('The poem {} was published by {} in {}'.format(titles[i], poets[i], dates[i]))
+    titles.append(poem[0])
+    poets.append(poem[1])
+    dates.append(poem[2])
 
-    
+for i in range(0, len(highlighted_poems_details)):
+    print('The poem {} was published by {} in {}'.format(titles[i], poets[i], dates[i]))

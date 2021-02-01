@@ -3,6 +3,7 @@ import warnings
 from pymysql.tests import base
 import pymysql.cursors
 
+
 class CursorTest(base.PyMySQLTestCase):
     def setUp(self):
         super(CursorTest, self).setUp()
@@ -75,9 +76,11 @@ class CursorTest(base.PyMySQLTestCase):
         self.assertIsNotNone(m, 'error parse %(id_name)s')
         self.assertEqual(m.group(3), '', 'group 3 not blank, bug in RE_INSERT_VALUES?')
 
-        m = pymysql.cursors.RE_INSERT_VALUES.match("INSERT INTO TEST (ID, NAME) VALUES (%(id_name)s, %(name)s) ON duplicate update")
+        m = pymysql.cursors.RE_INSERT_VALUES.match(
+            "INSERT INTO TEST (ID, NAME) VALUES (%(id_name)s, %(name)s) ON duplicate update")
         self.assertIsNotNone(m, 'error parse %(id_name)s')
-        self.assertEqual(m.group(3), ' ON duplicate update', 'group 3 not ON duplicate update, bug in RE_INSERT_VALUES?')
+        self.assertEqual(m.group(3), ' ON duplicate update',
+                         'group 3 not ON duplicate update, bug in RE_INSERT_VALUES?')
 
         # cursor._executed must bee "insert into test (data) values (0),(1),(2),(3),(4),(5),(6),(7),(8),(9)"
         # list args

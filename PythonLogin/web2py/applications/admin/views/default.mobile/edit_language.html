@@ -1,11 +1,11 @@
 {{extend 'default.mobile/layout.html'}}
 <script>
-function delkey(id) {
-  jQuery('#'+id).hide();
-  jQuery('#'+id+' INPUT').val(String.fromCharCode(127));
-  jQuery('#'+id+' TEXTAREA').val(String.fromCharCode(127));
-  return false;
-}
+    function delkey(id) {
+        jQuery('#' + id).hide();
+        jQuery('#' + id + ' INPUT').val(String.fromCharCode(127));
+        jQuery('#' + id + ' TEXTAREA').val(String.fromCharCode(127));
+        return false;
+    }
 </script>
 
 {{block sectionclass}}edit_language{{end}}
@@ -13,7 +13,7 @@ function delkey(id) {
 <h2>{{=T('Editing Language file')}} "{{=filename}}"</h2>
 
 <div>
-  {{=form}}
+    {{=form}}
 </div>
 
 

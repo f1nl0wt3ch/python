@@ -93,8 +93,8 @@ class ExtendedLoginForm(object):
         args = request.args
 
         if (self.signals and
-            any([True for signal in self.signals if signal in request.vars])
-            ):
+                any([True for signal in self.signals if signal in request.vars])
+        ):
             return self.alt_login_form.login_form()
 
         self.auth.settings.login_form = self.auth

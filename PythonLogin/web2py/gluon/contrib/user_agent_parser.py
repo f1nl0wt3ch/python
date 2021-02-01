@@ -201,10 +201,12 @@ class MSIE(Browser):
     name = "Microsoft Internet Explorer"
     version_markers = [" ", ";"]
 
+
 class MSEdge(Browser):
     look_for = "Edge"
     skip_if_found = ["MSIE"]
     version_markers = ["/", ""]
+
 
 class Galeon(Browser):
     look_for = "Galeon"
@@ -237,6 +239,7 @@ class Safari(Browser):
         else:
             return agent.split('Safari ')[-1].split(' ')[0].strip()  # Mobile Safari
 
+
 class GoogleBot(Browser):
     # https://support.google.com/webmasters/answer/1061943
     look_for = ["Googlebot", "Googlebot-News", "Googlebot-Image",
@@ -245,6 +248,7 @@ class GoogleBot(Browser):
     bot = True
     version_markers = [('/', ';'), ('/', ' ')]
 
+
 class GoogleFeedFetcher(Browser):
     look_for = "Feedfetcher-Google"
     bot = True
@@ -252,9 +256,11 @@ class GoogleFeedFetcher(Browser):
     def get_version(self, agent):
         pass
 
+
 class RunscopeRadar(Browser):
     look_for = "runscope-radar"
     bot = True
+
 
 class GoogleAppEngine(Browser):
     look_for = "AppEngine-Google"
@@ -263,6 +269,7 @@ class GoogleAppEngine(Browser):
     def get_version(self, agent):
         pass
 
+
 class GoogleApps(Browser):
     look_for = "GoogleApps script"
     bot = True
@@ -270,13 +277,16 @@ class GoogleApps(Browser):
     def get_version(self, agent):
         pass
 
+
 class TwitterBot(Browser):
     look_for = "Twitterbot"
     bot = True
 
+
 class MJ12Bot(Browser):
     look_for = "MJ12bot"
     bot = True
+
 
 class YandexBot(Browser):
     # http://help.yandex.com/search/robots/agent.xml
@@ -285,6 +295,7 @@ class YandexBot(Browser):
 
     def getVersion(self, agent, word):
         return agent[agent.index('Yandex'):].split('/')[-1].split(')')[0].strip()
+
 
 class BingBot(Browser):
     look_for = "bingbot"
@@ -305,45 +316,56 @@ class LinkedInBot(Browser):
     look_for = "LinkedInBot"
     bot = True
 
+
 class ArchiveDotOrgBot(Browser):
     look_for = "archive.org_bot"
     bot = True
+
 
 class YoudaoBot(Browser):
     look_for = "YoudaoBot"
     bot = True
 
+
 class YoudaoBotImage(Browser):
     look_for = "YodaoBot-Image"
     bot = True
+
 
 class RogerBot(Browser):
     look_for = "rogerbot"
     bot = True
 
+
 class TweetmemeBot(Browser):
     look_for = "TweetmemeBot"
     bot = True
+
 
 class WebshotBot(Browser):
     look_for = "WebshotBot"
     bot = True
 
+
 class SensikaBot(Browser):
     look_for = "SensikaBot"
     bot = True
+
 
 class YesupBot(Browser):
     look_for = "YesupBot"
     bot = True
 
+
 class DotBot(Browser):
     look_for = "DotBot"
     bot = True
 
+
 class PhantomJS(Browser):
     look_for = "Browser/Phantom"
     bot = True
+
 
 class FacebookExternalHit(Browser):
     look_for = 'facebookexternalhit'
@@ -353,35 +375,46 @@ class FacebookExternalHit(Browser):
 class NokiaOvi(Browser):
     look_for = "S40OviBrowser"
 
+
 class UCBrowser(Browser):
     look_for = "UCBrowser"
+
 
 class BrowserNG(Browser):
     look_for = "BrowserNG"
 
+
 class Dolfin(Browser):
     look_for = 'Dolfin'
+
 
 class NetFront(Browser):
     look_for = 'NetFront'
 
+
 class Jasmine(Browser):
     look_for = 'Jasmine'
+
 
 class Openwave(Browser):
     look_for = 'Openwave'
 
+
 class UPBrowser(Browser):
     look_for = 'UP.Browser'
+
 
 class OneBrowser(Browser):
     look_for = 'OneBrowser'
 
+
 class ObigoInternetBrowser(Browser):
     look_for = 'ObigoInternetBrowser'
 
+
 class TelecaBrowser(Browser):
     look_for = 'TelecaBrowser'
+
 
 class MAUI(Browser):
     look_for = 'Browser/MAUI'
@@ -505,16 +538,16 @@ class Windows(OS):
     platform = 'Windows'
     skip_if_found = ["Windows Phone"]
     win_versions = {
-                    "NT 10.0": "10",
-                    "NT 6.3": "8.1",
-                    "NT 6.2": "8",
-                    "NT 6.1": "7",
-                    "NT 6.0": "Vista",
-                    "NT 5.2": "Server 2003 / XP x64",
-                    "NT 5.1": "XP",
-                    "NT 5.01": "2000 SP1",
-                    "NT 5.0": "2000",
-                    "98; Win 9x 4.90": "Me"
+        "NT 10.0": "10",
+        "NT 6.3": "8.1",
+        "NT 6.2": "8",
+        "NT 6.1": "7",
+        "NT 6.0": "Vista",
+        "NT 5.2": "Server 2003 / XP x64",
+        "NT 5.1": "XP",
+        "NT 5.01": "2000 SP1",
+        "NT 5.0": "2000",
+        "98; Win 9x 4.90": "Me"
     }
 
     def getVersion(self, agent, word):
@@ -665,7 +698,8 @@ def simple_detect(agent):
 
     os = os_list and " ".join(os_list) or "Unknown OS"
     os_version = os_list and (result.get('flavor') and result['flavor'].get('version')) or \
-        (result.get('dist') and result['dist'].get('version')) or (result.get('os') and result['os'].get('version')) or ""
+                 (result.get('dist') and result['dist'].get('version')) or (
+                             result.get('os') and result['os'].get('version')) or ""
     browser = 'browser' in result and result['browser'].get('name') or 'Unknown Browser'
     browser_version = 'browser' in result and result['browser'].get('version') or ""
     if browser_version:
@@ -675,16 +709,17 @@ def simple_detect(agent):
     return os, browser
 
 
-class mobilize(object):  
+class mobilize(object):
     """
     Decorator for controller functions so they use different views for mobile devices.
 
     WARNING: If you update httpagentparser make sure to leave mobilize for
     backwards compatibility.
     """
+
     def __init__(self, func):
         self.func = func
-    
+
     def __call__(self):
         from gluon import current
         user_agent = current.request.user_agent()

@@ -15,6 +15,6 @@ class DB2Representer(SQLRepresenter):
             if isinstance(obj, datetime.datetime):
                 obj = obj.isoformat()[:19].replace('T', '-').replace(':', '.')
             elif isinstance(obj, datetime.date):
-                obj = obj.isoformat()[:10]+'-00.00.00'
+                obj = obj.isoformat()[:10] + '-00.00.00'
             return "'%s'" % obj
         return None

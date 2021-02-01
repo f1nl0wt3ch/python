@@ -33,13 +33,13 @@ class PostgreDialect(SQLDialect):
     @sqltype_for('big-reference')
     def type_big_reference(self):
         return 'BIGINT REFERENCES %(foreign_key)s ' + \
-            'ON DELETE %(on_delete_action)s %(null)s %(unique)s'
+               'ON DELETE %(on_delete_action)s %(null)s %(unique)s'
 
     @sqltype_for('reference TFK')
     def type_reference_tfk(self):
         return ' CONSTRAINT "FK_%(constraint_name)s_PK" FOREIGN KEY ' + \
-            '(%(field_name)s) REFERENCES %(foreign_table)s' + \
-            '(%(foreign_key)s) ON DELETE %(on_delete_action)s'
+               '(%(field_name)s) REFERENCES %(foreign_table)s' + \
+               '(%(foreign_key)s) ON DELETE %(on_delete_action)s'
 
     @sqltype_for('geometry')
     def type_geometry(self):
@@ -93,7 +93,7 @@ class PostgreDialect(SQLDialect):
         if first.type not in ('string', 'text', 'json', 'jsonb'):
             return "(%s LIKE %s ESCAPE '%s')" % (
                 self.cast(self.expand(first, query_env=query_env),
-                'CHAR(%s)' % first.length), second, escape)
+                          'CHAR(%s)' % first.length), second, escape)
         return "(%s LIKE %s ESCAPE '%s')" % (
             self.expand(first, query_env=query_env), second, escape)
 
@@ -108,7 +108,7 @@ class PostgreDialect(SQLDialect):
         if first.type not in ('string', 'text', 'json', 'jsonb', 'list:string'):
             return "(%s ILIKE %s ESCAPE '%s')" % (
                 self.cast(self.expand(first, query_env=query_env),
-                'CHAR(%s)' % first.length), second, escape)
+                          'CHAR(%s)' % first.length), second, escape)
         return "(%s ILIKE %s ESCAPE '%s')" % (
             self.expand(first, query_env=query_env), second, escape)
 
@@ -239,6 +239,7 @@ class PostgreDialectJSON(PostgreDialect):
     def type_jsonb(self):
         return 'JSONB'
 
+
 @dialects.register_for(PostgreNew)
 class PostgreDialectArrays(PostgreDialect):
     @sqltype_for('list:integer')
@@ -276,7 +277,7 @@ class PostgreDialectArrays(PostgreDialect):
     def eq(self, first, second=None, query_env={}):
         if first and 'type' not in first:
             return '(%s = %s)' % (first,
-                self.expand(second, query_env=query_env))
+                                  self.expand(second, query_env=query_env))
         return super(PostgreDialectArrays, self).eq(first, second, query_env)
 
 

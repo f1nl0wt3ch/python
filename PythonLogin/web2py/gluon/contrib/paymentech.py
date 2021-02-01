@@ -12,6 +12,7 @@
 import sys, httplib, urllib, urllib2
 from xml.dom.minidom import parseString
 
+
 # TODO: input validation, test, debugging output
 
 class PaymenTech(object):
@@ -169,9 +170,9 @@ class PaymenTech(object):
     """
 
     def __init__(self, development=False, user=None, password=None,
-               industry=None, message=None, api_url=None,
-               bin_code=None, merchant=None, host=None,
-               terminal=None, target=None):
+                 industry=None, message=None, api_url=None,
+                 bin_code=None, merchant=None, host=None,
+                 terminal=None, target=None):
 
         # PaymenTech point of sales data
         self.user = user
@@ -299,7 +300,7 @@ class PaymenTech(object):
             data[k] = v
 
         status_code = status_message = header = resp_code = \
-        tx_ref_num = order_id = None
+            tx_ref_num = order_id = None
         conn = httplib.HTTPS(self.host)
         conn.putrequest('POST', self.api_url)
 

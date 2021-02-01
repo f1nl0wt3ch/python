@@ -36,6 +36,7 @@ import sys
 import traceback
 import types
 import threading
+
 locker = threading.RLock()
 
 # Set to True if stack traces should be shown in the browser, etc.
@@ -262,6 +263,7 @@ def run(history, statement, env={}):
     finally:
         sys.modules['__main__'] = old_main
     return output.getvalue()
+
 
 if __name__ == '__main__':
     history = History()

@@ -12,7 +12,7 @@
         $.error('web2py.js has already been loaded!');
     }
 
-    var FORMDATA_IS_SUPPORTED = typeof(FormData) !== 'undefined';
+    var FORMDATA_IS_SUPPORTED = typeof (FormData) !== 'undefined';
     var animateIn = 'fadeIn';
     // var animateIn = 'slideDown';
 
@@ -81,7 +81,7 @@
             var success = [success_function];
 
             // add user success actions
-            if ($.isArray(options.done)){
+            if ($.isArray(options.done)) {
                 success = $.merge(success, options.done);
             } else {
                 success.push(options.done);
@@ -100,7 +100,7 @@
 
             // merge default ajax options with user custom options
             for (var attrname in options) {
-                    ajax_options[attrname] = options[attrname];
+                ajax_options[attrname] = options[attrname];
             }
 
             // call ajax function
@@ -159,6 +159,7 @@
                         else $(this.firstChild).val(trimmed);
                     });
                 }
+
                 var ul = this;
                 $(ul).find(':text').after('<a href="#">+</a>&nbsp;<a href="#">-</a>').keypress(
                     function (e) {
@@ -269,13 +270,13 @@
             /* help preventing double form submission for normal form (not LOADed) */
             $(doc).on('submit', 'form', function (e) {
                 var submit_buttons = $(this).find(web2py.formInputClickSelector);
-                submit_buttons.each(function() {
+                submit_buttons.each(function () {
                     web2py.disableElement($(this));
                 })
                 /* safeguard in case the form doesn't trigger a refresh,
                 see https://github.com/web2py/web2py/issues/1100 */
                 setTimeout(function () {
-                    submit_buttons.each(function() {
+                    submit_buttons.each(function () {
                         web2py.enableElement($(this));
                     });
                 }, 5000);
@@ -298,8 +299,8 @@
                  *doc.off('click', '.w2p_flash')
                  */
                 switch (xhr.status) {
-                case 500:
-                    web2py.flash(ajax_error_500);
+                    case 500:
+                        web2py.flash(ajax_error_500);
                 }
             });
 
@@ -492,7 +493,7 @@
                         inset = j;
                         break;
                     }
-                    /*calculate effect of character on alphabet size */
+                /*calculate effect of character on alphabet size */
                 if (!(inset in seen)) {
                     seen[inset] = 1;
                     score += csets[inset].length;
@@ -536,9 +537,11 @@
         web2py_websocket: function (url, onmessage, onopen, onclose) {
             if ('WebSocket' in window) {
                 var ws = new WebSocket(url);
-                ws.onopen = onopen ? onopen : (function () {});
+                ws.onopen = onopen ? onopen : (function () {
+                });
                 ws.onmessage = onmessage;
-                ws.onclose = onclose ? onclose : (function () {});
+                ws.onclose = onclose ? onclose : (function () {
+                });
                 return true; /* supported */
             } else return false; /* not supported */
         },
@@ -586,7 +589,7 @@
              * el.data('w2p_disable_with', el[method]());
              */
             if ((el.data('w2p_disable_with') == 'default') || (web2py.isUndefined(el.data(
-                    'w2p_disable_with')))) {
+                'w2p_disable_with')))) {
                 el.data('w2p_disable_with', disable_with_message);
             }
 
@@ -673,8 +676,8 @@
             }
             if (confirm_message) {
                 if (confirm_message == 'default') {
-                    confirm_message = !web2py.isUndefined(w2p_ajax_confirm_message) ?  
-                    w2p_ajax_confirm_message : 'Are you sure you want to delete this object?';
+                    confirm_message = !web2py.isUndefined(w2p_ajax_confirm_message) ?
+                        w2p_ajax_confirm_message : 'Are you sure you want to delete this object?';
                 }
                 if (!web2py.confirm(confirm_message)) {
                     web2py.stopEverything(e);

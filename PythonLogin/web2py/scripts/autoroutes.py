@@ -87,6 +87,7 @@ def auto_out(apps):
         ]
     return routes
 
+
 routes_in = auto_in(config)
 routes_out = auto_out(config)
 
@@ -133,18 +134,22 @@ def __routes_doctest():
     '''
     pass
 
+
 if __name__ == '__main__':
     try:
         import gluon.main
     except ImportError:
         import sys
         import os
+
         os.chdir(os.path.dirname(os.path.dirname(__file__)))
         sys.path.append(os.path.dirname(os.path.dirname(__file__)))
         import gluon.main
     from gluon.rewrite import regex_select, load, filter_url, regex_filter_out
-    regex_select()          # use base routing parameters
-    load(routes=__file__)   # load this file
+
+    regex_select()  # use base routing parameters
+    load(routes=__file__)  # load this file
 
     import doctest
+
     doctest.testmod()

@@ -58,7 +58,7 @@ class Migrator(object):
                 #         and referenced != tablename \
                 #         and hasattr(table,'_primarykey'):
                 #     ftype = types['integer']
-                #else:
+                # else:
                 try:
                     rtable = db[referenced]
                     rfield = rtable._id
@@ -78,9 +78,9 @@ class Migrator(object):
 
                 # must be PK reference or unique
                 if getattr(rtable, '_primarykey', None) and rfieldname in \
-                   rtable._primarykey or rfield.unique:
+                        rtable._primarykey or rfield.unique:
                     ftype = types[rfield.type[:9]] % \
-                        dict(length=rfield.length)
+                            dict(length=rfield.length)
                     # multicolumn primary key reference?
                     if not rfield.unique and len(rtable._primarykey) > 1:
                         # then it has to be a table level FK
@@ -90,13 +90,13 @@ class Migrator(object):
                     else:
                         fk = rtable._rname + ' (' + rfield._rname + ')'
                         ftype = ftype + \
-                            types['reference FK'] % dict(
-                                # should be quoted
-                                constraint_name=constraint_name,
-                                foreign_key=fk,
-                                table_name=table._rname,
-                                field_name=field._rname,
-                                on_delete_action=field.ondelete)
+                                types['reference FK'] % dict(
+                            # should be quoted
+                            constraint_name=constraint_name,
+                            foreign_key=fk,
+                            table_name=table._rname,
+                            field_name=field._rname,
+                            on_delete_action=field.ondelete)
                 else:
                     # make a guess here for circular references
                     if referenced in db:
@@ -105,21 +105,21 @@ class Migrator(object):
                         id_fieldname = table._id._rname
                     else:  # make a guess
                         id_fieldname = self.dialect.quote('id')
-                    #gotcha: the referenced table must be defined before
-                    #the referencing one to be able to create the table
-                    #Also if it's not recommended, we can still support
-                    #references to tablenames without rname to make
-                    #migrations and model relationship work also if tables
-                    #are not defined in order
+                    # gotcha: the referenced table must be defined before
+                    # the referencing one to be able to create the table
+                    # Also if it's not recommended, we can still support
+                    # references to tablenames without rname to make
+                    # migrations and model relationship work also if tables
+                    # are not defined in order
                     if referenced == tablename:
                         real_referenced = db[referenced]._rname
                     else:
                         real_referenced = (
-                            referenced in db and db[referenced]._rname or
-                            referenced)
+                                referenced in db and db[referenced]._rname or
+                                referenced)
                     rfield = db[referenced]._id
                     ftype_info = dict(
-                        index_name=self.dialect.quote(field._raw_rname+'__idx'),
+                        index_name=self.dialect.quote(field._raw_rname + '__idx'),
                         field_name=field._rname,
                         constraint_name=self.dialect.quote(constraint_name),
                         foreign_key='%s (%s)' % (
@@ -134,7 +134,7 @@ class Migrator(object):
             elif field_type.startswith('decimal'):
                 precision, scale = map(int, field_type[8:-1].split(','))
                 ftype = types[field_type[:7]] % \
-                    dict(precision=precision, scale=scale)
+                        dict(precision=precision, scale=scale)
             elif field_type.startswith('geo'):
                 if not hasattr(self.adapter, 'srid'):
                     raise RuntimeError('Adapter does not support geometry')
@@ -157,7 +157,8 @@ class Migrator(object):
                         schema, srid = parms
                     else:
                         schema = parms[0]
-                    ftype = "SELECT AddGeometryColumn ('%%(schema)s', '%%(tablename)s', '%%(fieldname)s', %%(srid)s, '%s', %%(dimension)s);" % types[geotype]
+                    ftype = "SELECT AddGeometryColumn ('%%(schema)s', '%%(tablename)s', '%%(fieldname)s', %%(srid)s, '%s', %%(dimension)s);" % \
+                            types[geotype]
                     ftype = ftype % dict(schema=schema,
                                          tablename=table._raw_rname,
                                          fieldname=field._raw_rname, srid=srid,
@@ -203,7 +204,7 @@ class Migrator(object):
             # Postgres - PostGIS:
             # geometry fields are added after the table has been created, not now
             if not (self.dbengine == 'postgres' and
-               field_type.startswith('geom')):
+                    field_type.startswith('geom')):
                 fields.append('%s %s' % (field._rname, ftype))
         other = ';'
 
@@ -225,32 +226,33 @@ class Migrator(object):
                 table._raw_rname, '_'.join(f._raw_rname for f in fk_fields))
             on_delete = list(set(f.ondelete for f in fk_fields))
             if len(on_delete) > 1:
-                raise SyntaxError('Table %s has incompatible ON DELETE actions in multi-field foreign key.' % table._dalname)
+                raise SyntaxError(
+                    'Table %s has incompatible ON DELETE actions in multi-field foreign key.' % table._dalname)
             fields = fields + ',\n    ' + \
-                types['reference TFK'] % dict(
-                    constraint_name=constraint_name,
-                    table_name=table._rname,
-                    field_name=', '.join(fkeys),
-                    foreign_table=rtable._rname,
-                    foreign_key=', '.join(pkeys),
-                    on_delete_action=on_delete[0])
+                     types['reference TFK'] % dict(
+                constraint_name=constraint_name,
+                table_name=table._rname,
+                field_name=', '.join(fkeys),
+                foreign_table=rtable._rname,
+                foreign_key=', '.join(pkeys),
+                on_delete_action=on_delete[0])
 
         if getattr(table, '_primarykey', None):
             query = "CREATE TABLE %s(\n    %s,\n    %s) %s" % \
-                (table._rname, fields,
-                 self.dialect.primary_key(', '.join([
-                    table[pk]._rname
-                    for pk in table._primarykey])), other)
+                    (table._rname, fields,
+                     self.dialect.primary_key(', '.join([
+                         table[pk]._rname
+                         for pk in table._primarykey])), other)
         else:
             query = "CREATE TABLE %s(\n    %s\n)%s" % \
-                (table._rname, fields, other)
+                    (table._rname, fields, other)
 
         uri = self.adapter.uri
         if uri.startswith('sqlite:///') \
                 or uri.startswith('spatialite:///'):
             if PY2:
                 path_encoding = sys.getfilesystemencoding() \
-                    or locale.getdefaultlocale()[1] or 'utf8'
+                                or locale.getdefaultlocale()[1] or 'utf8'
                 dbpath = uri[9:uri.rfind('/')].decode(
                     'utf8').encode(path_encoding)
             else:
@@ -313,7 +315,7 @@ class Migrator(object):
                     sql_fields, sql_fields_old,
                     sql_fields_aux, None,
                     fake_migrate=fake_migrate
-                    )
+                )
         return query
 
     def _fix(self, item):
@@ -335,7 +337,7 @@ class Migrator(object):
         else:
             drop_expr = 'ALTER TABLE %s DROP COLUMN %s;'
         field_types = dict((x.lower(), table[x].type)
-            for x in sql_fields.keys() if x in table)
+                           for x in sql_fields.keys() if x in table)
         # make sure all field names are lower case to avoid
         # migrations because of case change
         sql_fields = dict(map(self._fix, iteritems(sql_fields)))
@@ -358,7 +360,7 @@ class Migrator(object):
             if key not in sql_fields_old:
                 sql_fields_current[key] = sql_fields[key]
                 if self.dbengine in ('postgres',) and \
-                   sql_fields[key]['type'].startswith('geometry'):
+                        sql_fields[key]['type'].startswith('geometry'):
                     # 'sql' == ftype in sql
                     query = [sql_fields[key]['sql']]
                 else:
@@ -371,7 +373,7 @@ class Migrator(object):
                     sql_fields_current[key] = sql_fields[key]
                     # Field rname has changes, add new column
                     if (sql_fields[key]['raw_rname'].lower() !=
-                       sql_fields_old[key]['raw_rname'].lower()):
+                            sql_fields_old[key]['raw_rname'].lower()):
                         tt = sql_fields_aux[key]['sql'].replace(', ', new_add)
                         query = [
                             'ALTER TABLE %s ADD %s %s;' % (
@@ -384,20 +386,20 @@ class Migrator(object):
                 del sql_fields_current[key]
                 ftype = sql_fields_old[key]['type']
                 if self.dbengine == 'postgres' and \
-                   ftype.startswith('geometry'):
+                        ftype.startswith('geometry'):
                     geotype, parms = ftype[:-1].split('(')
                     schema = parms.split(',')[0]
                     query = ["SELECT DropGeometryColumn ('%(schema)s', \
                              '%(table)s', '%(field)s');" % dict(
-                                schema=schema, table=table._raw_rname,
-                                field=sql_fields_old[key]['raw_rname'])]
+                        schema=schema, table=table._raw_rname,
+                        field=sql_fields_old[key]['raw_rname'])]
                 else:
                     query = [drop_expr % (
                         table._rname, sql_fields_old[key]['rname'])]
                 metadata_change = True
             # The field has a new rname, temp field is not needed
             elif (sql_fields[key]['raw_rname'].lower() !=
-               sql_fields_old[key]['raw_rname'].lower()):
+                  sql_fields_old[key]['raw_rname'].lower()):
                 sql_fields_current[key] = sql_fields[key]
                 tt = sql_fields_aux[key]['sql'].replace(', ', new_add)
                 query = [
@@ -410,11 +412,11 @@ class Migrator(object):
                 ]
                 metadata_change = True
             elif (
-               sql_fields[key]['sql'] != sql_fields_old[key]['sql'] and not
-               isinstance(field_types.get(key), SQLCustomType) and not
-               sql_fields[key]['type'].startswith('reference') and not
-               sql_fields[key]['type'].startswith('double') and not
-               sql_fields[key]['type'].startswith('id')):
+                    sql_fields[key]['sql'] != sql_fields_old[key]['sql'] and not
+            isinstance(field_types.get(key), SQLCustomType) and not
+                    sql_fields[key]['type'].startswith('reference') and not
+                    sql_fields[key]['type'].startswith('double') and not
+                    sql_fields[key]['type'].startswith('id')):
                 sql_fields_current[key] = sql_fields[key]
                 tt = sql_fields_aux[key]['sql'].replace(', ', new_add)
                 key_tmp = self.dialect.quote(key + '__tmp')
@@ -460,7 +462,7 @@ class Migrator(object):
                 self.save_dbt(table, sql_fields_current)
 
         if metadata_change and not (
-           query and db._adapter.commit_on_alter_table):
+                query and db._adapter.commit_on_alter_table):
             db.commit()
             self.save_dbt(table, sql_fields_current)
             self.log('success!\n', table)
@@ -487,7 +489,7 @@ class Migrator(object):
 
     @staticmethod
     def file_open(filename, mode='rb', lock=True):
-        #to be used ONLY for files that on GAE may not be on filesystem
+        # to be used ONLY for files that on GAE may not be on filesystem
         if lock:
             fileobj = portalocker.LockedFile(filename, mode)
         else:
@@ -496,7 +498,7 @@ class Migrator(object):
 
     @staticmethod
     def file_close(fileobj):
-        #to be used ONLY for files that on GAE may not be on filesystem
+        # to be used ONLY for files that on GAE may not be on filesystem
         if fileobj:
             fileobj.close()
 
@@ -506,7 +508,7 @@ class Migrator(object):
 
     @staticmethod
     def file_exists(filename):
-        #to be used ONLY for files that on GAE may not be on filesystem
+        # to be used ONLY for files that on GAE may not be on filesystem
         return exists(filename)
 
 

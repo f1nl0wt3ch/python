@@ -5,7 +5,6 @@
     Unit tests for gluon.globals
 """
 
-
 import re
 import unittest
 
@@ -46,6 +45,7 @@ class testRequest(unittest.TestCase):
         def simple_rest():
             def GET(*args, **vars):
                 return args[0]
+
             return locals()
 
         self.assertEqual(simple_rest(), '1')
@@ -59,6 +59,7 @@ class testRequest(unittest.TestCase):
         def post_rest():
             def POST(*args, **vars):
                 return 'I posted'
+
             return locals()
 
         self.assertEqual(post_rest(), 'I posted')
@@ -72,6 +73,7 @@ class testRequest(unittest.TestCase):
         def ignore_rest():
             def GET(*args, **vars):
                 return args[0]
+
             return locals()
 
         self.assertEqual(ignore_rest(), '127.0.0.1')
@@ -134,12 +136,14 @@ class testResponse(unittest.TestCase):
         response = Response()
         response.files.append('https://code.jquery.com/jquery-1.11.3.min.js')
         content = return_includes(response)
-        self.assertEqual(content, '<script src="https://code.jquery.com/jquery-1.11.3.min.js" type="text/javascript"></script>')
+        self.assertEqual(content,
+                         '<script src="https://code.jquery.com/jquery-1.11.3.min.js" type="text/javascript"></script>')
 
         response = Response()
         response.files.append('https://code.jquery.com/jquery-1.11.3.min.js?var=0')
         content = return_includes(response)
-        self.assertEqual(content, '<script src="https://code.jquery.com/jquery-1.11.3.min.js?var=0" type="text/javascript"></script>')
+        self.assertEqual(content,
+                         '<script src="https://code.jquery.com/jquery-1.11.3.min.js?var=0" type="text/javascript"></script>')
 
         response = Response()
         response.files.append('https://code.jquery.com/jquery-1.11.3.min.js?var=0')
@@ -180,12 +184,14 @@ class testResponse(unittest.TestCase):
         response = Response()
         response.files.append(('js', 'http://maps.google.com/maps/api/js?sensor=false'))
         content = return_includes(response)
-        self.assertEqual(content, '<script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript"></script>')
+        self.assertEqual(content,
+                         '<script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript"></script>')
 
         response = Response()
         response.files.append(['js', 'http://maps.google.com/maps/api/js?sensor=false'])
         content = return_includes(response)
-        self.assertEqual(content, '<script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript"></script>')
+        self.assertEqual(content,
+                         '<script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript"></script>')
 
         response = Response()
         response.files.append(('js1', 'http://maps.google.com/maps/api/js?sensor=false'))
@@ -256,7 +262,6 @@ class testResponse(unittest.TestCase):
         response.include_meta()
         self.assertEqual(response.body.getvalue(), '\n<meta name="web2py" content="web2py" />\n')
         response = Response()
-        response.meta[u'meta_dict'] = {u'tag_name':'tag_value'}
+        response.meta[u'meta_dict'] = {u'tag_name': 'tag_value'}
         response.include_meta()
         self.assertEqual(response.body.getvalue(), '\n<meta tag_name="tag_value" />\n')
-

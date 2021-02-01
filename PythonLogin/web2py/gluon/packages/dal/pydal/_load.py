@@ -9,7 +9,7 @@ except:
 from .contrib import portalocker
 # TODO: uncomment the lines below when contrib/portalocker will be
 # inline with the one shipped with pip
-#try:
+# try:
 #    import portalocker
-#except ImportError:
+# except ImportError:
 #    from .contrib import portalocker

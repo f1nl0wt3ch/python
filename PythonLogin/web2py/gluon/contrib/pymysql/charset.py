@@ -1,9 +1,9 @@
 MBLENGTH = {
-        8:1,
-        33:3,
-        88:2,
-        91:2
-        }
+    8: 1,
+    33: 3,
+    88: 2,
+    91: 2
+}
 
 
 class Charset(object):
@@ -13,7 +13,7 @@ class Charset(object):
 
     def __repr__(self):
         return "Charset(id=%s, name=%r, collation=%r)" % (
-                self.id, self.name, self.collation)
+            self.id, self.name, self.collation)
 
     @property
     def encoding(self):
@@ -42,6 +42,7 @@ class Charsets:
         for c in self._by_id.values():
             if c.name == name and c.is_default:
                 return c
+
 
 _charsets = Charsets()
 """
@@ -257,7 +258,6 @@ _charsets.add(Charset(244, 'utf8mb4', 'utf8mb4_german2_ci', ''))
 _charsets.add(Charset(245, 'utf8mb4', 'utf8mb4_croatian_ci', ''))
 _charsets.add(Charset(246, 'utf8mb4', 'utf8mb4_unicode_520_ci', ''))
 _charsets.add(Charset(247, 'utf8mb4', 'utf8mb4_vietnamese_ci', ''))
-
 
 charset_by_name = _charsets.by_name
 charset_by_id = _charsets.by_id

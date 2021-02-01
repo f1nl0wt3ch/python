@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from . import capabilities
+
 try:
     import unittest2 as unittest
 except ImportError:
@@ -10,14 +11,14 @@ import warnings
 
 warnings.filterwarnings('error')
 
-class test_MySQLdb(capabilities.DatabaseTest):
 
+class test_MySQLdb(capabilities.DatabaseTest):
     db_module = pymysql
     connect_args = ()
     connect_kwargs = base.PyMySQLTestCase.databases[0].copy()
     connect_kwargs.update(dict(read_default_file='~/.my.cnf',
-                          use_unicode=True,
-                          charset='utf8', sql_mode="ANSI,STRICT_TRANS_TABLES,TRADITIONAL"))
+                               use_unicode=True,
+                               charset='utf8', sql_mode="ANSI,STRICT_TRANS_TABLES,TRADITIONAL"))
 
     create_table_extra = "ENGINE=INNODB CHARACTER SET UTF8"
     leak_test = False
@@ -27,19 +28,21 @@ class test_MySQLdb(capabilities.DatabaseTest):
 
     def test_TIME(self):
         from datetime import timedelta
-        def generator(row,col):
-            return timedelta(0, row*8000)
+        def generator(row, col):
+            return timedelta(0, row * 8000)
+
         self.check_data_integrity(
-                 ('col1 TIME',),
-                 generator)
+            ('col1 TIME',),
+            generator)
 
     def test_TINYINT(self):
         # Number data
-        def generator(row,col):
-            v = (row*row) % 256
+        def generator(row, col):
+            v = (row * row) % 256
             if v > 127:
-                v = v-256
+                v = v - 256
             return v
+
         self.check_data_integrity(
             ('col1 TINYINT',),
             generator)
@@ -72,13 +75,14 @@ class test_MySQLdb(capabilities.DatabaseTest):
 
     def test_small_CHAR(self):
         # Character data
-        def generator(row,col):
-            i = ((row+1)*(col+1)+62)%256
+        def generator(row, col):
+            i = ((row + 1) * (col + 1) + 62) % 256
             if i == 62: return ''
             if i == 63: return None
             return chr(i)
+
         self.check_data_integrity(
-            ('col1 char(1)','col2 char(1)'),
+            ('col1 char(1)', 'col2 char(1)'),
             generator)
 
     def test_bug_2671682(self):
@@ -104,6 +108,7 @@ class test_MySQLdb(capabilities.DatabaseTest):
 if __name__ == '__main__':
     if test_MySQLdb.leak_test:
         import gc
+
         gc.enable()
         gc.set_debug(gc.DEBUG_LEAK)
     unittest.main()

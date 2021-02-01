@@ -52,19 +52,22 @@ data_type_map = dict(
     real='decimal(30,15)',
 )
 
+
 def get_foreign_keys(sql_lines):
     fks = dict()
     for line in sql_lines[1:-1]:
         hit = re.search(r'FOREIGN\s+KEY\s+\("(\S+)"\)\s+REFERENCES\s+"(\S+)"\s+\("(\S+)"\)', line)
         if hit:
-            fks[hit.group(1)] =  hit.groups()[1:]
+            fks[hit.group(1)] = hit.groups()[1:]
 
     return fks
+
 
 def sqlite(database_name):
     conn = sqlite3.connect(database_name)
     c = conn.cursor()
-    r = c.execute(r"select name,sql from sqlite_master where type='table' and not name like '\_%' and not lower(name) like 'sqlite_%'")
+    r = c.execute(
+        r"select name,sql from sqlite_master where type='table' and not name like '\_%' and not lower(name) like 'sqlite_%'")
     tables = r.fetchall()
     connection_string = "legacy_db = DAL('sqlite://%s')" % database_name.split('/')[-1]
     legacy_db_table_web2py_code = []
@@ -72,16 +75,17 @@ def sqlite(database_name):
         if table_name.startswith('_'):
             continue
         if 'CREATE' in sql_create_stmnt:  # check if the table exists
-            #remove garbage lines from sql statement
+            # remove garbage lines from sql statement
             sql_lines = sql_create_stmnt.split('\n')
-            sql_lines = [x for x in sql_lines if not(
-                x.startswith('--') or x.startswith('/*') or x == '')]
-            #generate the web2py code from the create statement
+            sql_lines = [x for x in sql_lines if not (
+                    x.startswith('--') or x.startswith('/*') or x == '')]
+            # generate the web2py code from the create statement
             web2py_table_code = ''
             fields = []
             fks = get_foreign_keys(sql_lines)
             for line in sql_lines[1:-1]:
-                if re.search('KEY', line) or re.search('PRIMARY', line) or re.search('"ID"', line) or line.startswith(')'):
+                if re.search('KEY', line) or re.search('PRIMARY', line) or re.search('"ID"', line) or line.startswith(
+                        ')'):
                     continue
                 hit = re.search(r'\[(\S+)\]\s+(\w+(\(\S+\))?),?( .*)?', line)
                 if hit is not None:
@@ -99,15 +103,19 @@ def sqlite(database_name):
                         name, field_type)
             web2py_table_code = "legacy_db.define_table('%s',%s\n    migrate=False)" % (table_name, web2py_table_code)
             legacy_db_table_web2py_code.append(web2py_table_code)
-    #----------------------------------------
-    #write the legacy db to file
+    # ----------------------------------------
+    # write the legacy db to file
     legacy_db_web2py_code = connection_string + "\n\n"
     legacy_db_web2py_code += "\n\n#--------\n".join(
         legacy_db_table_web2py_code)
     return legacy_db_web2py_code
 
+
 if len(sys.argv) < 2:
-    print 'USAGE:\n\n    extract_mysql_models.py data_basename\n\n'
+    print
+    'USAGE:\n\n    extract_mysql_models.py data_basename\n\n'
 else:
-    print "# -*- coding: utf-8 -*-"
-    print sqlite(sys.argv[1])
+    print
+    "# -*- coding: utf-8 -*-"
+    print
+    sqlite(sys.argv[1])

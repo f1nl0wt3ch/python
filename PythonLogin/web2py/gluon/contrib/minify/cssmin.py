@@ -17,7 +17,6 @@ except ImportError:
 
 import re
 
-
 __version__ = '0.1.4'
 
 
@@ -59,7 +58,6 @@ def remove_unnecessary_whitespace(css):
     """Remove unnecessary whitespace characters."""
 
     def pseudoclasscolon(css):
-
         """
         Prevents 'p :link' from becoming 'p:link'.
 
@@ -151,7 +149,8 @@ def condense_floating_points(css):
 def condense_hex_colors(css):
     """Shorten colors from #AABBCC to #ABC where possible."""
 
-    regex = re.compile(r"([^\"'=\s])(\s*)#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])")
+    regex = re.compile(
+        r"([^\"'=\s])(\s*)#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])")
     match = regex.search(css)
     while match:
         first = match.group(3) + match.group(5) + match.group(7)

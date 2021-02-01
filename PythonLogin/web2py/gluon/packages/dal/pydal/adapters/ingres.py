@@ -34,8 +34,8 @@ class Ingres(SQLAdapter):
         # Older Ingres releases could use rule/trigger like Oracle above.
         if hasattr(table, '_primarykey'):
             modify_tbl_sql = 'modify %s to btree unique on %s' % \
-                (table._rname,
-                 ', '.join(["'%s'" % x for x in table.primarykey]))
+                             (table._rname,
+                              ', '.join(["'%s'" % x for x in table.primarykey]))
             self.execute(modify_tbl_sql)
         else:
             tmp_seqname = '%s_iisq' % table._raw_rname

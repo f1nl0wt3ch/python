@@ -453,7 +453,7 @@ class DAL(with_metaclass(MetaDAL, Serializable, BasicStorage)):
                                       entity_quoting=entity_quoting)
                         adapter = adapters.get_for(self._dbname)
                         self._adapter = adapter(**kwargs)
-                        #self._adapter.ignore_field_case = ignore_field_case
+                        # self._adapter.ignore_field_case = ignore_field_case
                         if bigint_id:
                             self._adapter.dialect._force_bigints()
                         connected = True
@@ -559,7 +559,7 @@ class DAL(with_metaclass(MetaDAL, Serializable, BasicStorage)):
             raise SyntaxError('invalid table "%s" attributes: %s' %
                               (tablename, invalid_kwargs))
         if not fields and 'fields' in kwargs:
-            fields = kwargs.get('fields',())
+            fields = kwargs.get('fields', ())
         if not isinstance(tablename, str):
             if isinstance(tablename, unicode):
                 try:
@@ -614,7 +614,7 @@ class DAL(with_metaclass(MetaDAL, Serializable, BasicStorage)):
         if migrate and self._uri not in (None, 'None') \
                 or self._adapter.dbengine == 'google:datastore':
             fake_migrate = self._fake_migrate_all or \
-                kwargs_get('fake_migrate', self._fake_migrate)
+                           kwargs_get('fake_migrate', self._fake_migrate)
             polymodel = kwargs_get('polymodel', None)
             try:
                 GLOBAL_LOCKER.acquire()
@@ -648,7 +648,7 @@ class DAL(with_metaclass(MetaDAL, Serializable, BasicStorage)):
                     'lazy_tables', 'do_connect']]))
         for table in self:
             db_as_dict["tables"].append(table.as_dict(flat=flat,
-                                        sanitize=sanitize))
+                                                      sanitize=sanitize))
         return db_as_dict
 
     def __contains__(self, tablename):
@@ -771,7 +771,7 @@ class DAL(with_metaclass(MetaDAL, Serializable, BasicStorage)):
         else:
             adapter.execute(query)
         if as_dict or as_ordered_dict:
-            if not hasattr(adapter.cursor,'description'):
+            if not hasattr(adapter.cursor, 'description'):
                 raise RuntimeError("database does not support executesql(...,as_dict=True)")
             # Non-DAL legacy db query, converts cursor results to dict.
             # sequence of 7-item sequences. each sequence tells about a column.
@@ -780,7 +780,8 @@ class DAL(with_metaclass(MetaDAL, Serializable, BasicStorage)):
             # reduce the column info down to just the field names
             fields = colnames or [f[0] for f in columns]
             if len(fields) != len(set(fields)):
-                raise RuntimeError("Result set includes duplicate column names. Specify unique column names using the 'colnames' argument")
+                raise RuntimeError(
+                    "Result set includes duplicate column names. Specify unique column names using the 'colnames' argument")
             #: avoid bytes strings in columns names (py3)
             if columns and not PY2:
                 for i in range(0, len(fields)):
@@ -828,7 +829,7 @@ class DAL(with_metaclass(MetaDAL, Serializable, BasicStorage)):
     def _remove_references_to(self, thistable):
         for table in self:
             table._referenced_by = [field for field in table._referenced_by
-                                    if not field.table==thistable]
+                                    if not field.table == thistable]
 
     def has_representer(self, name):
         return callable(self.representers.get(name))
@@ -837,7 +838,7 @@ class DAL(with_metaclass(MetaDAL, Serializable, BasicStorage)):
         return self.representers[name](*args, **kwargs)
 
     def export_to_csv_file(self, ofile, *args, **kwargs):
-        step = long(kwargs.get('max_fetch_rows,',500))
+        step = long(kwargs.get('max_fetch_rows,', 500))
         write_colnames = kwargs['write_colnames'] = \
             kwargs.get("write_colnames", True)
         for table in self.tables:
@@ -845,8 +846,8 @@ class DAL(with_metaclass(MetaDAL, Serializable, BasicStorage)):
             query = self._adapter.id_query(self[table])
             nrows = self(query).count()
             kwargs['write_colnames'] = write_colnames
-            for k in range(0,nrows,step):
-                self(query).select(limitby=(k,k+step)).export_to_csv_file(
+            for k in range(0, nrows, step):
+                self(query).select(limitby=(k, k + step)).export_to_csv_file(
                     ofile, *args, **kwargs)
                 kwargs['write_colnames'] = False
             ofile.write('\r\n\r\n')
@@ -856,8 +857,8 @@ class DAL(with_metaclass(MetaDAL, Serializable, BasicStorage)):
                              unique='uuid', map_tablenames=None,
                              ignore_missing_tables=False,
                              *args, **kwargs):
-        #if id_map is None: id_map={}
-        id_offset = {} # only used if id_map is None
+        # if id_map is None: id_map={}
+        id_offset = {}  # only used if id_map is None
         map_tablenames = map_tablenames or {}
         for line in ifile:
             line = line.strip()
@@ -865,13 +866,13 @@ class DAL(with_metaclass(MetaDAL, Serializable, BasicStorage)):
                 continue
             elif line == 'END':
                 return
-            elif not line.startswith('TABLE ') :
+            elif not line.startswith('TABLE '):
                 raise SyntaxError('Invalid file format')
-            elif  not line[6:] in self.tables:
+            elif not line[6:] in self.tables:
                 raise SyntaxError('Unknown table : %s' % line[6:])
             else:
                 tablename = line[6:]
-                tablename = map_tablenames.get(tablename,tablename)
+                tablename = map_tablenames.get(tablename, tablename)
                 if tablename is not None and tablename in self.tables:
                     self[tablename].import_from_csv_file(
                         ifile, id_map, null, unique, id_offset,
@@ -882,7 +883,8 @@ class DAL(with_metaclass(MetaDAL, Serializable, BasicStorage)):
                         if not line.strip():
                             break
                 else:
-                    raise RuntimeError("Unable to import table that does not exist.\nTry db.import_from_csv_file(..., map_tablenames={'table':'othertable'},ignore_missing_tables=True)")
+                    raise RuntimeError(
+                        "Unable to import table that does not exist.\nTry db.import_from_csv_file(..., map_tablenames={'table':'othertable'},ignore_missing_tables=True)")
 
     def can_join(self):
         return self._adapter.can_join()
@@ -894,5 +896,6 @@ def DAL_unpickler(db_uid):
 
 def DAL_pickler(db):
     return DAL_unpickler, (db._db_uid,)
+
 
 copyreg.pickle(DAL, DAL_pickler, DAL_unpickler)

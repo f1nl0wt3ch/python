@@ -65,7 +65,7 @@ class TeradataDialect(SQLDialect):
     @sqltype_for('reference TFK')
     def type_reference_tfk(self):
         return ' FOREIGN KEY (%(field_name)s) REFERENCES %(foreign_table)s' + \
-            ' (%(foreign_key)s)'
+               ' (%(foreign_key)s)'
 
     def left_join(self, val, query_env={}):
         # Left join must always have an ON clause

@@ -20,6 +20,7 @@ from gluon import current, redirect, HTTP
 
 import json
 
+
 class OAuthAccount(object):
     """
     Login will be done via   OAuth Framework, instead of web2py's
@@ -95,6 +96,7 @@ Any optional arg in the constructor will be passed asis to remote
 server for requests.  It can be used for the optional"scope" parameters for Facebook.
 
     """
+
     def __redirect_uri(self, next=None):
         """
         Build the uri used by the authenticating server to redirect
@@ -117,7 +119,6 @@ server for requests.  It can be used for the optional"scope" parameters for Face
         if r.get_vars and not next:
             uri += '?' + urlencode(r.get_vars)
         return uri
-
 
     def __build_url_opener(self, uri):
         """
@@ -192,11 +193,11 @@ server for requests.  It can be used for the optional"scope" parameters for Face
                             current.session.token = tokendata
                         except Exception as e:
                             raise Exception("Cannot parse oauth server response %s %s" % (data, e))
-                    else: # try facebook style first with x-www-form-encoded
+                    else:  # try facebook style first with x-www-form-encoded
                         tokendata = cgi.parse_qs(data)
                         current.session.token = \
-                          dict([(k, v[-1]) for k, v in tokendata.items()])
-                    if not tokendata: # parsing failed?
+                            dict([(k, v[-1]) for k, v in tokendata.items()])
+                    if not tokendata:  # parsing failed?
                         raise Exception("Cannot parse oauth server response %s" % data)
                     # set expiration absolute time try to avoid broken
                     # implementations where "expires_in" becomes "expires"
@@ -207,8 +208,8 @@ server for requests.  It can be used for the optional"scope" parameters for Face
                     else:
                         exps = None
                     current.session.token['expires'] = exps and \
-                        int(current.session.token[exps]) + \
-                        time.time()
+                                                       int(current.session.token[exps]) + \
+                                                       time.time()
                 finally:
                     opener.close()
                 return current.session.token['access_token']

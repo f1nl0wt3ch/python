@@ -25,4 +25,3 @@ class Teradata(SQLAdapter):
         # and they are not sequential anyway.  
         # Similar to the NullCursor class, return 1
         return 1
-        

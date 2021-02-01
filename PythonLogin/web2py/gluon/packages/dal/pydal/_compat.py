@@ -11,6 +11,7 @@ if PY2:
     from cStringIO import StringIO
     import copy_reg as copyreg
     from urllib import unquote
+
     BytesIO = StringIO
     reduce = reduce
     hashlib_md5 = hashlib.md5
@@ -24,15 +25,18 @@ if PY2:
     long = long
     xrange = xrange
 
+
     def implements_iterator(cls):
         cls.next = cls.__next__
         del cls.__next__
         return cls
 
+
     def implements_bool(cls):
         cls.__nonzero__ = cls.__bool__
         del cls.__bool__
         return cls
+
 
     def to_bytes(obj, charset='utf-8', errors='strict'):
         if obj is None:
@@ -42,6 +46,7 @@ if PY2:
         if isinstance(obj, unicode):
             return obj.encode(charset, errors)
         raise TypeError('Expected bytes')
+
 
     def to_native(obj, charset='utf8', errors='strict'):
         if obj is None or isinstance(obj, str):
@@ -53,6 +58,7 @@ else:
     import copyreg
     from functools import reduce
     from urllib.parse import unquote
+
     hashlib_md5 = lambda s: hashlib.md5(bytes(s, 'utf8'))
     iterkeys = lambda d: iter(d.keys())
     itervalues = lambda d: iter(d.values())
@@ -67,6 +73,7 @@ else:
     implements_iterator = _identity
     implements_bool = _identity
 
+
     def to_bytes(obj, charset='utf-8', errors='strict'):
         if obj is None:
             return None
@@ -76,6 +83,7 @@ else:
             return obj.encode(charset, errors)
         raise TypeError('Expected bytes')
 
+
     def to_native(obj, charset='utf8', errors='strict'):
         if obj is None or isinstance(obj, str):
             return obj
@@ -84,6 +92,7 @@ else:
 
 def with_metaclass(meta, *bases):
     """Create a base class with a metaclass."""
+
     # This requires a bit of explanation: the basic idea is to make a dummy
     # metaclass for one level of class instantiation that replaces itself with
     # the actual metaclass.
@@ -95,6 +104,7 @@ def with_metaclass(meta, *bases):
             if this_bases is None:
                 return type.__new__(cls, name, (), d)
             return meta(name, bases, d)
+
     return metaclass('temporary_class', None, {})
 
 

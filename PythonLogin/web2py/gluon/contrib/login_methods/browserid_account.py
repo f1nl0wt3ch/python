@@ -73,13 +73,14 @@ class BrowserID(object):
             auth_info_json = fetch(self.verify_url, data=verify_data)
             j = json.loads(auth_info_json)
             epoch_time = int(time.time() * 1000)  # we need 13 digit epoch time
-            if j["status"] == "okay" and j["audience"] == audience and j['issuer'].endswith(issuer) and j['expires'] >= epoch_time:
+            if j["status"] == "okay" and j["audience"] == audience and j['issuer'].endswith(issuer) and j[
+                'expires'] >= epoch_time:
                 return dict(email=j['email'])
             elif self.on_login_failure:
-                #print "status:  ", j["status"]=="okay", j["status"]
-                #print "audience:", j["audience"]==audience, j["audience"], audience
-                #print "issuer:  ", j["issuer"]==issuer, j["issuer"], issuer
-                #print "expires:  ", j["expires"] >= epoch_time, j["expires"], epoch_time
+                # print "status:  ", j["status"]=="okay", j["status"]
+                # print "audience:", j["audience"]==audience, j["audience"], audience
+                # print "issuer:  ", j["issuer"]==issuer, j["issuer"], issuer
+                # print "expires:  ", j["expires"] >= epoch_time, j["expires"], epoch_time
                 redirect(self.on_login_failure)
             else:
                 redirect('https://login.persona.org')
@@ -90,6 +91,7 @@ class BrowserID(object):
         onclick = "javascript:navigator.id.getVerifiedEmail(gotVerifiedEmail) ; return false"
         form = DIV(SCRIPT(_src=self.browserid_js, _type="text/javascript"),
                    SCRIPT(_src=self.crypto_js, _type="text/javascript"),
-                   A(IMG(_src=self.browserid_button, _alt=self.prompt), _href="#", _onclick=onclick, _class="browserid", _title="Login With BrowserID"),
+                   A(IMG(_src=self.browserid_button, _alt=self.prompt), _href="#", _onclick=onclick, _class="browserid",
+                     _title="Login With BrowserID"),
                    SCRIPT(self.asertion_js))
         return form

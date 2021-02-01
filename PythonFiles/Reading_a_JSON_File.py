@@ -29,6 +29,6 @@ We continue by parsing purchase_json using json.load(), creating a Python dictio
 import json
 
 with open('data.json') as message_json:
-     message = json.load(message_json)
-     print(message['text'])
-     print(message)
+    message = json.load(message_json)
+    print(message['text'])
+    print(message)

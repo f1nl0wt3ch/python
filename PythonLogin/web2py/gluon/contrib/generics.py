@@ -20,6 +20,7 @@ def wrapper(f):
             raise HTTP(405, '%s not available' % e)
         except Exception as e:
             raise HTTP(405, '%s error' % e)
+
     return g
 
 
@@ -52,6 +53,7 @@ def pyfpdf_from_html(html):
 
     class MyFPDF(FPDF, HTMLMixin):
         pass
+
     pdf = MyFPDF()
     pdf.add_page()
     # pyfpdf needs some attributes to render the table correctly:

@@ -39,7 +39,7 @@ class CouchDB(NoSQLAdapter):
             if expression.type == 'id':
                 return "%s._id" % expression.tablename
         return SQLAdapter._expand(self, expression, field_type,
-            query_env=query_env)
+                                  query_env=query_env)
 
     def insert(self, table, fields):
         rid = uuid2int(self.db.uuid())
@@ -76,9 +76,9 @@ class CouchDB(NoSQLAdapter):
             ['%s.%s' % (tablename, self._make_id_field(f)) for f in fieldnames]
         )
         fn = '(function(%(t)s){if(%(query)s)emit(%(order)s,[%(fields)s]);})' \
-            % dict(
-                t=tablename, query=self.expand(query),
-                order='%s._id' % tablename, fields=fields)
+             % dict(
+            t=tablename, query=self.expand(query),
+            order='%s._id' % tablename, fields=fields)
         return fn, colnames
 
     def select(self, query, fields, attributes):
@@ -133,7 +133,7 @@ class CouchDB(NoSQLAdapter):
         if query.first.type == 'id' and query.op == self.eq:
             rid = query.second
             tablename = query.first.tablename
-            assert(tablename == query.first.tablename)
+            assert (tablename == query.first.tablename)
             ctable = self.connection[tablename]
             try:
                 del ctable[str(rid)]

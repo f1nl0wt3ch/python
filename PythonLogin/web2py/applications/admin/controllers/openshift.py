@@ -1,4 +1,5 @@
 import os
+
 try:
     from distutils import dir_util
 except ImportError:
@@ -11,9 +12,11 @@ except ImportError:
     redirect(URL('default', 'site'))
 
 from gluon.settings import settings
+
 if not settings.is_source:
     session.flash = 'Requires running web2py from source'
     redirect(URL(request.application, 'default', 'site'))
+
 
 def deploy():
     apps = sorted(file for file in os.listdir(apath(r=request)))
@@ -39,7 +42,7 @@ def deploy():
         w2p_origin = os.getcwd()
         osrepo = form.vars.osrepo
         osname = form.vars.osname
-        #Git code starts here
+        # Git code starts here
         repo = Repo(form.vars.osrepo)
         index = repo.index
         assert repo.bare == False
@@ -48,14 +51,14 @@ def deploy():
             appsrc = os.path.join(apath(r=request), i)
             appdest = os.path.join(osrepo, 'wsgi', osname, 'applications', i)
             dir_util.copy_tree(appsrc, appdest)
-            #shutil.copytree(appsrc,appdest)
+            # shutil.copytree(appsrc,appdest)
             index.add(['wsgi/' + osname + '/applications/' + i])
             new_commit = index.commit("Deploy from Web2py IDE")
 
         origin = repo.remotes.origin
         origin.push
         origin.push()
-        #Git code ends here
+        # Git code ends here
     return dict(form=form, command=cmd)
 
 

@@ -7,7 +7,7 @@ def data():
         session.m = []
     if request.vars.q:
         if len(session.m) == 10:
-            del(session.m[0])
+            del (session.m[0])
         session.m.append(request.vars.q)
     return TABLE(*[TR(v) for v in sorted(session.m)]).xml()
 

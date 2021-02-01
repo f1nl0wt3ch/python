@@ -30,6 +30,7 @@ import sys
 __all__ = ['pkcs5_pbkdf2_hmac', 'pbkdf2_bin', 'pbkdf2_hex']
 __version__ = '0.99.4'
 
+
 def _commoncrypto_hashlib_to_crypto_map_get(hashfunc):
     hashlib_to_crypto_map = {hashlib.sha1: 1,
                              hashlib.sha224: 2,
@@ -40,6 +41,7 @@ def _commoncrypto_hashlib_to_crypto_map_get(hashfunc):
     if crypto_hashfunc is None:
         raise ValueError('Unkwnown digest %s' % hashfunc)
     return crypto_hashfunc
+
 
 def _commoncrypto_pbkdf2(data, salt, iterations, digest, keylen):
     """Common Crypto compatibile wrapper
@@ -63,23 +65,24 @@ def _commoncrypto_pbkdf2(data, salt, iterations, digest, keylen):
                                             ctypes.c_uint,
                                             ctypes.c_char_p,
                                             ctypes.c_size_t]
-    ret = crypto.CCKeyDerivationPBKDF(2, # hardcoded 2-> PBKDF2
-                                           c_pass, c_passlen,
-                                           c_salt, c_saltlen,
-                                           c_hashfunc,
-                                           c_iter,
-                                           c_buff,
-                                           c_keylen)
+    ret = crypto.CCKeyDerivationPBKDF(2,  # hardcoded 2-> PBKDF2
+                                      c_pass, c_passlen,
+                                      c_salt, c_saltlen,
+                                      c_hashfunc,
+                                      c_iter,
+                                      c_buff,
+                                      c_keylen)
 
     return (1 - ret, c_buff)
 
+
 def _openssl_hashlib_to_crypto_map_get(hashfunc):
     hashlib_to_crypto_map = {hashlib.md5: crypto.EVP_md5,
-                                 hashlib.sha1: crypto.EVP_sha1,
-                                 hashlib.sha256: crypto.EVP_sha256,
-                                 hashlib.sha224: crypto.EVP_sha224,
-                                 hashlib.sha384: crypto.EVP_sha384,
-                                 hashlib.sha512: crypto.EVP_sha512}
+                             hashlib.sha1: crypto.EVP_sha1,
+                             hashlib.sha256: crypto.EVP_sha256,
+                             hashlib.sha224: crypto.EVP_sha224,
+                             hashlib.sha384: crypto.EVP_sha384,
+                             hashlib.sha512: crypto.EVP_sha512}
     crypto_hashfunc = hashlib_to_crypto_map.get(hashfunc)
     if crypto_hashfunc is None:
         raise ValueError('Unkwnown digest %s' % hashfunc)
@@ -112,12 +115,13 @@ def _openssl_pbkdf2(data, salt, iterations, digest, keylen):
 
     crypto.PKCS5_PBKDF2_HMAC.restype = ctypes.c_int
     err = crypto.PKCS5_PBKDF2_HMAC(c_pass, c_passlen,
-                            c_salt, c_saltlen,
-                            c_iter,
-                            c_hashfunc,
-                            c_keylen,
-                            c_buff)
+                                   c_salt, c_saltlen,
+                                   c_iter,
+                                   c_hashfunc,
+                                   c_keylen,
+                                   c_buff)
     return (err, c_buff)
+
 
 try:  # check that we have proper OpenSSL or Common Crypto on the system.
     system = platform.system()
@@ -134,8 +138,8 @@ try:  # check that we have proper OpenSSL or Common Crypto on the system.
 
             crypto = ctypes.CDLL(libname)
         _pbkdf2_hmac = _openssl_pbkdf2
-        crypto.PKCS5_PBKDF2_HMAC # test compatibility
-    elif system == 'Darwin': # think different(TM)! i.e. break things!
+        crypto.PKCS5_PBKDF2_HMAC  # test compatibility
+    elif system == 'Darwin':  # think different(TM)! i.e. break things!
         if [int(x) for x in platform.mac_ver()[0].split('.')] < [10, 7, 0]:
             raise OSError('OS X Version too old %s < 10.7.0' % platform.mac_ver()[0])
         libname = ctypes.util.find_library('System')
@@ -150,7 +154,7 @@ try:  # check that we have proper OpenSSL or Common Crypto on the system.
             raise OSError('Library crypto not found.')
         crypto = ctypes.CDLL(os.path.basename(libname))
         _pbkdf2_hmac = _openssl_pbkdf2
-        crypto.PKCS5_PBKDF2_HMAC # test compatibility
+        crypto.PKCS5_PBKDF2_HMAC  # test compatibility
 
 except (OSError, AttributeError):
     _, e, _ = sys.exc_info()
@@ -175,6 +179,7 @@ def pbkdf2_hex(data, salt, iterations=1000, keylen=24, hashfunc=None):
 def pbkdf2_bin(data, salt, iterations=1000, keylen=24, hashfunc=None):
     return pkcs5_pbkdf2_hmac(data, salt, iterations, keylen, hashfunc)
 
+
 if __name__ == '__main__':
     try:
         crypto.SSLeay_version.restype = ctypes.c_char_p
@@ -183,6 +188,7 @@ if __name__ == '__main__':
         pass
 
     import platform
+
     if platform.python_version_tuple() < ('3', '0', '0'):
         def bytes(*args):
             return str(args[0])

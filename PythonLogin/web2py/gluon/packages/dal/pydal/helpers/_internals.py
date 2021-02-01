@@ -10,6 +10,7 @@ class Dispatcher(object):
         def wrap(dispatch_class):
             self._registry_[target] = dispatch_class
             return dispatch_class
+
         return wrap
 
     def get_for(self, obj):

@@ -36,12 +36,12 @@ class SAPDBDialect(SQLDialect):
     @sqltype_for('reference')
     def type_reference(self):
         return 'INT, FOREIGN KEY (%(field_name)s) REFERENCES ' + \
-            '%(foreign_key)s ON DELETE %(on_delete_action)s'
+               '%(foreign_key)s ON DELETE %(on_delete_action)s'
 
     @sqltype_for('big-reference')
     def type_big_reference(self):
         return 'BIGINT, FOREIGN KEY (%(field_name)s) REFERENCES ' + \
-            '%(foreign_key)s ON DELETE %(on_delete_action)s'
+               '%(foreign_key)s ON DELETE %(on_delete_action)s'
 
     def sequence_name(self, tablename):
         return self.quote('%s_id_Seq' % tablename)
@@ -68,10 +68,10 @@ class SAPDBDialect(SQLDialect):
             else:
                 whr2 = self.where('w_row > %i' % lmin)
             return 'SELECT%s %s FROM (SELECT w_tmp.*, ROWNO w_row FROM ' + \
-                '(SELECT %s FROM %s%s%s%s) w_tmp WHERE ROWNO=%i) %s%s%s%s;' \
-                % (
-                    dst, fields, fields, tables, whr, grp, order, lmax, tables,
-                    whr2, grp, order)
+                   '(SELECT %s FROM %s%s%s%s) w_tmp WHERE ROWNO=%i) %s%s%s%s;' \
+                   % (
+                       dst, fields, fields, tables, whr, grp, order, lmax, tables,
+                       whr2, grp, order)
         if for_update:
             upd = ' FOR UPDATE'
         return 'SELECT%s%s%s %s FROM %s%s%s%s%s;' % (

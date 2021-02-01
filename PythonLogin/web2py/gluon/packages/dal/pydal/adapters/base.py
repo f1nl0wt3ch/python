@@ -18,7 +18,6 @@ from ..objects import Table, Field, Expression, Query, Rows, IterRows, \
 from ..utils import deprecated
 from . import AdapterMeta, with_connection, with_connection_or_raise
 
-
 CALLABLETYPES = (
     types.LambdaType, types.FunctionType, types.BuiltinFunctionType,
     types.MethodType, types.BuiltinMethodType)
@@ -84,7 +83,7 @@ class BaseAdapter(with_metaclass(AdapterMeta, ConnectionPool)):
         if getattr(self, 'driver', None) is not None:
             return
         requested_driver = self._driver_from_uri() or \
-            self.adapter_args.get('driver')
+                           self.adapter_args.get('driver')
         if requested_driver:
             if requested_driver in self._available_drivers:
                 self.driver_name = requested_driver
@@ -155,7 +154,7 @@ class BaseAdapter(with_metaclass(AdapterMeta, ConnectionPool)):
         return query
 
     def _expand(self, expression, field_type=None, colnames=False,
-        query_env={}):
+                query_env={}):
         return str(expression)
 
     def expand_all(self, fields, tabledict):
@@ -207,9 +206,9 @@ class BaseAdapter(with_metaclass(AdapterMeta, ConnectionPool)):
     def _add_reference_sets_to_parsed_row(self, rid, table, tablename, row):
         for rfield in table._referenced_by:
             referee_link = self.db._referee_name and self.db._referee_name % \
-                dict(table=rfield.tablename, field=rfield.name)
+                           dict(table=rfield.tablename, field=rfield.name)
             if referee_link and referee_link not in row and \
-               referee_link != tablename:
+                    referee_link != tablename:
                 row[referee_link] = LazySet(rfield, rid)
 
     def _regex_select_as_parser(self, colname):
@@ -233,9 +232,9 @@ class BaseAdapter(with_metaclass(AdapterMeta, ConnectionPool)):
                 if field.filter_out:
                     value = field.filter_out(value)
                 colset[fieldname] = value
-                #! backward compatibility
+                # ! backward compatibility
                 if ft == 'id' and fieldname != 'id' and \
-                   'id' not in table.fields:
+                        'id' not in table.fields:
                     colset['id'] = value
                 #: additional parsing for 'id' fields
                 if ft == 'id' and not cacheable:
@@ -306,7 +305,7 @@ class BaseAdapter(with_metaclass(AdapterMeta, ConnectionPool)):
             for row in rows
         ]
         rowsobj = self.db.Rows(self.db, new_rows, colnames, rawrows=rows,
-                fields=fields)
+                               fields=fields)
         # Old style virtual fields
         for tablename, tmp in fields_virtual.items():
             table = tmp[0]
@@ -416,7 +415,7 @@ class SQLAdapter(BaseAdapter):
         return rv
 
     def _expand(self, expression, field_type=None, colnames=False,
-        query_env={}):
+                query_env={}):
         if isinstance(expression, Field):
             if not colnames:
                 rv = expression.sqlsafe
@@ -454,7 +453,7 @@ class SQLAdapter(BaseAdapter):
         return str(rv)
 
     def _expand_for_index(self, expression, field_type=None, colnames=False,
-        query_env={}):
+                          query_env={}):
         if isinstance(expression, Field):
             return expression._rname
         return self._expand(expression, field_type, colnames, query_env)
@@ -509,7 +508,7 @@ class SQLAdapter(BaseAdapter):
             sql_q = self.expand(query, query_env=query_env)
         sql_v = ','.join([
             '%s=%s' % (field._rname,
-                self.expand(value, field.type, query_env=query_env))
+                       self.expand(value, field.type, query_env=query_env))
             for (field, value) in fields])
         return self.dialect.update(table, sql_v, sql_q)
 
@@ -549,7 +548,7 @@ class SQLAdapter(BaseAdapter):
 
     def _geoexpand(self, field, query_env):
         if isinstance(field.type, str) and field.type.startswith('geo') and \
-           isinstance(field, Field):
+                isinstance(field, Field):
             field = field.st_astext()
         return self.expand(field, query_env=query_env)
 
@@ -576,7 +575,7 @@ class SQLAdapter(BaseAdapter):
             if t in tables_to_merge:
                 tables_to_merge.pop(t)
         important_tablenames = join_tables + join_on_tables + \
-            list(tables_to_merge)
+                               list(tables_to_merge)
         excluded = [
             t for t in tablenames if t not in important_tablenames
         ]
@@ -627,7 +626,7 @@ class SQLAdapter(BaseAdapter):
             tablemap = merge_tablemaps(tablemap, jtablemap)
         current_scope = outer_scoped + list(tablemap)
         query_env = dict(current_scope=current_scope,
-            parent_scope=outer_scoped)
+                         parent_scope=outer_scoped)
         #: prepare columns and expand fields
         colnames = [self._colexpand(x, query_env) for x in fields]
         sql_fields = ', '.join(self._geoexpand(x, query_env) for x in fields)
@@ -636,18 +635,18 @@ class SQLAdapter(BaseAdapter):
             cross_joins = iexcluded + list(itables_to_merge)
             tokens = [table_alias(cross_joins[0])]
             tokens += [self.dialect.cross_join(table_alias(t), query_env)
-                    for t in cross_joins[1:]]
+                       for t in cross_joins[1:]]
             tokens += [self.dialect.join(t, query_env) for t in ijoin_on]
             sql_t = ' '.join(tokens)
         elif not join and left:
             cross_joins = excluded + list(tables_to_merge)
             tokens = [table_alias(cross_joins[0])]
             tokens += [self.dialect.cross_join(table_alias(t), query_env)
-                    for t in cross_joins[1:]]
+                       for t in cross_joins[1:]]
             # FIXME: WTF? This is not correct syntax at least on PostgreSQL
             if join_tables:
                 tokens.append(self.dialect.left_join(','.join([table_alias(t)
-                        for t in join_tables]), query_env))
+                                                               for t in join_tables]), query_env))
             tokens += [self.dialect.left_join(t, query_env) for t in join_on]
             sql_t = ' '.join(tokens)
         elif join and left:
@@ -658,12 +657,12 @@ class SQLAdapter(BaseAdapter):
                 list(all_tables_in_query.difference(tables_in_joinon))
             tokens = [table_alias(tables_not_in_joinon[0])]
             tokens += [self.dialect.cross_join(table_alias(t), query_env)
-                    for t in tables_not_in_joinon[1:]]
+                       for t in tables_not_in_joinon[1:]]
             tokens += [self.dialect.join(t, query_env) for t in ijoin_on]
             # FIXME: WTF? This is not correct syntax at least on PostgreSQL
             if join_tables:
                 tokens.append(self.dialect.left_join(','.join([table_alias(t)
-                        for t in join_tables]), query_env))
+                                                               for t in join_tables]), query_env))
             tokens += [self.dialect.left_join(t, query_env) for t in join_on]
             sql_t = ' '.join(tokens)
         else:
@@ -690,7 +689,7 @@ class SQLAdapter(BaseAdapter):
                 sql_ord = self.expand(orderby, query_env=query_env)
         #: set default orderby if missing
         if (limitby and not groupby and query_tables and orderby_on_limitby and
-           not orderby):
+                not orderby):
             sql_ord = ', '.join([
                 tablemap[t][x].sqlsafe
                 for t in query_tables if not isinstance(tablemap[t], Select)
@@ -839,7 +838,7 @@ class SQLAdapter(BaseAdapter):
         except Exception as e:
             self.rollback()
             err = 'Error creating index %s\n  Driver error: %s\n' + \
-                '  SQL instruction: %s'
+                  '  SQL instruction: %s'
             raise RuntimeError(err % (index_name, str(e), sql))
         return True
 

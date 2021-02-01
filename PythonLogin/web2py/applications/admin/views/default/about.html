@@ -12,15 +12,18 @@
 <script language="javascript" type="text/javascript" src="{{=URL('static','js/jquery.flot.js')}}"></script>
 <script language="javascript" type="text/javascript" src="{{=URL('static','js/jquery.flot.resize.js')}}"></script>
 <div class="row-fluid">
-	<div class="span2"> </div>
-	<div class="span8 center"> 
-		<div id="placeholder"></div>
-	</div>
-	<div class="span2"> </div>
+    <div class="span2"></div>
+    <div class="span8 center">
+        <div id="placeholder"></div>
+    </div>
+    <div class="span2"></div>
 </div>
 <script type="text/javascript">
-jQuery(document).ready(function() {
-	jQuery.plot(jQuery("#placeholder"), [ {{=progress}} ]);
-})
+    jQuery(document).ready(function () {
+        jQuery.plot(jQuery("#placeholder"), [{{ = progress
+    }
+    } ])
+        ;
+    })
 </script>
 <!-- end "about" block -->

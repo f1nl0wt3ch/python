@@ -11,6 +11,7 @@ from gluon.languages import findT
 
 sys.path.insert(0, '.')
 
+
 def sync_language(d, data):
     ''' this function makes sure a translated string will be prefered over an untranslated
     string when syncing languages between apps. when both are translated, it prefers the
@@ -23,8 +24,8 @@ def sync_language(d, data):
             d[key] = data[key]
         # see if there is a translated string in the original list, but not in the new list
         elif (
-            ((d[key] != '') or (d[key] != key)) and
-            ((data[key] == '') or (data[key] == key))
+                ((d[key] != '') or (d[key] != key)) and
+                ((data[key] == '') or (data[key] == key))
         ):
             d[key] = d[key]
         # any other case (wether there is or there isn't a translated string)
@@ -32,6 +33,7 @@ def sync_language(d, data):
             d[key] = data[key]
 
     return d
+
 
 def sync_main(file, apps):
     d = {}
@@ -45,7 +47,6 @@ def sync_main(file, apps):
             langfile.close()
 
         d = sync_language(d, data)
-
 
     path = 'applications/%s/' % apps[-1]
     file1 = os.path.join(path, 'languages', '%s.py' % file)
@@ -69,8 +70,8 @@ def sync_main(file, apps):
         if file1 != file2:
             shutil.copyfile(file1, file2)
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     file = sys.argv[1]
     apps = sys.argv[2:]
 

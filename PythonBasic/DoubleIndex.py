@@ -7,14 +7,17 @@ For example, the following code should return [1,2,6,4] because the element at i
 double_index([1, 2, 3, 4], 2)
 After writing your function, un-comment the call to the function that we’ve provided for you to test your results.
 """
-def double_index(lst, index):
-      lst_len = len(lst)
-      if  index >= lst_len:
-          return lst
-      else:
-          new = lst[index]*2
-          lst[index] = new
-          return lst
 
-#Uncomment the line below when your function is done
+
+def double_index(lst, index):
+    lst_len = len(lst)
+    if index >= lst_len:
+        return lst
+    else:
+        new = lst[index] * 2
+        lst[index] = new
+        return lst
+
+
+# Uncomment the line below when your function is done
 print(double_index([3, 8, -10, 12], 2))

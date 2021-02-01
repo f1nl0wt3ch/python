@@ -54,8 +54,8 @@ class MSSQLDialect(SQLDialect):
     @sqltype_for('reference')
     def type_reference(self):
         return 'INT%(null)s%(unique)s, CONSTRAINT %(constraint_name)s ' + \
-            'FOREIGN KEY (%(field_name)s) REFERENCES %(foreign_key)s ON ' + \
-            'DELETE %(on_delete_action)s'
+               'FOREIGN KEY (%(field_name)s) REFERENCES %(foreign_key)s ON ' + \
+               'DELETE %(on_delete_action)s'
 
     @sqltype_for('big-id')
     def type_big_id(self):
@@ -64,20 +64,20 @@ class MSSQLDialect(SQLDialect):
     @sqltype_for('big-reference')
     def type_big_reference(self):
         return 'BIGINT%(null)s%(unique)s, CONSTRAINT %(constraint_name)s' + \
-            ' FOREIGN KEY (%(field_name)s) REFERENCES %(foreign_key)s ' + \
-            'ON DELETE %(on_delete_action)s'
+               ' FOREIGN KEY (%(field_name)s) REFERENCES %(foreign_key)s ' + \
+               'ON DELETE %(on_delete_action)s'
 
     @sqltype_for('reference FK')
     def type_reference_fk(self):
         return ', CONSTRAINT FK_%(constraint_name)s FOREIGN KEY ' + \
-            '(%(field_name)s) REFERENCES %(foreign_key)s ON DELETE ' + \
-            '%(on_delete_action)s'
+               '(%(field_name)s) REFERENCES %(foreign_key)s ON DELETE ' + \
+               '%(on_delete_action)s'
 
     @sqltype_for('reference TFK')
     def type_reference_tfk(self):
         return ' CONSTRAINT FK_%(constraint_name)s_PK FOREIGN KEY ' + \
-            '(%(field_name)s) REFERENCES %(foreign_table)s ' + \
-            '(%(foreign_key)s) ON DELETE %(on_delete_action)s'
+               '(%(field_name)s) REFERENCES %(foreign_table)s ' + \
+               '(%(foreign_key)s) ON DELETE %(on_delete_action)s'
 
     @sqltype_for('geometry')
     def type_geometry(self):
@@ -165,11 +165,11 @@ class MSSQLDialect(SQLDialect):
 
     def extract(self, first, what, query_env={}):
         return "DATEPART(%s,%s)" % (what,
-            self.expand(first, query_env=query_env))
+                                    self.expand(first, query_env=query_env))
 
     def epoch(self, val, query_env={}):
         return "DATEDIFF(second, '1970-01-01 00:00:00', %s)" % \
-            self.expand(val, query_env=query_env)
+               self.expand(val, query_env=query_env)
 
     def length(self, val, query_env={}):
         return "LEN(%s)" % self.expand(val, query_env=query_env)
@@ -278,12 +278,12 @@ class MSSQL3Dialect(MSSQLDialect):
             self._as(o, n) for (o, n) in zip(f_inner, f_outer)])
         f_oproxy = ', '.join(f_outer)
         interp = 'SELECT%s %s FROM (' + \
-            'SELECT%s ROW_NUMBER() OVER (%s) AS w_row, %s FROM %s%s%s)' + \
-            ' TMP WHERE w_row BETWEEN %i and %i;'
+                 'SELECT%s ROW_NUMBER() OVER (%s) AS w_row, %s FROM %s%s%s)' + \
+                 ' TMP WHERE w_row BETWEEN %i and %i;'
         return interp % (
-                dst, f_oproxy, dst, order, f_iproxy, tables, whr, grp,
-                lmin, lmax
-            )
+            dst, f_oproxy, dst, order, f_iproxy, tables, whr, grp,
+            lmin, lmax
+        )
 
     def select(self, fields, tables, where=None, groupby=None, having=None,
                orderby=None, limitby=None, distinct=False, for_update=False):
@@ -399,11 +399,11 @@ class VerticaDialect(MSSQLDialect):
     @sqltype_for('big-reference')
     def type_big_reference(self):
         return 'BIGINT REFERENCES %(foreign_key)s ON DELETE' + \
-            ' %(on_delete_action)s'
+               ' %(on_delete_action)s'
 
     def extract(self, first, what, query_env={}):
         return "DATE_PART('%s', TIMESTAMP %s)" % (what,
-            self.expand(first, query_env=query_env))
+                                                  self.expand(first, query_env=query_env))
 
     def truncate(self, table, mode=''):
         if mode:

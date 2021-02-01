@@ -18,7 +18,8 @@ import fnmatch
 import os, sys
 import copy
 import random
-from gluon._compat import builtin, PY2, unicodeT, to_native, to_bytes, iteritems, basestring, reduce, xrange, long, reload
+from gluon._compat import builtin, PY2, unicodeT, to_native, to_bytes, iteritems, basestring, reduce, xrange, long, \
+    reload
 from gluon.storage import Storage, List
 from gluon.template import parse_template
 from gluon.restricted import restricted, compile2
@@ -115,6 +116,7 @@ class mybuiltin(object):
     NOTE could simple use a dict and populate it,
     NOTE not sure if this changes things though if monkey patching import.....
     """
+
     # __builtins__
     def __getitem__(self, key):
         try:
@@ -183,7 +185,7 @@ def LOAD(c=None, f='index', args=None, vars=None,
                 raise ValueError(
                     "Timeout argument must be greater than zero or None")
             statement = "$.web2py.component('%s','%s', %s, %s);" \
-                % (url, target, timeout, times)
+                        % (url, target, timeout, times)
             attr['_data-w2p_timeout'] = timeout
             attr['_data-w2p_times'] = times
         else:
@@ -207,8 +209,8 @@ def LOAD(c=None, f='index', args=None, vars=None,
         other_request.post_vars = post_vars
         other_response = Response()
         other_request.env.path_info = '/' + \
-            '/'.join([request.application, c, f] +
-                     [str(a) for a in other_request.args])
+                                      '/'.join([request.application, c, f] +
+                                               [str(a) for a in other_request.args])
         other_request.env.query_string = \
             vars and URL(vars=vars).split('?')[1] or ''
         other_request.env.http_web2py_component_location = \
@@ -252,6 +254,7 @@ class LoadFactory(object):
     """
     Attention: this helper is new and experimental
     """
+
     def __init__(self, environment):
         self.environment = environment
 
@@ -290,8 +293,8 @@ class LoadFactory(object):
             other_request.post_vars = Storage()
             other_response = globals.Response()
             other_request.env.path_info = '/' + \
-                '/'.join([request.application, c, f] +
-                         [str(a) for a in other_request.args])
+                                          '/'.join([request.application, c, f] +
+                                                   [str(a) for a in other_request.args])
             other_request.env.query_string = \
                 vars and html.URL(vars=vars).split('?')[1] or ''
             other_request.env.http_web2py_component_location = \
@@ -392,7 +395,7 @@ _base_environment_['HTTP'] = HTTP
 _base_environment_['redirect'] = redirect
 _base_environment_['DAL'] = DAL
 _base_environment_['Field'] = Field
-_base_environment_['SQLDB'] = DAL        # for backward compatibility
+_base_environment_['SQLDB'] = DAL  # for backward compatibility
 _base_environment_['SQLField'] = Field  # for backward compatibility
 _base_environment_['SQLFORM'] = SQLFORM
 _base_environment_['SQLTABLE'] = SQLTABLE
@@ -421,7 +424,7 @@ def build_environment(request, response, session, store_current=True):
         r'^\w+\.py$',
         r'^%s/\w+\.py$' % request.controller,
         r'^%s/%s/\w+\.py$' % (request.controller, request.function)
-        ]
+    ]
 
     t = environment['T'] = translator(os.path.join(request.folder, 'languages'),
                                       request.env.http_accept_language)
@@ -443,8 +446,8 @@ def build_environment(request, response, session, store_current=True):
     environment['response'] = response
     environment['session'] = session
     environment['local_import'] = \
-        lambda name, reload=False, app=request.application:\
-        local_import_aux(name, reload, app)
+        lambda name, reload=False, app=request.application: \
+            local_import_aux(name, reload, app)
     BaseAdapter.set_folder(pjoin(request.folder, 'databases'))
     custom_import_install()
     return environment
@@ -504,7 +507,7 @@ def compile_models(folder):
     path = pjoin(folder, 'models')
     for fname in listdir(path, '.+\.py$'):
         data = read_file(pjoin(path, fname))
-        modelfile = 'models.'+fname.replace(os.path.sep, '.')
+        modelfile = 'models.' + fname.replace(os.path.sep, '.')
         filename = pjoin(folder, 'compiled', modelfile)
         mktree(filename)
         write_file(filename, data)
@@ -529,7 +532,7 @@ def compile_controllers(folder):
         exposed = find_exposed_functions(data)
         for function in exposed:
             command = data + "\nresponse._vars=response._caller(%s)\n" % \
-                function
+                      function
             filename = pjoin(folder, 'compiled',
                              'controllers.%s.%s.py' % (fname[:-3], function))
             write_file(filename, command)
@@ -581,10 +584,10 @@ def run_models_in(environment):
                 regex = re_compile('|'.join(regex))
         if models_to_run:
             if compiled:
-                n = len(cpath)+8
-                fname = model[n:-4].replace('.', '/')+'.py'
+                n = len(cpath) + 8
+                fname = model[n:-4].replace('.', '/') + '.py'
             else:
-                n = len(path)+1
+                n = len(path) + 1
                 fname = model[n:].replace(os.path.sep, '/')
             if not regex.search(fname) and c != 'appadmin':
                 continue
@@ -626,7 +629,7 @@ def run_controller_in(controller, function, environment):
         # TESTING END
 
         filename = pjoin(folder, 'controllers/%s.py'
-                                 % controller)
+                         % controller)
         if not os.path.exists(filename):
             raise HTTP(404,
                        rewrite.THREAD_LOCAL.routes.error_message % badc,
@@ -727,7 +730,7 @@ def run_view_in(environment):
                                    context=environment)
             # Compile template
             ccode = compile2(scode, filename)
-            layer = filename        
+            layer = filename
     restricted(ccode, environment, layer=layer, scode=scode)
     # parse_template saves everything in response body
     return environment['response'].body.getvalue()

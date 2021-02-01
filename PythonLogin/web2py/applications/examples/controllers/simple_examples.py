@@ -35,6 +35,7 @@ def hello6():
     response.flash = 'Hello World in a flash!'
     return dict(message=T('Hello World'))
 
+
 def redirectme():
     """ redirects to /{{=request.application}}/{{=request.controller}}/hello3 """
 
@@ -54,6 +55,7 @@ def servejs():
     response.headers['Content-Type'] = \
         gluon.contenttype.contenttype('.js')
     return 'alert("This is a Javascript document, it is not supposed to run!");'
+
 
 def makejson():
     return response.json(['foo', {'bar': ('baz', None, 1.0, 2)}])
@@ -80,9 +82,9 @@ def rss_aggregator():
                     description=d.channel.description,
                     lastBuildDate=datetime.datetime.now(),
                     items=[rss2.RSSItem(title=entry.title,
-                    link=entry.link, description=entry.description,
-                    pubDate=datetime.datetime.now()) for entry in
-                    d.entries])
+                                        link=entry.link, description=entry.description,
+                                        pubDate=datetime.datetime.now()) for entry in
+                           d.entries])
     response.headers['Content-Type'] = 'application/rss+xml'
     return rss.to_xml(encoding='utf-8')
 

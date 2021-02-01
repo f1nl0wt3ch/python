@@ -5,6 +5,7 @@ from ..helpers.classes import Reference
 from .base import SQLAdapter
 from . import adapters, with_connection_or_raise
 
+
 @adapters.register_for('oracle')
 class Oracle(SQLAdapter):
     dbengine = 'oracle'
@@ -41,7 +42,7 @@ class Oracle(SQLAdapter):
             if not m:
                 break
             command = command[:m.start('clob')] + str(i) + \
-                command[m.end('clob'):]
+                      command[m.end('clob'):]
             args.append(m.group('clob')[6:-2].replace("''", "'"))
             i += 1
         if command[-1:] == ';':
@@ -66,13 +67,13 @@ class Oracle(SQLAdapter):
         trigger_name = table._trigger_name
         self.execute(query)
         self.execute(
-            'CREATE SEQUENCE %s START WITH 1 INCREMENT BY 1 NOMAXVALUE MINVALUE -1;' 
+            'CREATE SEQUENCE %s START WITH 1 INCREMENT BY 1 NOMAXVALUE MINVALUE -1;'
             % sequence_name)
         self.execute(_trigger_sql % dict(
             trigger_name=trigger_name, tablename=tablename,
             sequence_name=sequence_name,
             id=id_name)
-        )
+                     )
 
     def _select_aux_execute(self, sql):
         self.execute(sql)
@@ -91,9 +92,9 @@ class Oracle(SQLAdapter):
     def sqlsafe_table(self, tablename, original_tablename=None):
         if original_tablename is not None:
             return (
-                self.dialect.quote_template + ' ' +
-                self.dialect.quote_template
-            ) % (original_tablename, tablename)
+                           self.dialect.quote_template + ' ' +
+                           self.dialect.quote_template
+                   ) % (original_tablename, tablename)
         return self.dialect.quote(tablename)
 
     def _build_value_for_insert(self, field, value, r_values):
@@ -111,7 +112,7 @@ class Oracle(SQLAdapter):
                 ','.join(
                     self._build_value_for_insert(f, v, r_values)
                     for f, v in fields)
-                ), r_values
+            ), r_values
         return self.dialect.insert_empty(table._rname), None
 
     def insert(self, table, fields):
@@ -140,6 +141,7 @@ class Oracle(SQLAdapter):
         rid = Reference(id)
         (rid._table, rid._record) = (table, None)
         return rid
+
 
 _trigger_sql = """
 CREATE OR REPLACE TRIGGER %(trigger_name)s BEFORE INSERT ON %(tablename)s FOR EACH ROW

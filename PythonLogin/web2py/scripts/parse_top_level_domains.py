@@ -18,7 +18,8 @@ content = resp.read()
 valid_lines = [a.strip().lower() for a in content.split('\n') if a.strip() and a.strip()[0] != '#']
 valid_lines += ['localhost']
 
-print 'Fetched TLDs are %s' % len(valid_lines)
+print
+'Fetched TLDs are %s' % len(valid_lines)
 
 results = [list(g) for k, g in itertools.groupby(sorted(valid_lines), key=operator.itemgetter(0))]
 
@@ -38,4 +39,5 @@ for a in results:
     if thisline:
         output.append(thisline[:-1])
 
-print '[\n' + '\n'.join(output)[:-1] + '\n]'
+print
+'[\n' + '\n'.join(output)[:-1] + '\n]'

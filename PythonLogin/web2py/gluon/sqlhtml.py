@@ -19,7 +19,8 @@ import re
 import copy
 
 import os
-from gluon._compat import StringIO,unichr, urllib_quote, iteritems, basestring, long, integer_types, unicodeT, to_native, to_unicode, urlencode
+from gluon._compat import StringIO, unichr, urllib_quote, iteritems, basestring, long, integer_types, unicodeT, \
+    to_native, to_unicode, urlencode
 from gluon.http import HTTP, redirect
 from gluon.html import XmlComponent, truncate_string
 from gluon.html import XML, SPAN, TAG, A, DIV, CAT, UL, LI, TEXTAREA, BR, IMG
@@ -54,8 +55,9 @@ REGEX_ALIAS_MATCH = re.compile('^(.*) AS (.*)$')
 def add_class(a, b):
     return a + ' ' + b if a else b
 
+
 def count_expected_args(f):
-    if hasattr(f,'func_code'):
+    if hasattr(f, 'func_code'):
         # python 2
         n = f.func_code.co_argcount - len(f.func_defaults or [])
         if getattr(f, 'im_self', None):
@@ -70,6 +72,7 @@ def count_expected_args(f):
         n = 1
     return n
 
+
 def represent(field, value, record):
     f = field.represent
     if not callable(f):
@@ -82,9 +85,11 @@ def represent(field, value, record):
     else:
         raise RuntimeError("field representation must take 1 or 2 args")
 
+
 class CacheRepresenter(object):
     def __init__(self):
         self.cache = {}
+
     def __call__(self, field, value, row):
         cache = self.cache
         if field not in cache:
@@ -164,7 +169,7 @@ class FormWidget(object):
         attr = dict(
             _id='%s_%s' % (field.tablename, field.name),
             _class=cls._class or
-                widget_class.match(str(field.type)).group(),
+                   widget_class.match(str(field.type)).group(),
             _name=field.name,
             requires=field.requires,
         )
@@ -588,7 +593,7 @@ class UploadWidget(FormWidget):
                 inp = DIV(inp,
                           SPAN('[',
                                A(current.T(
-                                UploadWidget.GENERIC_DESCRIPTION), _href=url),
+                                   UploadWidget.GENERIC_DESCRIPTION), _href=url),
                                '|',
                                INPUT(_type='checkbox',
                                      _name=field.name + cls.ID_DELETE_SUFFIX,
@@ -742,10 +747,10 @@ class AutocompleteWidget(object):
                                 self.help_string % dict(
                                     [(h.name, s[h.name]) for h
                                      in self.fields[:1] + self.help_fields]),
-                                                    _value=s[id_field.name],
-                                                    _selected=(k == 0))
-                                            for k, s in enumerate(rows)
-                                    ]
+                                _value=s[id_field.name],
+                                _selected=(k == 0))
+                            for k, s in enumerate(rows)
+                        ]
                     else:
                         options = [OPTION(
                             s[field.name], _value=s[id_field.name],
@@ -795,7 +800,7 @@ class AutocompleteWidget(object):
                     self.fields[1] == value).select(self.fields[0]).first()
             attr['value'] = record and record[self.fields[0].name]
             attr['_onblur'] = "jQuery('#%(div_id)s').delay(500).fadeOut('slow');" % \
-                dict(div_id=div_id, u='F' + self.keyword)
+                              dict(div_id=div_id, u='F' + self.keyword)
             js = """
             (function($) {
                 function doit(e_) {
@@ -838,9 +843,9 @@ class AutocompleteWidget(object):
                 }
             });
             })(jQuery)""".replace('\n', '').replace(' ' * 4, '') % \
-                dict(url=self.url, min_length=self.min_length,
-                     key=self.keyword, id=attr['_id'], key2=key2, key3=key3,
-                     name=name, div_id=div_id, u='F' + self.keyword)
+                 dict(url=self.url, min_length=self.min_length,
+                      key=self.keyword, id=attr['_id'], key2=key2, key3=key3,
+                      name=name, div_id=div_id, u='F' + self.keyword)
             return CAT(INPUT(**attr),
                        INPUT(_type='hidden', _id=key3, _value=value,
                              _name=name, requires=field.requires),
@@ -849,7 +854,7 @@ class AutocompleteWidget(object):
         else:
             attr['_name'] = field.name
             attr['_onblur'] = "jQuery('#%(div_id)s').delay(500).fadeOut('slow');" % \
-                dict(div_id=div_id, u='F' + self.keyword)
+                              dict(div_id=div_id, u='F' + self.keyword)
             js = """
             (function($) {
             function doit(e_) {
@@ -885,8 +890,8 @@ class AutocompleteWidget(object):
                 }
             });
             })(jQuery)""".replace('\n', '').replace(' ' * 4, '') % \
-                dict(url=self.url, min_length=self.min_length,
-                     key=self.keyword, id=attr['_id'], div_id=div_id, u='F' + self.keyword)
+                 dict(url=self.url, min_length=self.min_length,
+                      key=self.keyword, id=attr['_id'], div_id=div_id, u='F' + self.keyword)
             return CAT(INPUT(**attr), SCRIPT(js),
                        DIV(_id=div_id, _style='position:absolute;'))
 
@@ -1044,6 +1049,7 @@ def formstyle_bootstrap3_inline_factory(col_label_size=3):
     Note:
         Experimental!
     """
+
     def _inner(form, fields):
         form.add_class('form-horizontal')
         label_col_class = "col-sm-%d" % col_label_size
@@ -1082,13 +1088,15 @@ def formstyle_bootstrap3_inline_factory(col_label_size=3):
                 for e in controls.elements("input"):
                     e.add_class('form-control')
             elif isinstance(controls, CAT) and isinstance(controls[0], INPUT):
-                    controls[0].add_class('form-control')
+                controls[0].add_class('form-control')
             if isinstance(label, LABEL):
                 label['_class'] = add_class(label.get('_class'), 'control-label %s' % label_col_class)
 
             parent.append(DIV(label, _controls, _class='form-group', _id=id))
         return parent
+
     return _inner
+
 
 # bootstrap 4
 def formstyle_bootstrap4_stacked(form, fields):
@@ -1146,6 +1154,7 @@ def formstyle_bootstrap4_inline_factory(col_label_size=3):
     Note:
         Experimental!
     """
+
     def _inner(form, fields):
         label_col_class = "col-sm-%d" % col_label_size
         col_class = "col-sm-%d" % (12 - col_label_size)
@@ -1170,7 +1179,7 @@ def formstyle_bootstrap4_inline_factory(col_label_size=3):
                     controls.add_class('form-check-input')
                     label.add_class('form-check-label')
                     label.insert(0, controls)
-                    #label.insert(0, ' ')
+                    # label.insert(0, ' ')
                     _controls = DIV(DIV(label, _help, _class="form-check"), _class="%s" % col_class)
                     label = DIV(_class="sm-hidden %s" % label_col_class)
                 elif isinstance(controls, (SELECT, TEXTAREA)):
@@ -1183,17 +1192,17 @@ def formstyle_bootstrap4_inline_factory(col_label_size=3):
                 for e in controls.elements("input"):
                     e.add_class('form-control')
             elif isinstance(controls, CAT) and isinstance(controls[0], INPUT):
-                    controls[0].add_class('form-control')
+                controls[0].add_class('form-control')
             if isinstance(label, LABEL):
                 label['_class'] = add_class(label.get('_class'), 'form-control-label %s' % label_col_class)
 
             parent.append(DIV(label, _controls, _class='form-group row', _id=id))
         return parent
+
     return _inner
 
 
 class SQLFORM(FORM):
-
     """
     SQLFORM is used to map a table (and a current record) into an HTML form.
 
@@ -1282,7 +1291,7 @@ class SQLFORM(FORM):
         bootstrap4_stacked=formstyle_bootstrap4_stacked,
         bootstrap4_inline=formstyle_bootstrap4_inline_factory(3),
         inline=formstyle_inline,
-        )
+    )
 
     FIELDNAME_REQUEST_DELETE = 'delete_this_record'
     FIELDKEY_DELETE_RECORD = 'delete_record'
@@ -1309,28 +1318,28 @@ class SQLFORM(FORM):
         return status
 
     def __init__(
-        self,
-        table,
-        record=None,
-        deletable=False,
-        linkto=None,
-        upload=None,
-        fields=None,
-        labels=None,
-        col3={},
-        submit_button='Submit',
-        delete_label='Check to delete',
-        showid=True,
-        readonly=False,
-        comments=True,
-        keepopts=[],
-        ignore_rw=False,
-        record_id=None,
-        formstyle=None,
-        buttons=['submit'],
-        separator=None,
-        extra_fields=None,
-        **attributes
+            self,
+            table,
+            record=None,
+            deletable=False,
+            linkto=None,
+            upload=None,
+            fields=None,
+            labels=None,
+            col3={},
+            submit_button='Submit',
+            delete_label='Check to delete',
+            showid=True,
+            readonly=False,
+            comments=True,
+            keepopts=[],
+            ignore_rw=False,
+            record_id=None,
+            formstyle=None,
+            buttons=['submit'],
+            separator=None,
+            extra_fields=None,
+            **attributes
     ):
         T = current.T
 
@@ -1351,7 +1360,8 @@ class SQLFORM(FORM):
             if not readonly:
                 if not record:
                     # create form should only show writable fields
-                    fields = [f.name for f in table if (ignore_rw or f.writable or (f.readable and f.default)) and not f.compute]
+                    fields = [f.name for f in table if
+                              (ignore_rw or f.writable or (f.readable and f.default)) and not f.compute]
                 else:
                     # update form should also show readable fields and computed fields (but in reaodnly mode)
                     fields = [f.name for f in table if (ignore_rw or f.writable or f.readable)]
@@ -1440,7 +1450,7 @@ class SQLFORM(FORM):
                           _id=field_id + SQLFORM.ID_LABEL_SUFFIX)
 
             cond = readonly or field.compute or \
-                (not ignore_rw and not field.writable and field.readable)
+                   (not ignore_rw and not field.writable and field.readable)
 
             if cond:
                 label['_class'] = 'readonly'
@@ -1592,11 +1602,11 @@ class SQLFORM(FORM):
                            )
             xfields.append(
                 (self.FIELDKEY_DELETE_RECORD + SQLFORM.ID_ROW_SUFFIX,
-                    LABEL(
-                        T(delete_label), sep,
-                        _for=self.FIELDKEY_DELETE_RECORD,
-                        _id=self.FIELDKEY_DELETE_RECORD +
-                        SQLFORM.ID_LABEL_SUFFIX),
+                 LABEL(
+                     T(delete_label), sep,
+                     _for=self.FIELDKEY_DELETE_RECORD,
+                     _id=self.FIELDKEY_DELETE_RECORD +
+                         SQLFORM.ID_LABEL_SUFFIX),
                  widget,
                  col3.get(self.FIELDKEY_DELETE_RECORD, '')))
             self.custom.delete = self.custom.deletable = widget
@@ -1657,16 +1667,16 @@ class SQLFORM(FORM):
         return table
 
     def accepts(
-        self,
-        request_vars,
-        session=None,
-        formname='%(tablename)s/%(record_id)s',
-        keepvalues=None,
-        onvalidation=None,
-        dbio=True,
-        hideerror=False,
-        detect_record_change=False,
-        **kwargs
+            self,
+            request_vars,
+            session=None,
+            formname='%(tablename)s/%(record_id)s',
+            keepvalues=None,
+            onvalidation=None,
+            dbio=True,
+            hideerror=False,
+            detect_record_change=False,
+            **kwargs
     ):
 
         """
@@ -1767,10 +1777,10 @@ class SQLFORM(FORM):
         if self.record_changed and self.detect_record_change:
             message_onchange = \
                 kwargs.setdefault("message_onchange",
-                    current.T("A record change was detected. " +
-                            "Consecutive update self-submissions " +
-                            "are not allowed. Try re-submitting or " +
-                            "refreshing the form page."))
+                                  current.T("A record change was detected. " +
+                                            "Consecutive update self-submissions " +
+                                            "are not allowed. Try re-submitting or " +
+                                            "refreshing the form page."))
             if message_onchange is not None:
                 current.response.flash = message_onchange
             return ret
@@ -1849,8 +1859,8 @@ class SQLFORM(FORM):
                     self.vars[fieldname] = fields[fieldname] = True
                 else:
                     self.vars[fieldname] = fields[fieldname] = False
-            elif field.type == 'password' and self.record\
-                and request_vars.get(fieldname, None) == DEFAULT_PASSWORD_DISPLAY:
+            elif field.type == 'password' and self.record \
+                    and request_vars.get(fieldname, None) == DEFAULT_PASSWORD_DISPLAY:
                 continue  # do not update if password was not changed
             elif field.type == 'upload':
                 f = self.vars[fieldname]
@@ -1934,9 +1944,9 @@ class SQLFORM(FORM):
                     fields[fieldname] = safe_float(value)
 
         for fieldname in self.vars:
-            if fieldname != 'id' and fieldname in self.table.fields\
-                and fieldname not in fields and not fieldname\
-                    in request_vars:
+            if fieldname != 'id' and fieldname in self.table.fields \
+                    and fieldname not in fields and not fieldname \
+                                                        in request_vars:
                 fields[fieldname] = self.vars[fieldname]
 
         if dbio:
@@ -1970,7 +1980,7 @@ class SQLFORM(FORM):
                     self.vars.id = self.record[self.id_field_name]
                     if fields:
                         self.table._db(self.table._id == self.record[
-                                       self.id_field_name]).update(**fields)
+                            self.id_field_name]).update(**fields)
                 else:
                     self.vars.id = self.table.insert(**fields)
 
@@ -1979,7 +1989,7 @@ class SQLFORM(FORM):
 
     AUTOTYPES = {
         type(''): ('string', None),
-        type(u''): ('string',None),
+        type(u''): ('string', None),
         type(True): ('boolean', None),
         type(1): ('integer', IS_INT_IN_RANGE(-1e12, +1e12)),
         type(1.0): ('double', IS_FLOAT_IN_RANGE()),
@@ -2037,7 +2047,8 @@ class SQLFORM(FORM):
         # Clone fields, while passing tables straight through
         fields_with_clones = [f.clone() if isinstance(f, Field) else f for f in fields]
         dummy_dal = DAL(None)
-        dummy_dal.validators_method = lambda f: _default_validators(dummy_dal, f) # See https://github.com/web2py/web2py/issues/2007
+        dummy_dal.validators_method = lambda f: _default_validators(dummy_dal,
+                                                                    f)  # See https://github.com/web2py/web2py/issues/2007
         return SQLFORM(dummy_dal.define_table(table_name, *fields_with_clones), **attributes)
 
     @staticmethod
@@ -2051,26 +2062,26 @@ class SQLFORM(FORM):
             SEARCHABLE_TYPES = ('string', 'text', 'list:string')
             sfields = [field for field in fields if field.type in SEARCHABLE_TYPES]
             if settings.global_settings.web2py_runtime_gae:
-                return reduce(lambda a,b: a|b, [field.contains(key) for field in sfields])
+                return reduce(lambda a, b: a | b, [field.contains(key) for field in sfields])
             else:
                 if not (sfields and key and key.split()):
                     return fields[0].table
-                return reduce(lambda a,b:a&b,[
-                        reduce(lambda a,b: a|b, [
-                                field.contains(k) for field in sfields]
-                               ) for k in key.split()])
+                return reduce(lambda a, b: a & b, [
+                    reduce(lambda a, b: a | b, [
+                        field.contains(k) for field in sfields]
+                           ) for k in key.split()])
 
             # from https://groups.google.com/forum/#!topic/web2py/hKe6lI25Bv4
             # needs testing...
-            #words = key.split(' ') if key else []
-            #filters = []
-            #for field in fields:
+            # words = key.split(' ') if key else []
+            # filters = []
+            # for field in fields:
             #    if field.type in SEARCHABLE_TYPES:
             #        all_words_filters = []
             #        for word in words:
             #        all_words_filters.append(field.contains(word))
             #        filters.append(reduce(lambda a, b: (a & b), all_words_filters))
-            #parts = filters
+            # parts = filters
 
         else:
             return smart_query(fields, key)
@@ -2132,7 +2143,7 @@ class SQLFORM(FORM):
                     field_type = field.type
 
                 operators = SELECT(*[OPTION(T(option), _value=option) for option in options],
-                                    _class='form-control')
+                                   _class='form-control')
                 _id = "%s_%s" % (value_id, name)
                 if field_type in ['boolean', 'double', 'time', 'integer']:
                     widget_ = SQLFORM.widgets[field_type]
@@ -2167,17 +2178,20 @@ class SQLFORM(FORM):
                     value_input = SELECT(
                         *[OPTION(v, _value=k)
                           for k, v in field.requires.options()],
-                         _class='form-control',
-                         **dict(_id=_id))
+                        _class='form-control',
+                        **dict(_id=_id))
 
                 new_button = INPUT(
-                    _type="button", _value=T('New Search'), _class="btn btn-default", _title=T('Start building a new search'),
+                    _type="button", _value=T('New Search'), _class="btn btn-default",
+                    _title=T('Start building a new search'),
                     _onclick="%s_build_query('new','%s')" % (prefix, field))
                 and_button = INPUT(
-                    _type="button", _value=T('+ And'), _class="btn btn-default", _title=T('Add this to the search as an AND term'),
+                    _type="button", _value=T('+ And'), _class="btn btn-default",
+                    _title=T('Add this to the search as an AND term'),
                     _onclick="%s_build_query('and','%s')" % (prefix, field))
                 or_button = INPUT(
-                    _type="button", _value=T('+ Or'), _class="btn btn-default", _title=T('Add this to the search as an OR term'),
+                    _type="button", _value=T('+ Or'), _class="btn btn-default",
+                    _title=T('Add this to the search as an OR term'),
                     _onclick="%s_build_query('or','%s')" % (prefix, field))
                 close_button = INPUT(
                     _type="button", _value=T('Close'), _class="btn btn-default",
@@ -2187,14 +2201,15 @@ class SQLFORM(FORM):
                     operators, value_input, new_button,
                     and_button, or_button, close_button,
                     _id='%s_%s' % (field_id, name),
-                        _class='w2p_query_row',
-                        _style='display:none'))
+                    _class='w2p_query_row',
+                    _style='display:none'))
 
         criteria.insert(0, SELECT(
-                _id=fields_id,
-                _onchange="jQuery('.w2p_query_row').hide();jQuery('#%s_'+jQuery('#%s').val().replace('.','-')).show();" % (field_id, fields_id),
-                _style='float:left', _class='form-control',
-                *selectfields))
+            _id=fields_id,
+            _onchange="jQuery('.w2p_query_row').hide();jQuery('#%s_'+jQuery('#%s').val().replace('.','-')).show();" % (
+            field_id, fields_id),
+            _style='float:left', _class='form-control',
+            *selectfields))
 
         fadd = SCRIPT("""
         jQuery('#%(fields_id)s input,#%(fields_id)s select').css(
@@ -2218,10 +2233,10 @@ class SQLFORM(FORM):
           if(aggregator=='new') k.val(s); else k.val((v?(v+' '+ aggregator +' '):'')+s);
         }
         """ % dict(
-                   prefix=prefix, fields_id=fields_id, keywords_id=keywords_id,
-                   field_id=field_id, value_id=value_id
-                   )
+            prefix=prefix, fields_id=fields_id, keywords_id=keywords_id,
+            field_id=field_id, value_id=value_id
         )
+                      )
         return CAT(
             DIV(_id=panel_id, _style="display:none;", *criteria), fadd)
 
@@ -2255,22 +2270,22 @@ class SQLFORM(FORM):
              onupdate=None,
              ondelete=None,
              sorter_icons=(XML('&#x25B2;'), XML('&#x25BC;')),
-             ui = 'web2py',
+             ui='web2py',
              showbuttontext=True,
              _class="web2py_grid",
              formname='web2py_grid',
              search_widget='default',
              advanced_search=True,
-             ignore_rw = False,
-             formstyle = None,
-             exportclasses = None,
+             ignore_rw=False,
+             formstyle=None,
+             exportclasses=None,
              formargs={},
              createargs={},
              editargs={},
              viewargs={},
              selectable_submit_button='Submit',
-             buttons_placement = 'right',
-             links_placement = 'right',
+             buttons_placement='right',
+             links_placement='right',
              noconfirm=False,
              cache_count=None,
              client_side_delete=False,
@@ -2368,7 +2383,7 @@ class SQLFORM(FORM):
                 else:
                     nrows = dbset.count(cache=cache_count)
             elif isinstance(cache_count, integer_types):
-                    nrows = cache_count
+                nrows = cache_count
             elif callable(cache_count):
                 nrows = cache_count(dbset, request.vars)
             else:
@@ -2384,7 +2399,7 @@ class SQLFORM(FORM):
             if not orderby:
                 orderby = field_id
             elif isinstance(orderby, list):
-                orderby = reduce(lambda a,b: a|b, orderby)
+                orderby = reduce(lambda a, b: a | b, orderby)
             elif isinstance(orderby, Field) and orderby is not field_id:
                 # here we're with an ASC order on a field stored as orderby
                 orderby = orderby | field_id
@@ -2419,7 +2434,7 @@ class SQLFORM(FORM):
         # - url has valid signature (vars are not signed, only path_info)
         # = url does not contain 'create','delete','edit' (readonly)
         if user_signature:
-            if not ('/'.join(map(str,args)) == '/'.join(map(str,request.args)) or
+            if not ('/'.join(map(str, args)) == '/'.join(map(str, request.args)) or
                     URL.verify(request, user_signature=user_signature, hash_vars=False) or
                     (request.args(len(args)) == 'view' and not logged)):
                 session.flash = T('not authorized')
@@ -2466,7 +2481,7 @@ class SQLFORM(FORM):
         else:
             fields = []
             columns = []
-            filter1 = lambda f: isinstance(f, Field) and (f.type!='blob' or showblobs)
+            filter1 = lambda f: isinstance(f, Field) and (f.type != 'blob' or showblobs)
             filter2 = lambda f: isinstance(f, Field) and f.readable and f.listable
             for table in tables:
                 fields += filter(filter1, table)
@@ -2486,7 +2501,7 @@ class SQLFORM(FORM):
             elif groupby and isinstance(groupby, Expression):
                 # take the first groupby field
                 field_id = groupby.first
-                while not(isinstance(field_id, Field)):
+                while not (isinstance(field_id, Field)):
                     # Navigate to the first Field of the expression
                     field_id = field_id.first
         table = field_id.table
@@ -2630,13 +2645,17 @@ class SQLFORM(FORM):
                 redirect(referrer, client_side=client_side_delete)
 
         exportManager = dict(
-            csv_with_hidden_cols=(ExporterCSV_hidden, 'CSV (hidden cols)', T('Comma-separated export including columns not shown; fields from other tables are exported as raw values for faster export')),
-            csv=(ExporterCSV, 'CSV', T('Comma-separated export of visible columns. Fields from other tables are exported as they appear on-screen but this may be slow for many rows')),
+            csv_with_hidden_cols=(ExporterCSV_hidden, 'CSV (hidden cols)', T(
+                'Comma-separated export including columns not shown; fields from other tables are exported as raw values for faster export')),
+            csv=(ExporterCSV, 'CSV', T(
+                'Comma-separated export of visible columns. Fields from other tables are exported as they appear on-screen but this may be slow for many rows')),
             xml=(ExporterXML, 'XML', T('XML export of columns shown')),
             html=(ExporterHTML, 'HTML', T('HTML export of visible columns')),
             json=(ExporterJSON, 'JSON', T('JSON export of visible columns')),
-            tsv_with_hidden_cols=(ExporterTSV_hidden, 'TSV (Spreadsheets, hidden cols)', T('Spreadsheet-optimised export of tab-separated content including hidden columns. May be slow')),
-            tsv=(ExporterTSV, 'TSV (Spreadsheets)', T('Spreadsheet-optimised export of tab-separated content, visible columns only. May be slow.')))
+            tsv_with_hidden_cols=(ExporterTSV_hidden, 'TSV (Spreadsheets, hidden cols)', T(
+                'Spreadsheet-optimised export of tab-separated content including hidden columns. May be slow')),
+            tsv=(ExporterTSV, 'TSV (Spreadsheets)',
+                 T('Spreadsheet-optimised export of tab-separated content, visible columns only. May be slow.')))
         if exportclasses is not None:
             """
             remember: allow to set exportclasses=dict(csv=False, csv_with_hidden_cols=False) to disable the csv format
@@ -2670,7 +2689,7 @@ class SQLFORM(FORM):
                         if field.readable and field.tablename in tablenames:
                             if not str(field) in expcolumns:
                                 expcolumns.append(str(field))
-                            if not(isinstance(field, Field.Virtual)):
+                            if not (isinstance(field, Field.Virtual)):
                                 selectable_columns.append(str(field))
                     # look for virtual fields not displayed (and virtual method
                     # fields to be added here?)
@@ -2746,11 +2765,13 @@ class SQLFORM(FORM):
                 sfields_id = '%s_query_panel' % prefix
                 skeywords_id = '%s_keywords' % prefix
                 # hidden fields to presever keywords in url after the submit
-                hidden_fields = [INPUT(_type='hidden', _value=v, _name=k) for k, v in request.get_vars.items() if k not in ['keywords', 'page']]
+                hidden_fields = [INPUT(_type='hidden', _value=v, _name=k) for k, v in request.get_vars.items() if
+                                 k not in ['keywords', 'page']]
                 search_widget = lambda sfield, url: CAT(FORM(
                     INPUT(_name='keywords', _value=keywords,
                           _id=skeywords_id, _class='form-control',
-                          _onfocus="jQuery('#%s').change();jQuery('#%s').slideDown();" % (spanel_id, sfields_id) if advanced_search else ''
+                          _onfocus="jQuery('#%s').change();jQuery('#%s').slideDown();" % (
+                          spanel_id, sfields_id) if advanced_search else ''
                           ),
                     INPUT(_type='submit', _value=T('Search'), _class="btn btn-default btn-secondary"),
                     INPUT(_type='submit', _value=T('Clear'), _class="btn btn-default btn-secondary",
@@ -2840,9 +2861,9 @@ class SQLFORM(FORM):
 
         # Include extra column for buttons if needed.
         include_buttons_column = (
-            details or editable or deletable or
-            (links and links_in_grid and
-             not all([isinstance(link, dict) for link in links])))
+                details or editable or deletable or
+                (links and links_in_grid and
+                 not all([isinstance(link, dict) for link in links])))
         if include_buttons_column:
             if buttons_placement in ['right', 'both']:
                 headcols.append(TH(_class=ui.get('default', '')))
@@ -2870,7 +2891,7 @@ class SQLFORM(FORM):
         try:
             table_fields = [field for field in fields
                             if (field.tablename in tablenames and
-                                not(isinstance(field, Field.Virtual)))]
+                                not (isinstance(field, Field.Virtual)))]
             if dbset._db._adapter.dbengine == 'google:datastore' and use_cursor:
                 rows = dbset.select(left=left, orderby=orderby,
                                     groupby=groupby, limitby=limitby,
@@ -2935,6 +2956,7 @@ class SQLFORM(FORM):
                 elif keywords:
                     d['keywords'] = keywords
                 return A(name, _href=url(vars=d), cid=request.cid)
+
             NPAGES = 5  # window is 2*NPAGES
             if page > NPAGES + 1:
                 paginator.append(LI(self_link('<<', 0)))
@@ -3066,8 +3088,8 @@ class SQLFORM(FORM):
                     if callable(rid):  # can this ever be callable?
                         rid = rid(row)
                     tr = TR(*trcols, **dict(
-                            _id=rid,
-                            _class='%s %s' % (classtr, 'with_id')))
+                        _id=rid,
+                        _class='%s %s' % (classtr, 'with_id')))
                 else:
                     tr = TR(*trcols, **dict(_class=classtr))
                 tbody.append(tr)
@@ -3093,14 +3115,15 @@ class SQLFORM(FORM):
                 if formstyle == 'bootstrap':
                     # add space between buttons
                     htmltable = FORM(htmltable, DIV(_class='form-actions', *inputs))
-                elif 'bootstrap' in formstyle : # Same for bootstrap 3 & 4
-                     htmltable = FORM(htmltable, DIV(_class='form-group web2py_table_selectable_actions', *inputs))
+                elif 'bootstrap' in formstyle:  # Same for bootstrap 3 & 4
+                    htmltable = FORM(htmltable, DIV(_class='form-group web2py_table_selectable_actions', *inputs))
                 else:
                     htmltable = FORM(htmltable, *inputs)
 
                 if htmltable.process(formname=formname).accepted:
                     htmltable.vars.records = htmltable.vars.records or []
-                    htmltable.vars.records = htmltable.vars.records if isinstance(htmltable.vars.records, list) else [htmltable.vars.records]
+                    htmltable.vars.records = htmltable.vars.records if isinstance(htmltable.vars.records, list) else [
+                        htmltable.vars.records]
                     records = [int(r) for r in htmltable.vars.records]
                     if not callable(selectable):
                         for i, submit_info in enumerate(selectable):
@@ -3154,7 +3177,7 @@ class SQLFORM(FORM):
     def smartgrid(table, constraints=None, linked_tables=None,
                   links=None, links_in_grid=True,
                   args=None, user_signature=True,
-                  divider=2*unichr(160) + '>' + 2*unichr(160), breadcrumbs_class='',
+                  divider=2 * unichr(160) + '>' + 2 * unichr(160), breadcrumbs_class='',
                   **kwargs):
         """
         Builds a system of SQLFORM.grid(s) between any referenced tables
@@ -3218,6 +3241,7 @@ class SQLFORM(FORM):
                 return table._format(row)
             else:
                 return '#' + str(row.id)
+
         try:
             nargs = len(args) + 1
             previous_tablename, previous_fieldname, previous_id = \
@@ -3288,7 +3312,7 @@ class SQLFORM(FORM):
                     'formargs', 'createargs', 'editargs', 'viewargs', 'selectable_submit_button',
                     'buttons_placement', 'links_placement', 'noconfirm', 'cache_count', 'client_side_delete',
                     'ignore_common_filters', 'auto_pagination', 'use_cursor'
-                   ):
+                    ):
             if isinstance(kwargs.get(key, None), dict):
                 if table._tablename in kwargs[key]:
                     kwargs[key] = kwargs[key][table._tablename]
@@ -3330,8 +3354,8 @@ class SQLFORM(FORM):
                         args0 = tablename + '.' + fieldname
                         linked.append(
                             lambda row, t=t, nargs=nargs, args0=args0:
-                                A(SPAN(t), cid=request.cid, _href=url(
-                                    args=[args0, row[id_field_name]])))
+                            A(SPAN(t), cid=request.cid, _href=url(
+                                args=[args0, row[id_field_name]])))
         links += linked
         grid = SQLFORM.grid(query, args=request.args[:nargs], links=links,
                             links_in_grid=links_in_grid,
@@ -3341,9 +3365,9 @@ class SQLFORM(FORM):
             header = table._plural
             next = grid.create_form or grid.update_form or grid.view_form
             breadcrumbs.append(LI(
-                    A(T(header), cid=request.cid, _href=url()),
-                    SPAN(divider, _class='divider') if next else '',
-                    _class='active w2p_grid_breadcrumb_elem'))
+                A(T(header), cid=request.cid, _href=url()),
+                SPAN(divider, _class='divider') if next else '',
+                _class='active w2p_grid_breadcrumb_elem'))
             if grid.create_form:
                 header = T('New %(entity)s') % dict(entity=table._singular)
             elif grid.update_form:
@@ -3356,8 +3380,8 @@ class SQLFORM(FORM):
                                   grid.view_form.record))
             if next:
                 breadcrumbs.append(LI(
-                            A(T(header), cid=request.cid, _href=url()),
-                            _class='active w2p_grid_breadcrumb_elem'))
+                    A(T(header), cid=request.cid, _href=url()),
+                    _class='active w2p_grid_breadcrumb_elem'))
             grid.insert(
                 0, DIV(UL(*breadcrumbs, **{'_class': breadcrumbs_class}),
                        _class='web2py_breadcrumbs'))
@@ -3365,7 +3389,6 @@ class SQLFORM(FORM):
 
 
 class SQLTABLE(TABLE):
-
     """
     Given with a Rows object, as returned by a `db().select()`, generates
     an html table with the rows.
@@ -3430,11 +3453,12 @@ class SQLTABLE(TABLE):
             return
         REGEX_TABLE_DOT_FIELD = sqlrows.db._adapter.REGEX_TABLE_DOT_FIELD
         fieldmap = dict(zip(sqlrows.colnames, sqlrows.fields))
-        tablemap = dict(((f.tablename, f.table) if isinstance(f, Field) else (f._table._tablename, f._table) for f in fieldmap.values()))
+        tablemap = dict(((f.tablename, f.table) if isinstance(f, Field) else (f._table._tablename, f._table) for f in
+                         fieldmap.values()))
         for table in tablemap.values():
             pref = table._tablename + '.'
-            fieldmap.update(((pref+f.name, f) for f in table._virtual_fields))
-            fieldmap.update(((pref+f.name, f) for f in table._virtual_methods))
+            fieldmap.update(((pref + f.name, f) for f in table._virtual_fields))
+            fieldmap.update(((pref + f.name, f) for f in table._virtual_methods))
         field_types = (Field, Field.Virtual, Field.Method)
         if not columns:
             columns = list(sqlrows.colnames)
@@ -3550,15 +3574,15 @@ class SQLTABLE(TABLE):
                         if r not in repr_cache[field]:
                             repr_cache[field][r] = represent(field, r, record)
                         r = repr_cache[field][r]
-                elif linkto and hasattr(field._table, '_primarykey')\
+                elif linkto and hasattr(field._table, '_primarykey') \
                         and fieldname in field._table._primarykey:
                     # have to test this with multi-key tables
                     key = urlencode(dict([
-                                ((tablename in record
-                                      and isinstance(record, Row)
-                                      and isinstance(record[tablename], Row)) and
-                                 (k, record[tablename][k])) or (k, record[k])
-                                    for k in field._table._primarykey]))
+                        ((tablename in record
+                          and isinstance(record, Row)
+                          and isinstance(record[tablename], Row)) and
+                         (k, record[tablename][k])) or (k, record[k])
+                        for k in field._table._primarykey]))
                     r = A(r, _href='%s/%s?%s' % (linkto, tablename, key))
                 elif isinstance(field.type, str) and field.type.startswith('list:'):
                     r = represent(field, r or [], record)
@@ -3633,6 +3657,7 @@ class SQLTABLE(TABLE):
         """
 
         return css
+
 
 form_factory = SQLFORM.factory  # for backward compatibility, deprecated
 
@@ -3713,7 +3738,7 @@ class ExporterTSV(ExportClass):
     def export(self):  # export TSV with rows.represent
         if self.rows:
             s = StringIO()
-            self.rows.export_to_csv_file(s, represent=True,delimiter='\t',newline='\n')
+            self.rows.export_to_csv_file(s, represent=True, delimiter='\t', newline='\n')
             return s.getvalue()
         else:
             return None
@@ -3730,7 +3755,7 @@ class ExporterTSV_hidden(ExportClass):
     def export(self):  # export TSV with rows.represent
         if self.rows:
             s = StringIO()
-            self.rows.export_to_csv_file(s,delimiter='\t',newline='\n')
+            self.rows.export_to_csv_file(s, delimiter='\t', newline='\n')
             return s.getvalue()
         else:
             return None
@@ -3780,7 +3805,8 @@ class ExporterHTML(ExportClass):
 
     def export(self):
         table = SQLTABLE(self.rows, truncate=None) if self.rows else ''
-        return '<html>\n<head>\n<meta http-equiv="content-type" content="text/html; charset=UTF-8" />\n</head>\n<body>\n%s\n</body>\n</html>' % (table or '')
+        return '<html>\n<head>\n<meta http-equiv="content-type" content="text/html; charset=UTF-8" />\n</head>\n<body>\n%s\n</body>\n</html>' % (
+                    table or '')
 
 
 class ExporterXML(ExportClass):

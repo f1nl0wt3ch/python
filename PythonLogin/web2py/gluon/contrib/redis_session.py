@@ -157,6 +157,7 @@ class MockQuery(object):
     """a fake Query object that supports querying by id
        and listing all keys. No other operation is supported
     """
+
     def __init__(self, field=None, db=None, prefix=None, session_expiry=False,
                  with_lock=False, unique_key=None):
         self.field = field

@@ -16,13 +16,13 @@ class InformixDialect(FireBirdDialect):
     @sqltype_for('reference FK')
     def type_reference_fk(self):
         return 'REFERENCES %(foreign_key)s ON DELETE %(on_delete_action)s ' + \
-            'CONSTRAINT FK_%(table_name)s_%(field_name)s'
+               'CONSTRAINT FK_%(table_name)s_%(field_name)s'
 
     @sqltype_for('reference TFK')
     def type_reference_tfk(self):
         return 'FOREIGN KEY (%(field_name)s) REFERENCES %(foreign_table)s' + \
-            '(%(foreign_key)s) ON DELETE %(on_delete_action)s ' + \
-            'CONSTRAINT TFK_%(table_name)s_%(field_name)s'
+               '(%(foreign_key)s) ON DELETE %(on_delete_action)s ' + \
+               'CONSTRAINT TFK_%(table_name)s_%(field_name)s'
 
     @property
     def random(self):

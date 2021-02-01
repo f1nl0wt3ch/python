@@ -22,6 +22,7 @@ from gluon.languages import translator
 from gluon.http import HTTP
 from gluon.validators import *
 
+
 # TODO: Create these test...
 
 # class Test_add_class(unittest.TestCase):
@@ -277,7 +278,6 @@ class TestSQLFORM(unittest.TestCase):
 
         self.db.commit()
 
-    
     def test_SQLFORM(self):
         form = SQLFORM(self.db.auth_user)
         self.assertEqual(form.xml()[:5], b'<form')
@@ -337,7 +337,7 @@ class TestSQLFORM(unittest.TestCase):
 
     #  def test_search_menu(self):
     #     pass
-   
+
     def test_grid(self):
         grid_form = SQLFORM.grid(self.db.auth_user)
         self.assertEqual(grid_form.xml()[:4], b'<div')
@@ -345,6 +345,7 @@ class TestSQLFORM(unittest.TestCase):
     def test_smartgrid(self):
         smartgrid_form = SQLFORM.smartgrid(self.db.auth_user)
         self.assertEqual(smartgrid_form.xml()[:4], b'<div')
+
 
 class TestSQLTABLE(unittest.TestCase):
     def setUp(self):
@@ -382,7 +383,6 @@ class TestSQLTABLE(unittest.TestCase):
         rows = self.db(self.db.auth_user.id > 0).select(self.db.auth_user.ALL)
         sqltable = SQLTABLE(rows)
         self.assertEqual(sqltable.xml()[:7], b'<table>')
-
 
 # class TestExportClass(unittest.TestCase):
 #     def test___init__(self):

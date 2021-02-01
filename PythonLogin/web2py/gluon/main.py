@@ -65,9 +65,11 @@ import logging.config
 
 # attention!, the import Tkinter in messageboxhandler, changes locale ...
 import gluon.messageboxhandler
+
 logging.gluon = gluon
 # so we must restore it! Thanks ozancag
 import locale
+
 locale.setlocale(locale.LC_CTYPE, "C")  # IMPORTANT, web2py requires locale "C"
 
 exists = os.path.exists
@@ -95,7 +97,7 @@ from gluon import newcron
 
 __all__ = ['wsgibase', 'save_password', 'appfactory', 'HttpServer']
 
-requests = 0    # gc timer
+requests = 0  # gc timer
 
 # Security Checks: validate URL and session_id here,
 # accept_language is validated in languages
@@ -245,6 +247,7 @@ class LazyWSGI(object):
         to decorate actions with WSGI middleware. actions must return strings.
         uses a simulated environment so it may have weird behavior in some cases
         """
+
         def middleware(f):
             def app(environ, start_response):
                 data = f()
@@ -253,12 +256,15 @@ class LazyWSGI(object):
                 if isinstance(data, list):
                     return data
                 return [data]
+
             for item in middleware_apps:
                 app = item(app)
 
             def caller(app):
                 return app(self.environ, self.start_response)
+
             return lambda caller=caller, app=app: caller(app)
+
         return middleware
 
 
@@ -345,8 +351,8 @@ def wsgibase(environ, responder):
                             if env.server_name:
                                 local_hosts.add(env.server_name)
                                 local_hosts.update([
-                                        addrinfo[4][0] for addrinfo
-                                        in getipaddrinfo(env.server_name)])
+                                    addrinfo[4][0] for addrinfo
+                                    in getipaddrinfo(env.server_name)])
                         except (socket.gaierror, TypeError):
                             pass
                     global_settings.local_hosts = list(local_hosts)
@@ -366,7 +372,7 @@ def wsgibase(environ, responder):
                     is_scheduler=False,
                     is_https=env.wsgi_url_scheme in HTTPS_SCHEMES or
                              request.env.http_x_forwarded_proto in HTTPS_SCHEMES or env.https == 'on'
-                    )
+                )
                 request.url = environ['PATH_INFO']
 
                 # ##################################################
@@ -686,25 +692,25 @@ class HttpServer(object):
     """
 
     def __init__(
-        self,
-        ip='127.0.0.1',
-        port=8000,
-        password='',
-        pid_filename='httpserver.pid',
-        log_filename='httpserver.log',
-        profiler_dir=None,
-        ssl_certificate=None,
-        ssl_private_key=None,
-        ssl_ca_certificate=None,
-        min_threads=None,
-        max_threads=None,
-        server_name=None,
-        request_queue_size=5,
-        timeout=10,
-        socket_timeout=1,
-        shutdown_timeout=None,  # Rocket does not use a shutdown timeout
-        path=None,
-        interfaces=None  # Rocket is able to use several interfaces - must be list of socket-tuples as string
+            self,
+            ip='127.0.0.1',
+            port=8000,
+            password='',
+            pid_filename='httpserver.pid',
+            log_filename='httpserver.log',
+            profiler_dir=None,
+            ssl_certificate=None,
+            ssl_private_key=None,
+            ssl_ca_certificate=None,
+            min_threads=None,
+            max_threads=None,
+            server_name=None,
+            request_queue_size=5,
+            timeout=10,
+            socket_timeout=1,
+            shutdown_timeout=None,  # Rocket does not use a shutdown timeout
+            path=None,
+            interfaces=None  # Rocket is able to use several interfaces - must be list of socket-tuples as string
     ):
         """
         starts the web server.

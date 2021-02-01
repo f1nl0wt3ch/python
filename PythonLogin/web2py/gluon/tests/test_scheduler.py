@@ -54,7 +54,7 @@ class CronParserTest(unittest.TestCase):
         # minute asterisk
         base = datetime.datetime(2010, 1, 23, 12, 18)
         itr = CronParser('*/1 * * * *', base)
-        n1 = itr.get_next()    # 19
+        n1 = itr.get_next()  # 19
         self.assertEqual(base.year, n1.year)
         self.assertEqual(base.month, n1.month)
         self.assertEqual(base.day, n1.day)
@@ -396,7 +396,6 @@ class CronParserTest(unittest.TestCase):
         self.assertEqual(n1.minute, 0)
 
 
-
 class TestsForJobGraph(BaseTestScheduler):
 
     def testJobGraph(self):
@@ -492,7 +491,7 @@ class TestsForJobGraph(BaseTestScheduler):
         # no exceptions raised, but result None
         self.assertEqual(myjob.validate('job_1'), None)
         # and no deps added
-        deps_inserted = self.db(self.db.scheduler_task_deps.id>0).count()
+        deps_inserted = self.db(self.db.scheduler_task_deps.id > 0).count()
         self.assertEqual(deps_inserted, 0)
 
     def testJobGraphDifferentJobs(self):
@@ -547,7 +546,6 @@ class TestsForJobGraph(BaseTestScheduler):
 class TestsForSchedulerAPIs(BaseTestScheduler):
 
     def testQueue_Task(self):
-
         def isnotqueued(result):
             self.assertEqual(result.id, None)
             self.assertEqual(result.uuid, None)
@@ -637,7 +635,7 @@ def termination():
 
     def exec_sched(self):
         import subprocess
-        call_args = [sys.executable, 'web2py.py', '--no-banner', '-D', '20','-K', 'welcome']
+        call_args = [sys.executable, 'web2py.py', '--no-banner', '-D', '20', '-K', 'welcome']
         ret = subprocess.call(call_args, env=dict(os.environ))
         return ret
 
@@ -680,7 +678,8 @@ def demo4():
             ("task times_run is 2", task.times_run == 2),
             ("task ran 2 times only", len(task_run) == 2),
             ("scheduler_run records are COMPLETED ", (task_run[0].status == task_run[1].status == 'COMPLETED')),
-            ("period is respected", (task_run[1].start_time > task_run[0].start_time + datetime.timedelta(seconds=task.period)))
+            ("period is respected",
+             (task_run[1].start_time > task_run[0].start_time + datetime.timedelta(seconds=task.period)))
         ]
         self.exec_asserts(res, 'REPEATS')
 
@@ -698,7 +697,7 @@ def demo4():
         task2 = s.task_status(prio2.id, output=True)
         res = [
             ("tasks status completed", task1.scheduler_task.status == task2.scheduler_task.status == 'COMPLETED'),
-            ("priority2 was executed before priority1" , task1.scheduler_run.id > task2.scheduler_run.id)
+            ("priority2 was executed before priority1", task1.scheduler_run.id > task2.scheduler_run.id)
         ]
         self.exec_asserts(res, 'PRIORITY')
 
@@ -743,7 +742,8 @@ def demo6():
             ("tasks no_returns1 completed", task1.status == 'COMPLETED'),
             ("tasks no_returns2 failed", task2.status == 'FAILED'),
             ("no_returns1 doesn't have a scheduler_run record", len(task_run1) == 0),
-            ("no_returns2 has a scheduler_run record FAILED", (len(task_run2) == 1 and task_run2[0].status == 'FAILED')),
+            (
+            "no_returns2 has a scheduler_run record FAILED", (len(task_run2) == 1 and task_run2[0].status == 'FAILED')),
         ]
         self.exec_asserts(res, 'NO_RETURN')
 
@@ -794,17 +794,18 @@ def demo7():
         task, task_run = self.fetch_results(s, drift)
         res = [
             ("task status completed", task.status == 'COMPLETED'),
-            ("next_run_time is exactly start_time + period", (task.next_run_time == task.start_time + datetime.timedelta(seconds=task.period)))
+            ("next_run_time is exactly start_time + period",
+             (task.next_run_time == task.start_time + datetime.timedelta(seconds=task.period)))
         ]
         self.exec_asserts(res, 'DRIFT')
 
         # env check
         task1 = s.task_status(env.id, output=True)
         res = [
-            ("task %s returned W2P_TASK correctly" % (task1.scheduler_task.id),  task1.result == [task1.scheduler_task.id, task1.scheduler_task.uuid, task1.scheduler_run.id]),
+            ("task %s returned W2P_TASK correctly" % (task1.scheduler_task.id),
+             task1.result == [task1.scheduler_task.id, task1.scheduler_task.uuid, task1.scheduler_run.id]),
         ]
         self.exec_asserts(res, 'ENV')
-
 
     def testRetryFailed(self):
         s = Scheduler(self.db)
@@ -840,7 +841,8 @@ def demo8():
             ("task times_failed is 2", task.times_failed == 2),
             ("task ran 2 times only", len(task_run) == 2),
             ("scheduler_run records are FAILED", (task_run[0].status == task_run[1].status == 'FAILED')),
-            ("period is respected", (task_run[1].start_time > task_run[0].start_time + datetime.timedelta(seconds=task.period)))
+            ("period is respected",
+             (task_run[1].start_time > task_run[0].start_time + datetime.timedelta(seconds=task.period)))
         ]
         self.exec_asserts(res, 'FAILED')
 
@@ -851,8 +853,10 @@ def demo8():
             ("task times_run is 2", task.times_run == 2),
             ("task times_failed is 0", task.times_failed == 0),
             ("task ran 6 times", len(task_run) == 6),
-            ("scheduler_run records for COMPLETED is 2", len([run.status for run in task_run if run.status == 'COMPLETED']) == 2),
-            ("scheduler_run records for FAILED is 4", len([run.status for run in task_run if run.status == 'FAILED']) == 4),
+            ("scheduler_run records for COMPLETED is 2",
+             len([run.status for run in task_run if run.status == 'COMPLETED']) == 2),
+            ("scheduler_run records for FAILED is 4",
+             len([run.status for run in task_run if run.status == 'FAILED']) == 4),
         ]
         self.exec_asserts(res, 'FAILED_CONSECUTIVE')
 

@@ -35,13 +35,12 @@ EXAMPLE: python extract_pgsql_models.py mydb localhost 5432 reingart saraza
 """
 
 # Config options
-DEBUG = False       # print debug messages to STDERR
-SCHEMA = 'public'   # change if not using default PostgreSQL schema
+DEBUG = False  # print debug messages to STDERR
+SCHEMA = 'public'  # change if not using default PostgreSQL schema
 
 # Constant for Field keyword parameter order (and filter):
 KWARGS = ('type', 'length', 'default', 'required', 'ondelete',
           'notnull', 'unique', 'label', 'comment')
-
 
 import sys
 
@@ -98,7 +97,7 @@ def define_field(conn, table, field, pks):
     if ref:
         f.update(ref)
     elif field['column_default'] and \
-        field['column_default'].startswith("nextval") and \
+            field['column_default'].startswith("nextval") and \
             field['column_name'] in pks:
         # postgresql sequence (SERIAL) and primary key!
         f['type'] = "'id'"
@@ -106,7 +105,7 @@ def define_field(conn, table, field, pks):
         f['type'] = "'string'"
         if field['character_maximum_length']:
             f['length'] = field['character_maximum_length']
-    elif field['data_type'] in ('text', ):
+    elif field['data_type'] in ('text',):
         f['type'] = "'text'"
     elif field['data_type'] in ('boolean', 'bit'):
         f['type'] = "'boolean'"
@@ -116,15 +115,15 @@ def define_field(conn, table, field, pks):
         f['type'] = "'double'"
     elif field['data_type'] in ('timestamp', 'timestamp without time zone'):
         f['type'] = "'datetime'"
-    elif field['data_type'] in ('date', ):
+    elif field['data_type'] in ('date',):
         f['type'] = "'date'"
     elif field['data_type'] in ('time', 'time without time zone'):
         f['type'] = "'time'"
     elif field['data_type'] in ('numeric', 'currency'):
         f['precision'] = field['numeric_precision']
         f['scale'] = field['numeric_scale'] or 0
-        f['type'] = "'decimal({},{})'".format(f['precision'],f['scale'])
-    elif field['data_type'] in ('bytea', ):
+        f['type'] = "'decimal({},{})'".format(f['precision'], f['scale'])
+    elif field['data_type'] in ('bytea',):
         f['type'] = "'blob'"
     elif field['data_type'] in ('point', 'lseg', 'polygon', 'unknown', 'USER-DEFINED'):
         f['type'] = ""  # unsupported?
@@ -242,7 +241,8 @@ def define_table(conn, table):
     "Output single table definition"
     fields = get_fields(conn, table)
     pks = primarykeys(conn, table)
-    print "db.define_table('%s'," % (table, )
+    print
+    "db.define_table('%s'," % (table,)
     for field in fields:
         fname = field['column_name']
         fdef = define_field(conn, table, field, pks)
@@ -250,21 +250,26 @@ def define_table(conn, table):
             fdef['unique'] = "True"
         if fdef['type'] == "'id'" and fname in pks:
             pks.pop(pks.index(fname))
-        print "    Field('%s', %s)," % (fname,
-                                        ', '.join(["%s=%s" % (k, fdef[k]) for k in KWARGS
-                                                   if k in fdef and fdef[k]]))
+        print
+        "    Field('%s', %s)," % (fname,
+                                  ', '.join(["%s=%s" % (k, fdef[k]) for k in KWARGS
+                                             if k in fdef and fdef[k]]))
     if pks:
-        print "    primarykey=[%s]," % ", ".join(["'%s'" % pk for pk in pks])
-    print     "    migrate=migrate)"
+        print
+        "    primarykey=[%s]," % ", ".join(["'%s'" % pk for pk in pks])
+    print
+    "    migrate=migrate)"
     print
 
 
 def define_db(conn, db, host, port, user, passwd):
     "Output database definition (model)"
     dal = 'db = DAL("postgres://%s:%s@%s:%s/%s", pool_size=10)'
-    print dal % (user, passwd, host, port, db)
     print
-    print "migrate = False"
+    dal % (user, passwd, host, port, db)
+    print
+    print
+    "migrate = False"
     print
     for table in get_tables(conn):
         define_table(conn, table)
@@ -272,13 +277,15 @@ def define_db(conn, db, host, port, user, passwd):
 
 if __name__ == "__main__":
     if len(sys.argv) < 6:
-        print HELP
+        print
+        HELP
     else:
         # Parse arguments from command line:
         db, host, port, user, passwd = sys.argv[1:6]
 
         # Make the database connection (change driver if required)
         import psycopg2
+
         cnn = psycopg2.connect(database=db, host=host, port=port,
                                user=user, password=passwd,
                                )

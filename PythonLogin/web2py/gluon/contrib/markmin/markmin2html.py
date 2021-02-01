@@ -16,8 +16,8 @@ if PY2:
     from string import maketrans
 else:
     from urllib.parse import quote as urllib_quote
-    maketrans = str.maketrans
 
+    maketrans = str.maketrans
 
 """
 TODO: next version should use MathJax
@@ -571,6 +571,7 @@ ttab_in = maketrans("'`:*~\\[]{}@$+-.#\n", '\x0b\x0c\x0e\x0f\x10\x11\x12\x13\x14
 ttab_out = maketrans('\x0b\x0c\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x05', "'`:*~\\[]{}@$+-.#\n")
 regex_quote = re.compile('(?P<name>\w+?)\s*\=\s*')
 
+
 def local_html_escape(data, quote=False):
     """
     Works with bytes.
@@ -587,13 +588,15 @@ def local_html_escape(data, quote=False):
         import html
         if isinstance(data, str):
             return html.escape(data, quote=quote)
-        data = data.replace(b"&", b"&amp;")  # Must be done first!                                                                                           
+        data = data.replace(b"&",
+                            b"&amp;")  # Must be done first!
         data = data.replace(b"<", b"&lt;")
         data = data.replace(b">", b"&gt;")
         if quote:
             data = data.replace(b'"', b"&quot;")
             data = data.replace(b'\'', b"&#x27;")
         return data
+
 
 def make_dict(b):
     return '{%s}' % regex_quote.sub("'\g<name>':", b)
@@ -1214,7 +1217,7 @@ def render(text,
                         m = regex_tq.match(s)
                         if m:
                             if (lineno + 1 == strings_len or
-                                        '|' not in strings[lineno + 1]):
+                                    '|' not in strings[lineno + 1]):
                                 t_cls = m.group('c') or ''
                                 t_id = m.group('p') or ''
                                 break

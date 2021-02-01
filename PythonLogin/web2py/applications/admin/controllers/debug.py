@@ -9,7 +9,6 @@ from gluon._compat import thread
 from gluon.fileutils import open_file
 import pydoc
 
-
 if DEMO_MODE or MULTI_USER_MODE:
     session.flash = T('disabled in demo mode')
     redirect(URL('default', 'site'))
@@ -71,7 +70,7 @@ def interact():
         f_globals = {}
         for name, value in env['globals'].items():
             if name not in gluon.html.__all__ and \
-                name not in gluon.validators.__all__:
+                    name not in gluon.validators.__all__:
                 f_globals[name] = pydoc.text.repr(value)
     else:
         f_locals = {}
@@ -214,6 +213,7 @@ def toggle_breakpoint():
     except Exception as e:
         session.flash = str(e)
     return response.json({'ok': ok, 'lineno': lineno})
+
 
 def list_breakpoints():
     "Return a list of linenumbers for current breakpoints"

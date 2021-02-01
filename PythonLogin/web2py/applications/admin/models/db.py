@@ -2,14 +2,15 @@
 # this file is released under public domain and you can use without limitations
 
 if MULTI_USER_MODE:
-    db = DAL('sqlite://storage.sqlite')       # if not, use SQLite or other DB
+    db = DAL('sqlite://storage.sqlite')  # if not, use SQLite or other DB
     from gluon.tools import *
+
     auth = Auth(
-        globals(), db)                      # authentication/authorization
+        globals(), db)  # authentication/authorization
     crud = Crud(
-        globals(), db)                      # for CRUD helpers using auth
+        globals(), db)  # for CRUD helpers using auth
     service = Service(
-        globals())                   # for json, xml, jsonrpc, xmlrpc, amfrpc
+        globals())  # for json, xml, jsonrpc, xmlrpc, amfrpc
     plugins = PluginManager()
 
     mail = auth.settings.mailer
@@ -19,7 +20,7 @@ if MULTI_USER_MODE:
 
     auth.settings.extra_fields['auth_user'] = \
         [Field('is_manager', 'boolean', default=False, writable=False)]
-    auth.define_tables()                           # creates all needed tables
+    auth.define_tables()  # creates all needed tables
     auth.settings.registration_requires_verification = False
     auth.settings.registration_requires_approval = True
     auth.settings.reset_password_requires_verification = True

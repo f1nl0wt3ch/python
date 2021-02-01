@@ -2,6 +2,8 @@
 web2py handler for isapi-wsgi for IIS. Requires:
 http://code.google.com/p/isapi-wsgi/
 """
+
+
 # The entry point for the ISAPI extension.
 
 
@@ -18,11 +20,14 @@ def __ExtensionFactory__():
     application = gluon.main.wsgibase
     return isapi_wsgi.ISAPIThreadPoolHandler(application)
 
+
 # ISAPI installation:
 if __name__ == '__main__':
     import sys
+
     if len(sys.argv) < 2:
-        print "USAGE: python isapiwsgihandler.py install --server=Sitename"
+        print
+        "USAGE: python isapiwsgihandler.py install --server=Sitename"
         sys.exit(0)
     from isapi.install import ISAPIParameters
     from isapi.install import ScriptMapParams

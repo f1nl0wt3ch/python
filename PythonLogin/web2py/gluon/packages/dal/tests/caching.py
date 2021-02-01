@@ -35,12 +35,14 @@ class SimpleCache(object):
         self.storage[key] = (now, self._encode(value))
         return value
 
+
 class PickleCache(SimpleCache):
     def _encode(self, value):
         return pickle.dumps(value, pickle.HIGHEST_PROTOCOL)
 
     def _decode(self, value):
         return pickle.loads(value)
+
 
 @unittest.skipIf(IS_IMAP, "TODO: IMAP test")
 class TestCache(DALtest):
@@ -64,7 +66,7 @@ class TestCache(DALtest):
         db = self.connect()
         cache = (PickleCache(), 1000)
         db.define_table('tt', Field('aa'), Field('bb', type='integer'),
-            Field('cc', type='decimal(5,2)'))
+                        Field('cc', type='decimal(5,2)'))
         db.tt.insert(aa='1', bb=2, cc=3)
         r0 = db(db.tt).select(db.tt.ALL)
         csv0 = str(r0)

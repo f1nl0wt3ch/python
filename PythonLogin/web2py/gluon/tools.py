@@ -231,11 +231,11 @@ class Mail(object):
         """
 
         def __init__(
-            self,
-            payload,
-            filename=None,
-            content_id=None,
-            content_type=None,
+                self,
+                payload,
+                filename=None,
+                content_id=None,
+                content_type=None,
                 encoding='utf-8'):
             if isinstance(payload, str):
                 if filename is None:
@@ -633,13 +633,13 @@ class Mail(object):
             x509_sign_chainfile = x509_sign_chainfile or self.settings.x509_sign_chainfile
 
             x509_sign_certfile = x509_sign_certfile or self.settings.x509_sign_certfile or \
-                x509_sign_keyfile or self.settings.x509_sign_certfile
+                                 x509_sign_keyfile or self.settings.x509_sign_certfile
 
             # crypt certfiles could be a string or a list
             x509_crypt_certfiles = x509_crypt_certfiles or self.settings.x509_crypt_certfiles
 
-            x509_nocerts = x509_nocerts or\
-                self.settings.x509_nocerts
+            x509_nocerts = x509_nocerts or \
+                           self.settings.x509_nocerts
 
             # need m2crypto
             try:
@@ -654,18 +654,18 @@ class Mail(object):
             if sign:
                 # key for signing
                 try:
-                    keyfile_bio = BIO.openfile(x509_sign_keyfile)\
-                        if os.path.isfile(x509_sign_keyfile)\
+                    keyfile_bio = BIO.openfile(x509_sign_keyfile) \
+                        if os.path.isfile(x509_sign_keyfile) \
                         else BIO.MemoryBuffer(x509_sign_keyfile)
-                    sign_certfile_bio = BIO.openfile(x509_sign_certfile)\
-                        if os.path.isfile(x509_sign_certfile)\
+                    sign_certfile_bio = BIO.openfile(x509_sign_certfile) \
+                        if os.path.isfile(x509_sign_certfile) \
                         else BIO.MemoryBuffer(x509_sign_certfile)
                     s.load_key_bio(keyfile_bio, sign_certfile_bio,
                                    callback=lambda x: sign_passphrase)
                     if x509_sign_chainfile:
                         sk = X509.X509_Stack()
-                        chain = X509.load_cert(x509_sign_chainfile)\
-                            if os.path.isfile(x509_sign_chainfile)\
+                        chain = X509.load_cert(x509_sign_chainfile) \
+                            if os.path.isfile(x509_sign_chainfile) \
                             else X509.load_cert_string(x509_sign_chainfile)
                         sk.push(chain)
                         s.set_x509_stack(sk)
@@ -696,8 +696,8 @@ class Mail(object):
 
                     # make an encryption cert's stack
                     for crypt_certfile in x509_crypt_certfiles:
-                        certfile = X509.load_cert(crypt_certfile)\
-                            if os.path.isfile(crypt_certfile)\
+                        certfile = X509.load_cert(crypt_certfile) \
+                            if os.path.isfile(crypt_certfile) \
                             else X509.load_cert_string(crypt_certfile)
                         sk.push(certfile)
                     s.set_x509_stack(sk)
@@ -752,11 +752,11 @@ class Mail(object):
         try:
             if self.settings.server == 'logging':
                 entry = 'email not sent\n%s\nFrom: %s\nTo: %s\nSubject: %s\n\n%s\n%s\n' % \
-                    ('-' * 40, sender, ', '.join(to), subject, text or html, '-' * 40)
+                        ('-' * 40, sender, ', '.join(to), subject, text or html, '-' * 40)
                 logger.warning(entry)
             elif self.settings.server.startswith('logging:'):
                 entry = 'email not sent\n%s\nFrom: %s\nTo: %s\nSubject: %s\n\n%s\n%s\n' % \
-                    ('-' * 40, sender, ', '.join(to), subject, text or html, '-' * 40)
+                        ('-' * 40, sender, ', '.join(to), subject, text or html, '-' * 40)
                 open(self.settings.server[8:], 'a').write(entry)
             elif self.settings.server == 'gae':
                 xcc = dict()
@@ -952,7 +952,7 @@ class Recaptcha2(DIV):
   </div>
 </div>
 </div>""" % dict(public_key=public_key))
-            )
+                         )
         )
         if not self.errors.captcha:
             return XML(captcha).xml()
@@ -1329,6 +1329,7 @@ class AuthJWT(object):
             token_param: request.vars attribute with the token used only if the http authorization header is not present (default: "_token").
 
         """
+
         def decorator(action):
             def f(*args, **kwargs):
                 try:
@@ -1359,7 +1360,6 @@ class AuthJWT(object):
 
 
 class Auth(AuthAPI):
-
     default_settings = dict(AuthAPI.default_settings,
                             allow_basic_login=False,
                             allow_basic_login_only=False,
@@ -1897,7 +1897,9 @@ class Auth(AuthAPI):
                 self.bar[0][3].append((item['name'], False, item['href']))
 
         def bootstrap3():  # Default web2py scaffolding
-            def rename(icon): return icon + ' ' + icon.replace('icon', 'glyphicon')
+            def rename(icon):
+                return icon + ' ' + icon.replace('icon', 'glyphicon')
+
             self.bar = UL(LI(Anr(I(_class=rename('icon ' + items[0]['icon'])),
                                  ' ' + items[0]['name'],
                                  _href=items[0]['href'])), _class='dropdown-menu')
@@ -2262,7 +2264,7 @@ class Auth(AuthAPI):
         table_user = self.table_user()
         userfield = self.settings.login_userfield or 'username' \
             if self.settings.login_userfield or 'username' \
-            in table_user.fields else 'email'
+               in table_user.fields else 'email'
         passfield = self.settings.password_field
         return Storage({'table_user': table_user,
                         'userfield': userfield,
@@ -2347,6 +2349,7 @@ class Auth(AuthAPI):
                          _href=service + query_sep + "ticket=" + ticket)
             else:
                 redirect(service + query_sep + "ticket=" + ticket)
+
         if self.is_logged_in() and 'renew' not in request.vars:
             return allow_access()
         elif not self.is_logged_in() and 'gateway' in request.vars:
@@ -2356,6 +2359,7 @@ class Auth(AuthAPI):
             if onaccept is not DEFAULT:
                 onaccept(form)
             return allow_access(interactivelogin=True)
+
         return self.login(next, onvalidation, cas_onaccept, log)
 
     def cas_validate(self, version=2, proxy=False):
@@ -2378,8 +2382,9 @@ class Auth(AuthAPI):
 
         def build_response(body):
             xml_body = to_native(TAG['cas:serviceResponse'](
-                    body, **{'_xmlns:cas': 'http://www.yale.edu/tp/cas'}).xml())
+                body, **{'_xmlns:cas': 'http://www.yale.edu/tp/cas'}).xml())
             return '<?xml version="1.0" encoding="UTF-8"?>\n' + xml_body
+
         if success:
             if version == 1:
                 message = 'yes\n%s' % user[userfield]
@@ -2562,7 +2567,7 @@ class Auth(AuthAPI):
                                )
 
                 captcha = settings.login_captcha or \
-                    (settings.login_captcha is not False and settings.captcha)
+                          (settings.login_captcha is not False and settings.captcha)
                 if captcha:
                     addrow(form, captcha.label, captcha, captcha.comment,
                            settings.formstyle, 'captcha__row')
@@ -2919,7 +2924,7 @@ class Auth(AuthAPI):
                 if isinstance(table_user[username].requires, list):
                     table_user[username].requires.append(unique_validator)
                 else:
-                    table_user[username].requires += (unique_validator, )
+                    table_user[username].requires += (unique_validator,)
         elif not isinstance(table_user[username].requires, IS_NOT_IN_DB):
             table_user[username].requires = [table_user[username].requires,
                                              unique_validator]
@@ -2996,7 +3001,7 @@ class Auth(AuthAPI):
                     return form
                 session.flash = self.messages.email_sent
             if self.settings.registration_requires_approval and \
-               not self.settings.registration_requires_verification:
+                    not self.settings.registration_requires_verification:
                 table_user[form.vars.id] = dict(registration_key='pending')
                 session.flash = self.messages.registration_pending
             elif (not self.settings.registration_requires_verification or self.settings.login_after_registration):
@@ -3067,7 +3072,7 @@ class Auth(AuthAPI):
         response = current.response
         session = current.session
         captcha = self.settings.retrieve_username_captcha or \
-            (self.settings.retrieve_username_captcha is not False and self.settings.captcha)
+                  (self.settings.retrieve_username_captcha is not False and self.settings.captcha)
         if not self.settings.mailer:
             response.flash = self.messages.function_disabled
             return ''
@@ -3189,9 +3194,9 @@ class Auth(AuthAPI):
             }
             user.update_record(**d)
             if self.settings.mailer and \
-               self.settings.mailer.send(to=form.vars.email,
-                                         subject=self.messages.retrieve_password_subject,
-                                         message=self.messages.retrieve_password % dict(password=password)):
+                    self.settings.mailer.send(to=form.vars.email,
+                                              subject=self.messages.retrieve_password_subject,
+                                              message=self.messages.retrieve_password % dict(password=password)):
                 session.flash = self.messages.email_sent
             else:
                 session.flash = self.messages.unable_send_email
@@ -3293,8 +3298,8 @@ class Auth(AuthAPI):
         d = dict(user)
         d.update(dict(key=reset_password_key, link=link, site=current.request.env.http_host))
         if self.settings.mailer and self.settings.mailer.send(
-            to=user.email,
-            subject=subject % d,
+                to=user.email,
+                subject=subject % d,
                 message=body % d):
             user.update_record(reset_password_key=reset_password_key)
             return True
@@ -3437,7 +3442,7 @@ class Auth(AuthAPI):
         response = current.response
         session = current.session
         captcha = self.settings.retrieve_password_captcha or \
-            (self.settings.retrieve_password_captcha is not False and self.settings.captcha)
+                  (self.settings.retrieve_password_captcha is not False and self.settings.captcha)
 
         if next is DEFAULT:
             next = self.get_vars_next() or self.settings.request_reset_password_next
@@ -3452,7 +3457,7 @@ class Auth(AuthAPI):
             log = self.messages['reset_password_log']
         userfield = self.settings.login_userfield or 'username' \
             if self.settings.login_userfield or 'username' \
-            in table_user.fields else 'email'
+               in table_user.fields else 'email'
         if userfield == 'email':
             table_user.email.requires = [
                 IS_EMAIL(error_message=self.messages.invalid_email),
@@ -3515,8 +3520,8 @@ class Auth(AuthAPI):
         d = dict(user)
         d.update(dict(key=reset_password_key, link=link))
         if self.settings.mailer and self.settings.mailer.send(
-            to=user.email,
-            subject=self.messages.reset_password_subject,
+                to=user.email,
+                subject=self.messages.reset_password_subject,
                 message=self.messages.reset_password % d):
             user.update_record(reset_password_key=reset_password_key)
             return True
@@ -3576,8 +3581,8 @@ class Auth(AuthAPI):
             requires = [requires]
         requires = list(filter(lambda t: isinstance(t, CRYPT), requires))
         if requires:
-            requires[0] = CRYPT(**requires[0].__dict__) # Copy the existing CRYPT attributes
-            requires[0].min_length = 0 # But do not enforce minimum length for the old password
+            requires[0] = CRYPT(**requires[0].__dict__)  # Copy the existing CRYPT attributes
+            requires[0].min_length = 0  # But do not enforce minimum length for the old password
         form = SQLFORM.factory(
             Field('old_password', 'password', requires=requires,
                   label=self.messages.old_password),
@@ -3865,6 +3870,7 @@ class Auth(AuthAPI):
                     return call_or_redirect(
                         self.settings.on_failed_authorization)
                 return action(*a, **b)
+
             f.__doc__ = action.__doc__
             f.__name__ = action.__name__
             f.__dict__.update(action.__dict__)
@@ -3908,6 +3914,7 @@ class Auth(AuthAPI):
 
         def has_membership(self=self, group_id=group_id, role=role):
             return self.has_membership(group_id=group_id, role=role)
+
         return self.requires(has_membership, otherwise=otherwise)
 
     def requires_permission(self, name, table_name='', record_id=0,
@@ -3920,6 +3927,7 @@ class Auth(AuthAPI):
 
         def has_permission(self=self, name=name, table_name=table_name, record_id=record_id):
             return self.has_permission(name, table_name, record_id)
+
         return self.requires(has_permission, otherwise=otherwise)
 
     def requires_signature(self, otherwise=None, hash_vars=True):
@@ -3929,8 +3937,10 @@ class Auth(AuthAPI):
         If role is provided instead of group_id then the
         group_id is calculated.
         """
+
         def verify():
             return URL.verify(current.request, user_signature=True, hash_vars=hash_vars)
+
         return self.requires(verify, otherwise)
 
     def accessible_query(self, name, table, user_id=None):
@@ -3970,13 +3980,13 @@ class Auth(AuthAPI):
             (membership.group_id == permission.group_id)
             (permission.name == name)
             (permission.table_name == table)
-            ._select(permission.record_id))
+                ._select(permission.record_id))
         if self.settings.everybody_group_id:
             query |= table.id.belongs(
                 db(permission.group_id == self.settings.everybody_group_id)
                 (permission.name == name)
                 (permission.table_name == table)
-                ._select(permission.record_id))
+                    ._select(permission.record_id))
         return query
 
     @staticmethod
@@ -4266,8 +4276,8 @@ class Crud(object):  # pragma: no cover
             request.vars.update(json.loads(request.vars.json))
         if next is DEFAULT:
             next = request.get_vars._next \
-                or request.post_vars._next \
-                or self.settings.update_next
+                   or request.post_vars._next \
+                   or self.settings.update_next
         if onvalidation is DEFAULT:
             onvalidation = self.settings.update_onvalidation
         if onaccept is DEFAULT:
@@ -4412,8 +4422,8 @@ class Crud(object):  # pragma: no cover
         session = current.session
         if next is DEFAULT:
             next = request.get_vars._next \
-                or request.post_vars._next \
-                or self.settings.delete_next
+                   or request.post_vars._next \
+                   or self.settings.delete_next
         if message is DEFAULT:
             message = self.messages.record_deleted
         record = table[record_id]
@@ -4649,8 +4659,10 @@ def fetch(url, data=None, headers=None,
         html = response.content
     return html
 
+
 regex_geocode = \
-    re.compile(r"""<geometry>[\W]*?<location>[\W]*?<lat>(?P<la>[^<]*)</lat>[\W]*?<lng>(?P<lo>[^<]*)</lng>[\W]*?</location>""")
+    re.compile(
+        r"""<geometry>[\W]*?<location>[\W]*?<lat>(?P<la>[^<]*)</lat>[\W]*?<lng>(?P<lo>[^<]*)</lng>[\W]*?</location>""")
 
 
 def geocode(address):
@@ -4669,7 +4681,9 @@ def reverse_geocode(lat, lng, lang=None):
     if not lang:
         lang = current.T.accepted_language
     try:
-        return json.loads(fetch('http://maps.googleapis.com/maps/api/geocode/json?latlng=%(lat)s,%(lng)s&language=%(lang)s' % locals()))['results'][0]['formatted_address']
+        return json.loads(fetch(
+            'http://maps.googleapis.com/maps/api/geocode/json?latlng=%(lat)s,%(lng)s&language=%(lang)s' % locals()))[
+            'results'][0]['formatted_address']
     except:
         return ''
 
@@ -4686,7 +4700,7 @@ def universal_caller(f, *a, **b):
 
     # Fill the arg_dict with name and value for the submitted, positional values
     for pos_index, pos_val in enumerate(a[:c]):
-        arg_dict[n[pos_index]] = pos_val    # n[pos_index] is the name of the argument
+        arg_dict[n[pos_index]] = pos_val  # n[pos_index] is the name of the argument
 
     # There might be pos_args left, that are sent as named_values. Gather them as well.
     # If a argument already is populated with values we simply replaces them.
@@ -4936,6 +4950,7 @@ class Service(object):
             else:
                 self.amfrpc3_procedures[f.__name__] = f
             return f
+
         return _amfrpc3
 
     def soap(self, name=None, returns=None, args=None, doc=None, response_element_name=None):
@@ -4964,6 +4979,7 @@ class Service(object):
         def _soap(f):
             self.soap_procedures[name or f.__name__] = f, returns, args, doc, response_element_name
             return f
+
         return _soap
 
     def serve_run(self, args=None):
@@ -4990,6 +5006,7 @@ class Service(object):
             if value is None:
                 return '<NULL>'
             return value
+
         if args and args[0] in self.csv_procedures:
             import types
             r = self.call_service_function(self.csv_procedures[args[0]],
@@ -5406,6 +5423,7 @@ def completion(callback):
     It logs the output of the function every time input is called.
     The argument of completion is executed in a new thread.
     """
+
     def _completion(f):
         def __completion(*a, **b):
             d = None
@@ -5414,7 +5432,9 @@ def completion(callback):
                 return d
             finally:
                 thread.start_new_thread(callback, (d,))
+
         return __completion
+
     return _completion
 
 
@@ -5473,6 +5493,7 @@ def test_thread_separation():
         c.x = 7
         lock1.release()
         lock2.release()
+
     lock1 = thread.allocate_lock()
     lock2 = thread.allocate_lock()
     lock1.acquire()
@@ -5774,6 +5795,7 @@ class Wiki(object):
                 else:
                     my_render = self.markmin_render
                 return my_render(page)
+
             r = custom_render
         else:
             raise ValueError(
@@ -5867,7 +5889,7 @@ class Wiki(object):
                     Field('name'),
                     Field('wiki_page', 'reference wiki_page'),
                     auth.signature],
-                'vars':{'format': '%(title)s', 'migrate': migrate}}),
+                'vars': {'format': '%(title)s', 'migrate': migrate}}),
             ('wiki_media', {
                 'args': [
                     Field('wiki_page', 'reference wiki_page'),
@@ -5908,12 +5930,13 @@ class Wiki(object):
                 tag = tag.strip().lower()
                 if tag:
                     db.wiki_tag.insert(name=tag, wiki_page=page.id)
+
         db.wiki_page._after_insert.append(update_tags_insert)
         db.wiki_page._after_update.append(update_tags_update)
 
         if (auth.user and
-            check_credentials(current.request, gae_login=False) and
-            'wiki_editor' not in auth.user_groups.values() and
+                check_credentials(current.request, gae_login=False) and
+                'wiki_editor' not in auth.user_groups.values() and
                 self.settings.groups == auth.user_groups.values()):
             group = db.auth_group(role='wiki_editor')
             gid = group.id if group else db.auth_group.insert(
@@ -6069,7 +6092,7 @@ class Wiki(object):
             if not (self.can_manage() or
                     slug.startswith(self.settings.force_prefix)):
                 current.session.flash = 'slug must have "%s" prefix' \
-                    % self.settings.force_prefix
+                                        % self.settings.force_prefix
                 redirect(URL(args=('_create')))
             db.wiki_page.can_read.default = [Wiki.everybody]
             db.wiki_page.can_edit.default = [auth.user_group_role()]
@@ -6149,7 +6172,7 @@ class Wiki(object):
             return self.not_authorized(page)
         self.auth.db.wiki_media.id.represent = lambda id, row: \
             id if not row.filename else \
-            SPAN('@////%i/%s.%s' % (id, IS_SLUG.urlify(row.title.split('.')[0]), row.filename.split('.')[-1]))
+                SPAN('@////%i/%s.%s' % (id, IS_SLUG.urlify(row.title.split('.')[0]), row.filename.split('.')[-1]))
         self.auth.db.wiki_media.wiki_page.default = page.id
         self.auth.db.wiki_media.wiki_page.writable = False
         links = []
@@ -6179,7 +6202,7 @@ class Wiki(object):
         options = [OPTION(row.slug, _value=row.id) for row in slugs]
         options.insert(0, OPTION('', _value=''))
         fields = [Field("slug", default=current.request.args(1) or
-                        self.settings.force_prefix,
+                                        self.settings.force_prefix,
                         requires=(IS_SLUG(), IS_NOT_IN_DB(db, db.wiki_page.slug))), ]
         if self.settings.templates:
             fields.append(
@@ -6210,9 +6233,9 @@ class Wiki(object):
                     wiki_table.can_read, wiki_table.can_edit],
             links=[
                 lambda row:
-                    A('edit', _href=URL(args=('_edit', row.slug)), _class='btn'),
+                A('edit', _href=URL(args=('_edit', row.slug)), _class='btn'),
                 lambda row:
-                    A('media', _href=URL(args=('_editmedia', row.slug)), _class='btn')],
+                A('media', _href=URL(args=('_editmedia', row.slug)), _class='btn')],
             details=False, editable=False, deletable=False, create=False,
             orderby=self.auth.db.wiki_page.title,
             args=['_pages'],
@@ -6328,8 +6351,8 @@ class Wiki(object):
             if preview:
                 fields.append(db.wiki_page.body)
             if query is None:
-                query = (db.wiki_page.id == db.wiki_tag.wiki_page) &\
-                    (db.wiki_tag.name.belongs(tags))
+                query = (db.wiki_page.id == db.wiki_tag.wiki_page) & \
+                        (db.wiki_tag.name.belongs(tags))
                 query = query | db.wiki_page.title.contains(request.vars.q)
             if self.settings.restrict_search and not self.can_manage():
                 query = query & (db.wiki_page.created_by == self.auth.user_id)
@@ -6345,15 +6368,16 @@ class Wiki(object):
 
                 def link(t):
                     return A(t, _href=URL(args='_search', vars=dict(q=t)))
+
                 items = [DIV(H3(A(p.wiki_page.title, _href=URL(
                     args=p.wiki_page.slug))),
-                    MARKMIN(self.first_paragraph(p.wiki_page))
-                    if preview else '',
-                    DIV(_class='w2p_wiki_tags',
-                        *[link(t.strip()) for t in
-                          p.wiki_page.tags or [] if t.strip()]),
-                    _class='w2p_wiki_search_item')
-                    for p in pages]
+                             MARKMIN(self.first_paragraph(p.wiki_page))
+                             if preview else '',
+                             DIV(_class='w2p_wiki_tags',
+                                 *[link(t.strip()) for t in
+                                   p.wiki_page.tags or [] if t.strip()]),
+                             _class='w2p_wiki_search_item')
+                         for p in pages]
                 content.append(DIV(_class='w2p_wiki_pages', *items))
             else:
                 cloud = False
@@ -6379,6 +6403,7 @@ class Wiki(object):
             STYLE = 'padding:0 0.2em;line-height:%.2fem;font-size:%.2fem'
             size = (1.5 * (c - b) / max(a - b, 1) + 1.3)
             return STYLE % (1.3, size)
+
         items = []
         for item in ids:
             items.append(A(item.wiki_tag.name,
@@ -6400,10 +6425,10 @@ class Wiki(object):
 class Config(object):
 
     def __init__(
-        self,
-        filename,
-        section,
-        default_values={}
+            self,
+            filename,
+            section,
+            default_values={}
     ):
         self.config = configparser.ConfigParser(default_values)
         self.config.read(filename)
@@ -6413,7 +6438,7 @@ class Config(object):
         self.filename = filename
 
     def read(self):
-        if not(isinstance(current.session['settings_%s' % self.section], dict)):
+        if not (isinstance(current.session['settings_%s' % self.section], dict)):
             settings = dict(self.config.items(self.section))
         else:
             settings = current.session['settings_%s' % self.section]
@@ -6430,6 +6455,8 @@ class Config(object):
             result = False
         return result
 
+
 if __name__ == '__main__':
     import doctest
+
     doctest.testmod()

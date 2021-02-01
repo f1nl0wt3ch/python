@@ -202,7 +202,8 @@ class TestMail(unittest.TestCase):
         self.assertTrue(mail.send(to=['somebody@example.com'],
                                   subject='hello',
                                   message='world',
-                                  attachments=Mail.Attachment(module_file, content_id='trololo', content_type='tra/lala')))
+                                  attachments=Mail.Attachment(module_file, content_id='trololo',
+                                                              content_type='tra/lala')))
         message = TestMail.DummySMTP.inbox.pop()
         self.assertTrue('Content-Type: tra/lala' in message.payload)
         self.assertTrue('Content-Id: <trololo>' in message.payload)
@@ -264,6 +265,7 @@ class TestAuthJWT(unittest.TestCase):
         @self.jwtauth.allows_jwt()
         def optional_auth():
             self.assertEqual(self.user_data['username'], self.auth.user.username)
+
         optional_auth()
 
 
@@ -1028,7 +1030,7 @@ class TestAuth(unittest.TestCase):
             self.db(self.db.auth_permission.id == permission_id).select(self.db.auth_permission.name).first().name
         self.assertEqual(permission_name, 'user_1_permission')
         # add an existing permission
-        permission_id =\
+        permission_id = \
             self.auth.add_permission(group_id=0,
                                      name='user_1_permission',
                                      table_name='auth_user',
@@ -1047,7 +1049,7 @@ class TestAuth(unittest.TestCase):
         self.assertTrue(self.auth.del_permission(group_id=self.auth.id_group('user_1'),
                                                  name='del_permission_test',
                                                  table_name='auth_user',
-                                                 record_id=0,))
+                                                 record_id=0, ))
         count_log_event_test_after = self.db(self.db.auth_event.id > 0).count()
         # check that event is logged
         self.assertEqual(count_log_event_test_after, count_log_event_test_before)
@@ -1083,6 +1085,7 @@ class TestToolsFunctions(unittest.TestCase):
     """
     Test suite for all the tools.py functions
     """
+
     def test_prettydate(self):
         # plain
         now = datetime.datetime.now()
@@ -1387,4 +1390,3 @@ class TestExpose(unittest.TestCase):
     def test_not_authorized(self):
         with self.assertRaises(HTTP):
             self.make_expose(base='inside', show='link_to_file3')
-

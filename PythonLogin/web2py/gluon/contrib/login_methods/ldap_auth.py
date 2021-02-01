@@ -5,9 +5,11 @@
 
 import sys
 import logging
+
 try:
     import ldap
     import ldap.filter
+
     ldap.set_option(ldap.OPT_REFERRALS, 0)
 except Exception as e:
     logging.error('missing ldap, try "pip install python-ldap"')
@@ -45,7 +47,6 @@ def ldap_auth(server='ldap',
               group_mapping={},
               tls=False,
               logging_level='error'):
-
     """
     to use ldap login with MS Active Directory:
 
@@ -319,8 +320,8 @@ def ldap_auth(server='ldap',
                 con.simple_bind_s(dn, pw)
                 # search by e-mail address
                 filter = '(&(mail=%s)(%s))' % (
-                                ldap.filter.escape_filter_chars(username),
-                                filterstr)
+                    ldap.filter.escape_filter_chars(username),
+                    filterstr)
                 # find the uid
                 attrs = ['uid']
                 if manage_user:
@@ -613,7 +614,7 @@ def ldap_auth(server='ldap',
 
             if cacert_path:
                 ldap.set_option(ldap.OPT_X_TLS_CACERTDIR, cacert_path)
-                
+
             if cacert_file:
                 ldap.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER)
                 ldap.set_option(ldap.OPT_X_TLS_CACERTFILE, cacert_file)
@@ -621,7 +622,7 @@ def ldap_auth(server='ldap',
                 ldap.set_option(ldap.OPT_X_TLS_CERTFILE, cert_file)
             if key_file:
                 ldap.set_option(ldap.OPT_X_TLS_KEYFILE, key_file)
-                
+
             con = ldap.initialize("ldaps://" + ldap_server + ":" + str(ldap_port))
         else:
             if not ldap_port:
@@ -692,7 +693,7 @@ def ldap_auth(server='ldap',
             else:
                 # bind as anonymous
                 con.simple_bind_s('', '')
-                
+
         # if username is None, return empty list
         if username is None:
             return list()

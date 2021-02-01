@@ -16,5 +16,6 @@ Let’s get started by importing and using the datetime module. In this case, yo
 """
 # Import datetime from datetime below:
 from datetime import datetime
+
 current_time = datetime.now()
 print(current_time)

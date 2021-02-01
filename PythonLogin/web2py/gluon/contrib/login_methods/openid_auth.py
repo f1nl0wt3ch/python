@@ -117,7 +117,7 @@ class OpenIDAuth(object):
         messages.flash_openid_associated = 'OpenID associated'
         messages.flash_associate_openid = 'Please login or register an account for this OpenID.'
         messages.p_openid_not_registered = "This Open ID haven't be registered. " \
-            + "Please login to associate with it or register an account for it."
+                                           + "Please login to associate with it or register an account for it."
         messages.flash_openid_authenticated = 'OpenID authenticated successfully.'
         messages.flash_openid_fail_authentication = 'OpenID authentication failed. (Error message: %s)'
         messages.flash_openid_canceled = 'OpenID authentication canceled by user.'
@@ -153,7 +153,7 @@ class OpenIDAuth(object):
         Delete the w2popenid record in session as logout
         """
         if current.session.w2popenid:
-            del(current.session.w2popenid)
+            del (current.session.w2popenid)
         return next
 
     def login_form(self):
@@ -183,7 +183,7 @@ class OpenIDAuth(object):
             db = self.db
             if (w2popenid.ok is True and w2popenid.oid):  # OpenID authenticated
                 if self._w2popenid_expired(w2popenid):
-                    del(current.session.w2popenid)
+                    del (current.session.w2popenid)
                     flash = self.messages.flash_openid_expired
                     current.session.warning = flash
                     redirect(self.auth.settings.login_url)
@@ -198,7 +198,7 @@ class OpenIDAuth(object):
                         # TODO: ask first maybe
                         self._associate_user_openid(self.auth.user, oid)
                         if current.session.w2popenid:
-                            del(current.session.w2popenid)
+                            del (current.session.w2popenid)
                         current.session.flash = self.messages.flash_openid_associated
                         if nextvar in request.vars:
                             redirect(request.vars[nextvar])
@@ -219,7 +219,7 @@ class OpenIDAuth(object):
                     self.table_user.id == alt_login.oiduser).select().first()
                 if user:
                     if current.session.w2popenid:
-                        del(current.session.w2popenid)
+                        del (current.session.w2popenid)
                 if 'username' in self.table_user.fields():
                     username = 'username'
                 elif 'email' in self.table_user.fields():
@@ -233,7 +233,7 @@ class OpenIDAuth(object):
         Get the matched OpenID for given
         """
         query = (
-            (db.alt_logins.username == oid) & (db.alt_logins.oidtype == type_))
+                (db.alt_logins.username == oid) & (db.alt_logins.oidtype == type_))
         alt_login = db(query).select().first()  # Get the OpenID record
         return alt_login
 
@@ -293,6 +293,7 @@ class OpenIDAuth(object):
         """
         Render the form for OpenID login
         """
+
         def warning_openid_fail(session):
             session.warning = messages.openid_fail_discover
 
@@ -319,7 +320,7 @@ width: 400px;
             openid_field_label or self.messages.label_alt_login_username,
             INPUT(_type="input", _name="oid",
                   requires=IS_NOT_EMPTY(
-                  error_message=messages.openid_fail_discover),
+                      error_message=messages.openid_fail_discover),
                   _style=style),
             hidden_next_input,
             INPUT(_type="submit",
@@ -343,7 +344,7 @@ width: 400px;
             try:
                 if '_next' in request.vars:
                     return_to_url = self.return_to_url + \
-                        '?_next=' + request.vars._next
+                                    '?_next=' + request.vars._next
                 url = consumerhelper.begin(oid, self.realm, return_to_url)
             except DiscoveryFailure:
                 warning_openid_fail(session)
@@ -415,7 +416,7 @@ width: 400px;
             l.append(LI(username, " ", delete_link))
 
         profile_url = URL(r=request, f='user', args=['profile'])
-        #return_to_url = self.return_to_url + '?' + self.nextvar + '=' + profile_url
+        # return_to_url = self.return_to_url + '?' + self.nextvar + '=' + profile_url
         openid_list = DIV(H3(messages.h_openid_list), UL(l),
                           self._login_form(
                               _next='profile',
@@ -546,7 +547,7 @@ class Web2pyStore(OpenIDStore):
 
         db = self.database
         query = (db.oid_associations.server_url == server_url) & (
-            db.oid_associations.handle == association.handle)
+                db.oid_associations.handle == association.handle)
         db(query).delete()
         db.oid_associations.insert(server_url=server_url,
                                    handle=association.handle,
@@ -582,7 +583,7 @@ class Web2pyStore(OpenIDStore):
     def removeAssociation(self, server_url, handle):
         db = self.database
         query = (db.oid_associations.server_url == server_url) & (
-            db.oid_associations.handle == handle)
+                db.oid_associations.handle == handle)
         return db(query).delete() is not None
 
     def useNonce(self, server_url, timestamp, salt):
@@ -594,7 +595,8 @@ class Web2pyStore(OpenIDStore):
         db = self.database
         if abs(timestamp - time.time()) > nonce.SKEW:
             return False
-        query = (db.oid_nonces.server_url == server_url) & (db.oid_nonces.itimestamp == timestamp) & (db.oid_nonces.salt == salt)
+        query = (db.oid_nonces.server_url == server_url) & (db.oid_nonces.itimestamp == timestamp) & (
+                    db.oid_nonces.salt == salt)
         if db(query).count() > 0:
             return False
         else:
@@ -622,7 +624,8 @@ class Web2pyStore(OpenIDStore):
                 keep_assoc.append(r)
         for r in remove_assoc:
             del db.oid_associations[r['id']]
-        return (keep_assoc, len(remove_assoc))  # return tuple (list of valid associations, number of deleted associations)
+        return (
+        keep_assoc, len(remove_assoc))  # return tuple (list of valid associations, number of deleted associations)
 
     def cleanupNonces(self):
         """

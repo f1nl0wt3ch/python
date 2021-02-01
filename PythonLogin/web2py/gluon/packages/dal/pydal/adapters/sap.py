@@ -3,6 +3,7 @@ from .._compat import integer_types, long
 from .base import SQLAdapter
 from . import adapters
 
+
 @adapters.register_for('sapdb')
 class SAPDB(SQLAdapter):
     dbengine = 'sapdb'

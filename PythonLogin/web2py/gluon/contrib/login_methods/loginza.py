@@ -15,7 +15,6 @@ import json
 
 
 class Loginza(object):
-
     """
     from gluon.contrib.login_methods.loginza import Loginza
     auth.settings.login_form = Loginza(request,
@@ -46,36 +45,36 @@ class Loginza(object):
         # Howto download and store it locally?
         # FIXME: what if email is unique=True
 
-        self.mappings["http://twitter.com/"] = lambda profile:\
+        self.mappings["http://twitter.com/"] = lambda profile: \
             dict(registration_id=profile.get("identity", ""),
                  username=profile.get("nickname", ""),
                  email=profile.get("email", ""),
                  last_name=profile.get("name", "").get("full_name", ""),
-                 #avatar = profile.get("photo",""),
+                 # avatar = profile.get("photo",""),
                  )
-        self.mappings["https://www.google.com/accounts/o8/ud"] = lambda profile:\
+        self.mappings["https://www.google.com/accounts/o8/ud"] = lambda profile: \
             dict(registration_id=profile.get("identity", ""),
                  username=profile.get("name", "").get("full_name", ""),
                  email=profile.get("email", ""),
                  first_name=profile.get("name", "").get("first_name", ""),
                  last_name=profile.get("name", "").get("last_name", ""),
-                 #avatar = profile.get("photo",""),
+                 # avatar = profile.get("photo",""),
                  )
-        self.mappings["http://vkontakte.ru/"] = lambda profile:\
+        self.mappings["http://vkontakte.ru/"] = lambda profile: \
             dict(registration_id=profile.get("identity", ""),
                  username=profile.get("name", "").get("full_name", ""),
                  email=profile.get("email", ""),
                  first_name=profile.get("name", "").get("first_name", ""),
                  last_name=profile.get("name", "").get("last_name", ""),
-                 #avatar = profile.get("photo",""),
+                 # avatar = profile.get("photo",""),
                  )
-        self.mappings.default = lambda profile:\
+        self.mappings.default = lambda profile: \
             dict(registration_id=profile.get("identity", ""),
                  username=profile.get("name", "").get("full_name"),
                  email=profile.get("email", ""),
                  first_name=profile.get("name", "").get("first_name", ""),
                  last_name=profile.get("name", "").get("last_name", ""),
-                 #avatar = profile.get("photo",""),
+                 # avatar = profile.get("photo",""),
                  )
 
     def get_user(self):

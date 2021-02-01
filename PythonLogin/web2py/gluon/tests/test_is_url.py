@@ -18,12 +18,12 @@ class TestIsUrl(unittest.TestCase):
 
         x = IS_URL()
         self.assertEqual(x('http://google.ca'), ('http://google.ca',
-                         None))
+                                                 None))
         self.assertEqual(x('google.ca'), ('http://google.ca', None))
         self.assertEqual(x('google.ca:80'), ('http://google.ca:80',
-                         None))
+                                             None))
         self.assertEqual(x('unreal.blargg'), ('unreal.blargg',
-                         'Enter a valid URL'))
+                                              'Enter a valid URL'))
         self.assertEqual(x('google..ca'), ('google..ca', 'Enter a valid URL'))
         self.assertEqual(
             x('google.ca..'), ('google.ca..', 'Enter a valid URL'))
@@ -32,73 +32,73 @@ class TestIsUrl(unittest.TestCase):
 
         x = IS_URL(mode='http')
         self.assertEqual(x('http://google.ca'), ('http://google.ca',
-                         None))
+                                                 None))
         self.assertEqual(x('google.ca'), ('http://google.ca', None))
         self.assertEqual(x('google.ca:80'), ('http://google.ca:80',
-                         None))
+                                             None))
         self.assertEqual(x('unreal.blargg'), ('unreal.blargg',
-                         'Enter a valid URL'))
+                                              'Enter a valid URL'))
 
         # prepends 'https' instead of 'http'
 
         x = IS_URL(mode='http', prepend_scheme='https')
         self.assertEqual(x('http://google.ca'), ('http://google.ca',
-                         None))
+                                                 None))
         self.assertEqual(x('google.ca'), ('https://google.ca', None))
         self.assertEqual(x('google.ca:80'), ('https://google.ca:80',
-                         None))
+                                             None))
         self.assertEqual(x('unreal.blargg'), ('unreal.blargg',
-                         'Enter a valid URL'))
+                                              'Enter a valid URL'))
 
         # prepending disabled
 
         x = IS_URL(prepend_scheme=None)
         self.assertEqual(x('http://google.ca'), ('http://google.ca',
-                         None))
+                                                 None))
         self.assertEqual(x('google.ca'), ('google.ca', None))
         self.assertEqual(x('google.ca:80'), ('google.ca:80', None))
         self.assertEqual(x('unreal.blargg'), ('unreal.blargg',
-                         'Enter a valid URL'))
+                                              'Enter a valid URL'))
 
         # custom allowed_schemes
 
         x = IS_URL(mode='http', allowed_schemes=[None, 'http'])
         self.assertEqual(x('http://google.ca'), ('http://google.ca',
-                         None))
+                                                 None))
         self.assertEqual(x('https://google.ca'), ('https://google.ca',
-                         'Enter a valid URL'))
+                                                  'Enter a valid URL'))
         self.assertEqual(x('google.ca'), ('http://google.ca', None))
         self.assertEqual(x('google.ca:80'), ('http://google.ca:80',
-                         None))
+                                             None))
         self.assertEqual(x('unreal.blargg'), ('unreal.blargg',
-                         'Enter a valid URL'))
+                                              'Enter a valid URL'))
 
         # custom allowed_schemes, excluding None
 
         x = IS_URL(allowed_schemes=['http'])
         self.assertEqual(x('http://google.ca'), ('http://google.ca',
-                         None))
+                                                 None))
         self.assertEqual(x('https://google.ca'), ('https://google.ca',
-                         'Enter a valid URL'))
+                                                  'Enter a valid URL'))
         self.assertEqual(x('google.ca'), ('google.ca', 'Enter a valid URL'))
         self.assertEqual(x('google.ca:80'), ('google.ca:80',
-                         'Enter a valid URL'))
+                                             'Enter a valid URL'))
         self.assertEqual(x('unreal.blargg'), ('unreal.blargg',
-                         'Enter a valid URL'))
+                                              'Enter a valid URL'))
 
         # custom allowed_schemes and prepend_scheme
 
         x = IS_URL(allowed_schemes=[None, 'https'],
                    prepend_scheme='https')
         self.assertEqual(x('http://google.ca'), ('http://google.ca',
-                         'Enter a valid URL'))
+                                                 'Enter a valid URL'))
         self.assertEqual(x('https://google.ca'), ('https://google.ca',
-                         None))
+                                                  None))
         self.assertEqual(x('google.ca'), ('https://google.ca', None))
         self.assertEqual(x('google.ca:80'), ('https://google.ca:80',
-                         None))
+                                             None))
         self.assertEqual(x('unreal.blargg'), ('unreal.blargg',
-                         'Enter a valid URL'))
+                                              'Enter a valid URL'))
 
         # Now any URL requiring prepending will fail, but prepending is still
         # enabled!
@@ -115,48 +115,48 @@ class TestIsUrl(unittest.TestCase):
         self.assertEqual(x('google.ca'), ('google.ca', None))
         self.assertEqual(x('google.ca:80'), ('http://google.ca:80', None))
         self.assertEqual(x('blargg://unreal'), ('blargg://unreal',
-                         'Enter a valid URL'))
+                                                'Enter a valid URL'))
 
         # 'generic' mode with custom allowed_schemes that still includes
         # 'http' (the default for prepend_scheme)
 
         x = IS_URL(mode='generic', allowed_schemes=['http', 'blargg'])
         self.assertEqual(x('http://google.ca'), ('http://google.ca',
-                         None))
+                                                 None))
         self.assertEqual(x('ftp://google.ca'), ('ftp://google.ca',
-                         'Enter a valid URL'))
+                                                'Enter a valid URL'))
         self.assertEqual(x('google.ca'), ('google.ca', 'Enter a valid URL'))
         self.assertEqual(x('google.ca:80'), ('google.ca:80',
-                         'Enter a valid URL'))
+                                             'Enter a valid URL'))
         self.assertEqual(x('blargg://unreal'), ('blargg://unreal',
-                         None))
+                                                None))
 
         # 'generic' mode with overriden prepend_scheme
 
         x = IS_URL(mode='generic', prepend_scheme='ftp')
         self.assertEqual(x('http://google.ca'), ('http://google.ca',
-                         None))
+                                                 None))
         self.assertEqual(x('ftp://google.ca'), ('ftp://google.ca',
-                         None))
+                                                None))
         self.assertEqual(x('google.ca'), ('google.ca', None))
         self.assertEqual(x('google.ca:80'), ('ftp://google.ca:80',
-                         None))
+                                             None))
         self.assertEqual(x('blargg://unreal'), ('blargg://unreal',
-                         'Enter a valid URL'))
+                                                'Enter a valid URL'))
 
         # 'generic' mode with overriden allowed_schemes and prepend_scheme
 
         x = IS_URL(mode='generic', allowed_schemes=[None, 'ftp', 'ftps'
                                                     ], prepend_scheme='ftp')
         self.assertEqual(x('http://google.ca'), ('http://google.ca',
-                         'Enter a valid URL'))
+                                                 'Enter a valid URL'))
         self.assertEqual(x('google.ca'), ('google.ca', None))
         self.assertEqual(x('ftp://google.ca'), ('ftp://google.ca',
-                         None))
+                                                None))
         self.assertEqual(x('google.ca:80'), ('ftp://google.ca:80',
-                         None))
+                                             None))
         self.assertEqual(x('blargg://unreal'), ('blargg://unreal',
-                         'Enter a valid URL'))
+                                                'Enter a valid URL'))
 
         # Now any URL requiring prepending will fail, but prepending is still
         # enabled!
@@ -183,9 +183,9 @@ class TestIsUrl(unittest.TestCase):
             x = IS_URL(allowed_schemes=[None, 'ftp', 'ftps'],
                        prepend_scheme='ftp')
             x('http://www.benn.ca')  # we can only reasonably know about the
-                                     # error at calling time
+            # error at calling time
         except Exception as e:
-            if str(e)\
+            if str(e) \
                     != "allowed_scheme value 'ftp' is not in [None, 'http', 'https']":
                 self.fail('Wrong exception: ' + str(e))
         else:
@@ -198,9 +198,9 @@ class TestIsUrl(unittest.TestCase):
         try:
             x = IS_URL(prepend_scheme='ftp')
             x('http://www.benn.ca')  # we can only reasonably know about the
-                                     # error at calling time
+            # error at calling time
         except Exception as e:
-            if str(e)\
+            if str(e) \
                     != "prepend_scheme='ftp' is not in allowed_schemes=[None, 'http', 'https']":
                 self.fail('Wrong exception: ' + str(e))
         else:
@@ -212,7 +212,7 @@ class TestIsUrl(unittest.TestCase):
         try:
             x = IS_URL(allowed_schemes=[None, 'https'])
         except Exception as e:
-            if str(e)\
+            if str(e) \
                     != "prepend_scheme='http' is not in allowed_schemes=[None, 'https']":
                 self.fail('Wrong exception: ' + str(e))
         else:
@@ -224,7 +224,7 @@ class TestIsUrl(unittest.TestCase):
             x = IS_URL(allowed_schemes=[None, 'http'],
                        prepend_scheme='https')
         except Exception as e:
-            if str(e)\
+            if str(e) \
                     != "prepend_scheme='https' is not in allowed_schemes=[None, 'http']":
                 self.fail('Wrong exception: ' + str(e))
         else:
@@ -234,9 +234,9 @@ class TestIsUrl(unittest.TestCase):
 
         try:
             x = IS_URL(mode='generic', allowed_schemes=[None, 'ftp',
-                       'ftps'])
+                                                        'ftps'])
         except Exception as e:
-            if str(e)\
+            if str(e) \
                     != "prepend_scheme='http' is not in allowed_schemes=[None, 'ftp', 'ftps']":
                 self.fail('Wrong exception: ' + str(e))
         else:
@@ -248,7 +248,7 @@ class TestIsUrl(unittest.TestCase):
         try:
             x = IS_URL(mode='generic', prepend_scheme='blargg')
             x('http://www.google.ca')
-              # we can only reasonably know about the error at calling time
+            # we can only reasonably know about the error at calling time
         except Exception as e:
             if not str(e).startswith(
                     "prepend_scheme='blargg' is not in allowed_schemes="):
@@ -262,7 +262,7 @@ class TestIsUrl(unittest.TestCase):
             x = IS_URL(mode='generic', allowed_schemes=[None, 'http'],
                        prepend_scheme='blargg')
         except Exception as e:
-            if str(e)\
+            if str(e) \
                     != "prepend_scheme='blargg' is not in allowed_schemes=[None, 'http']":
                 self.fail('Wrong exception: ' + str(e))
         else:
@@ -287,13 +287,11 @@ class TestIsUrl(unittest.TestCase):
 
 
 class TestIsGenericUrl(unittest.TestCase):
-
     x = IS_GENERIC_URL()
 
     def testInvalidUrls(self):
         urlsToCheckA = []
         for i in list(range(0, 32)) + [127]:
-
             # Control characters are disallowed in any part of a URL
 
             urlsToCheckA.append('http://www.benn' + chr(i) + '.ca')
@@ -409,7 +407,6 @@ class TestIsGenericUrl(unittest.TestCase):
 
 
 class TestIsHttpUrl(unittest.TestCase):
-
     x = IS_HTTP_URL()
 
     def testInvalidUrls(self):
@@ -559,12 +556,12 @@ class TestIsHttpUrl(unittest.TestCase):
 
         z = IS_HTTP_URL(prepend_scheme=None)
         self.assertEqual(z('google.ca:8080'), ('google.ca:8080',
-                         None))  # prepending disabled
+                                               None))  # prepending disabled
 
         try:
             IS_HTTP_URL(prepend_scheme='mailto')
         except Exception as e:
-            if str(e)\
+            if str(e) \
                     != "prepend_scheme='mailto' is not in allowed_schemes=[None, 'http', 'https']":
                 self.fail('Wrong exception: ' + str(e))
         else:
@@ -575,15 +572,16 @@ class TestIsHttpUrl(unittest.TestCase):
         a = IS_HTTP_URL(allowed_schemes=['http'])
         self.assertEqual(a('google.ca'), ('google.ca', 'Enter a valid URL'))
         self.assertEqual(a('google.ca:80'), ('google.ca:80',
-                         'Enter a valid URL'))
+                                             'Enter a valid URL'))
 
 
 class TestUnicode(unittest.TestCase):
     x = IS_URL()
     y = IS_URL(allowed_schemes=['https'], prepend_scheme='https')
-               #excludes the option for abbreviated URLs with no scheme
+    # excludes the option for abbreviated URLs with no scheme
     z = IS_URL(prepend_scheme=None)
-               # disables prepending the scheme in the return value
+
+    # disables prepending the scheme in the return value
 
     def testUnicodeToAsciiUrl(self):
         self.assertEqual(unicode_to_ascii_authority(u'www.Alliancefran\xe7aise.nu'), 'www.xn--alliancefranaise-npb.nu')
@@ -600,19 +598,27 @@ class TestUnicode(unittest.TestCase):
         self.assertEqual(self.x(u'www.Alliancefran\xe7aise.nu:8080'), (
             'http://www.xn--alliancefranaise-npb.nu:8080', None))
         self.assertEqual(self.x(u'http://www.Alliancefran\xe7aise.nu'),
-                          ('http://www.xn--alliancefranaise-npb.nu', None))
-        self.assertEqual(self.x(u'http://www.Alliancefran\xe7aise.nu/parnaise/blue'), ('http://www.xn--alliancefranaise-npb.nu/parnaise/blue', None))
-        self.assertEqual(self.x(u'http://www.Alliancefran\xe7aise.nu/parnaise/blue#fragment'), ('http://www.xn--alliancefranaise-npb.nu/parnaise/blue#fragment', None))
-        self.assertEqual(self.x(u'http://www.Alliancefran\xe7aise.nu/parnaise/blue?query=value#fragment'), ('http://www.xn--alliancefranaise-npb.nu/parnaise/blue?query=value#fragment', None))
-        self.assertEqual(self.x(u'http://www.Alliancefran\xe7aise.nu:8080/parnaise/blue?query=value#fragment'), ('http://www.xn--alliancefranaise-npb.nu:8080/parnaise/blue?query=value#fragment', None))
-        self.assertEqual(self.x(u'www.Alliancefran\xe7aise.nu/parnaise/blue?query=value#fragment'), ('http://www.xn--alliancefranaise-npb.nu/parnaise/blue?query=value#fragment', None))
+                         ('http://www.xn--alliancefranaise-npb.nu', None))
+        self.assertEqual(self.x(u'http://www.Alliancefran\xe7aise.nu/parnaise/blue'),
+                         ('http://www.xn--alliancefranaise-npb.nu/parnaise/blue', None))
+        self.assertEqual(self.x(u'http://www.Alliancefran\xe7aise.nu/parnaise/blue#fragment'),
+                         ('http://www.xn--alliancefranaise-npb.nu/parnaise/blue#fragment', None))
+        self.assertEqual(self.x(u'http://www.Alliancefran\xe7aise.nu/parnaise/blue?query=value#fragment'),
+                         ('http://www.xn--alliancefranaise-npb.nu/parnaise/blue?query=value#fragment', None))
+        self.assertEqual(self.x(u'http://www.Alliancefran\xe7aise.nu:8080/parnaise/blue?query=value#fragment'),
+                         ('http://www.xn--alliancefranaise-npb.nu:8080/parnaise/blue?query=value#fragment', None))
+        self.assertEqual(self.x(u'www.Alliancefran\xe7aise.nu/parnaise/blue?query=value#fragment'),
+                         ('http://www.xn--alliancefranaise-npb.nu/parnaise/blue?query=value#fragment', None))
         self.assertEqual(self.x(
             u'http://\u4e2d\u4fd4.com'), ('http://xn--fiq13b.com', None))
         self.assertEqual(self.x(u'http://\u4e2d\u4fd4.com/\u4e86'),
-                          ('http://xn--fiq13b.com/%4e%86', None))
-        self.assertEqual(self.x(u'http://\u4e2d\u4fd4.com/\u4e86?query=\u4e86'), ('http://xn--fiq13b.com/%4e%86?query=%4e%86', None))
-        self.assertEqual(self.x(u'http://\u4e2d\u4fd4.com/\u4e86?query=\u4e86#fragment'), ('http://xn--fiq13b.com/%4e%86?query=%4e%86#fragment', None))
-        self.assertEqual(self.x(u'http://\u4e2d\u4fd4.com?query=\u4e86#fragment'), ('http://xn--fiq13b.com?query=%4e%86#fragment', None))
+                         ('http://xn--fiq13b.com/%4e%86', None))
+        self.assertEqual(self.x(u'http://\u4e2d\u4fd4.com/\u4e86?query=\u4e86'),
+                         ('http://xn--fiq13b.com/%4e%86?query=%4e%86', None))
+        self.assertEqual(self.x(u'http://\u4e2d\u4fd4.com/\u4e86?query=\u4e86#fragment'),
+                         ('http://xn--fiq13b.com/%4e%86?query=%4e%86#fragment', None))
+        self.assertEqual(self.x(u'http://\u4e2d\u4fd4.com?query=\u4e86#fragment'),
+                         ('http://xn--fiq13b.com?query=%4e%86#fragment', None))
         self.assertEqual(
             self.x(u'http://B\xfccher.ch'), ('http://xn--bcher-kva.ch', None))
         self.assertEqual(self.x(u'http://\xe4\xf6\xfc\xdf.com'), (
@@ -623,7 +629,8 @@ class TestUnicode(unittest.TestCase):
             'http://xn--hzipatika-01a.com', None))
         self.assertEqual(self.x(u'http://www.\xe7ukurova.com'), (
             'http://www.xn--ukurova-txa.com', None))
-        self.assertEqual(self.x(u'http://nixier\xf6hre.nixieclock-tube.com'), ('http://xn--nixierhre-57a.nixieclock-tube.com', None))
+        self.assertEqual(self.x(u'http://nixier\xf6hre.nixieclock-tube.com'),
+                         ('http://xn--nixierhre-57a.nixieclock-tube.com', None))
         self.assertEqual(self.x(u'google.ca.'), ('http://google.ca.', None))
 
         self.assertEqual(
@@ -656,12 +663,13 @@ class TestUnicode(unittest.TestCase):
 
         self.assertEqual(self.y(u'http://\u4e2d\u4fd4.com/\u4e86'), (
             u'http://\u4e2d\u4fd4.com/\u4e86', 'Enter a valid URL'))
-        #self.assertEqual(self.y(u'google.ca'), (u'google.ca', 'Enter a valid URL'))
+        # self.assertEqual(self.y(u'google.ca'), (u'google.ca', 'Enter a valid URL'))
 
         self.assertEqual(self.z(u'invalid.domain..com'), (
             u'invalid.domain..com', 'Enter a valid URL'))
         self.assertEqual(self.z(u'invalid.\u4e2d\u4fd4.blargg'), (
             u'invalid.\u4e2d\u4fd4.blargg', 'Enter a valid URL'))
+
 
 # ##############################################################################
 

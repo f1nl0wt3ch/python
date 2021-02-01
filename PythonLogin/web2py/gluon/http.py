@@ -77,11 +77,11 @@ class HTTP(Exception):
     """
 
     def __init__(
-        self,
-        status,
-        body='',
-        cookies=None,
-        **headers
+            self,
+            status,
+            body='',
+            cookies=None,
+            **headers
     ):
         self.status = status
         self.body = body
@@ -112,7 +112,7 @@ class HTTP(Exception):
                 body = status
             if isinstance(body, (str, bytes, bytearray)):
                 if isinstance(body, unicodeT):
-                    body = to_bytes(body) # This must be done before len
+                    body = to_bytes(body)  # This must be done before len
                 headers['Content-Length'] = len(body)
         rheaders = []
         for k, v in iteritems(headers):

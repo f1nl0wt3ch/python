@@ -4,6 +4,7 @@ from .._globals import IDENTITY
 from .base import SQLAdapter
 from . import adapters, with_connection_or_raise
 
+
 class Slicer(object):
     def rowslice(self, rows, minimum=0, maximum=None):
         if maximum is None:
@@ -75,7 +76,7 @@ class MSSQL(SQLAdapter):
             urlargs = ';'.join([
                 '%s=%s' % (ak, av) for (ak, av) in iteritems(argsdict)])
             self.cnxn = 'SERVER=%s;PORT=%s;DATABASE=%s;UID=%s;PWD=%s;%s' \
-                % (host, port, db, user, password, urlargs)
+                        % (host, port, db, user, password, urlargs)
 
     def connector(self):
         return self.driver.connect(self.cnxn, **self.driver_args)

@@ -4,7 +4,6 @@ from .._load import OrderedDict
 from ..helpers._internals import Dispatcher
 from ..objects import Expression
 
-
 dialects = Dispatcher("dialect")
 
 

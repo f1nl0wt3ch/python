@@ -9,6 +9,7 @@ except Exception:
     from pymysql.tests import base
     import pymysql.cursors
 
+
 class TestSSCursor(base.PyMySQLTestCase):
     def test_SSCursor(self):
         affected_rows = 18446744073709551615
@@ -24,16 +25,16 @@ class TestSSCursor(base.PyMySQLTestCase):
             ('America', '', 'America/El_Salvador'),
             ('America', '', 'America/Costa_Rica'),
             ('America', '', 'America/Denver'),
-            ('America', '', 'America/Detroit'),]
+            ('America', '', 'America/Detroit'), ]
 
         try:
             cursor = conn.cursor(pymysql.cursors.SSCursor)
 
             # Create table
             cursor.execute(('CREATE TABLE tz_data ('
-                'region VARCHAR(64),'
-                'zone VARCHAR(64),'
-                'name VARCHAR(64))'))
+                            'region VARCHAR(64),'
+                            'zone VARCHAR(64),'
+                            'name VARCHAR(64))'))
 
             conn.begin()
             # Test INSERT
@@ -53,25 +54,25 @@ class TestSSCursor(base.PyMySQLTestCase):
 
                 # Test cursor.rowcount
                 self.assertEqual(cursor.rowcount, affected_rows,
-                    'cursor.rowcount != %s' % (str(affected_rows)))
+                                 'cursor.rowcount != %s' % (str(affected_rows)))
 
                 # Test cursor.rownumber
                 self.assertEqual(cursor.rownumber, iter,
-                    'cursor.rowcount != %s' % (str(iter)))
+                                 'cursor.rowcount != %s' % (str(iter)))
 
                 # Test row came out the same as it went in
                 self.assertEqual((row in data), True,
-                    'Row not found in source data')
+                                 'Row not found in source data')
 
             # Test fetchall
             cursor.execute('SELECT * FROM tz_data')
             self.assertEqual(len(cursor.fetchall()), len(data),
-                'fetchall failed. Number of rows does not match')
+                             'fetchall failed. Number of rows does not match')
 
             # Test fetchmany
             cursor.execute('SELECT * FROM tz_data')
             self.assertEqual(len(cursor.fetchmany(2)), 2,
-                'fetchmany failed. Number of rows does not match')
+                             'fetchmany failed. Number of rows does not match')
 
             # So MySQLdb won't throw "Commands out of sync"
             while True:
@@ -83,28 +84,30 @@ class TestSSCursor(base.PyMySQLTestCase):
             cursor.execute('UPDATE tz_data SET zone = %s', ['Foo'])
             conn.commit()
             self.assertEqual(cursor.rowcount, len(data),
-                'Update failed. affected_rows != %s' % (str(len(data))))
+                             'Update failed. affected_rows != %s' % (str(len(data))))
 
             # Test executemany
             cursor.executemany('INSERT INTO tz_data VALUES (%s, %s, %s)', data)
             self.assertEqual(cursor.rowcount, len(data),
-                'executemany failed. cursor.rowcount != %s' % (str(len(data))))
+                             'executemany failed. cursor.rowcount != %s' % (str(len(data))))
 
             # Test multiple datasets
             cursor.execute('SELECT 1; SELECT 2; SELECT 3')
-            self.assertListEqual(list(cursor), [(1, )])
+            self.assertListEqual(list(cursor), [(1,)])
             self.assertTrue(cursor.nextset())
-            self.assertListEqual(list(cursor), [(2, )])
+            self.assertListEqual(list(cursor), [(2,)])
             self.assertTrue(cursor.nextset())
-            self.assertListEqual(list(cursor), [(3, )])
+            self.assertListEqual(list(cursor), [(3,)])
             self.assertFalse(cursor.nextset())
 
         finally:
             cursor.execute('DROP TABLE tz_data')
             cursor.close()
 
+
 __all__ = ["TestSSCursor"]
 
 if __name__ == "__main__":
     import unittest
+
     unittest.main()

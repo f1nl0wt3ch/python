@@ -54,7 +54,7 @@ class BaseRepresenter(Representer):
         if isinstance(value, datetime):
             value = value.isoformat(self.dialect.dt_sep)[:19]
         elif isinstance(value, date):
-            value = value.isoformat()[:10]+self.dialect.dt_sep+'00:00:00'
+            value = value.isoformat()[:10] + self.dialect.dt_sep + '00:00:00'
         else:
             value = str(value)
         return value
@@ -169,7 +169,7 @@ class NoSQLRepresenter(BaseRepresenter):
     @pre(is_breaking=True)
     def _nullify_empty_string(self, obj, field_type):
         if obj == '' and not (isinstance(field_type, str) and
-           field_type[:2] in ('st', 'te', 'pa', 'up')):
+                              field_type[:2] in ('st', 'te', 'pa', 'up')):
             return True, None
         return False, obj
 

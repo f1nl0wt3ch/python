@@ -19,12 +19,13 @@ from gluon.html import SPAN
 MP_WORKING = 0
 try:
     import multiprocessing
+
     MP_WORKING = 1
-    #due to http://bugs.python.org/issue10845, testing multiprocessing in python is impossible
+    # due to http://bugs.python.org/issue10845, testing multiprocessing in python is impossible
     if sys.platform.startswith('win'):
         MP_WORKING = 0
-    #multiprocessing is also not available on GAE. Since tests randomly
-    #fail, let's not make them on it too
+    # multiprocessing is also not available on GAE. Since tests randomly
+    # fail, let's not make them on it too
     if 'datastore' in os.getenv('DB', ''):
         MP_WORKING = 0
 except ImportError:
@@ -95,7 +96,7 @@ class TestTranslations(unittest.TestCase):
                          'Hello World')
         self.assertEqual(str(T.M('**Hello World**')),
                          '<strong>Hello World</strong>')
-		# sub_tuple testing
+        # sub_tuple testing
         self.assertEqual(str(T('%s %%{shop}', 1)),
                          '1 shop')
         self.assertEqual(str(T('%s %%{shop}', 2)),
@@ -192,7 +193,7 @@ class TestTranslations(unittest.TestCase):
                          '2')
         self.assertEqual(str(T('%i%%{?st?[0]}', 0)),
                          '0')
-		# sub_dict testing
+        # sub_dict testing
         self.assertEqual(str(T('%(key)s %%{is(key)}', dict(key=1))),
                          '1 is')
         self.assertEqual(str(T('%(key)i %%{is(key)}', dict(key=2))),
@@ -255,6 +256,7 @@ class TestTranslations(unittest.TestCase):
         self.assertEqual(to_unicode(T('Hello World')),
                          'Salve Mondo')
 
+
 class TestDummyApp(unittest.TestCase):
 
     def setUp(self):
@@ -269,48 +271,48 @@ class TestDummyApp(unittest.TestCase):
         os.mkdir(pjoin(self.apppath, 'modules'))
         with open(pjoin(self.apppath, 'languages', 'en.py'), 'w') as testlang:
             testlang.write(
-"""
-{}
-"""
+                """
+                {}
+                """
             )
         with open(pjoin(self.apppath, 'languages', 'pt.py'), 'w') as testlang:
             testlang.write(
-"""
-{}
-"""
+                """
+                {}
+                """
             )
         with open(pjoin(self.apppath, 'modules', 'test.py'), 'w') as testmodule:
             testmodule.write(
-"""
-from gluon import current
-
-hello = current.T('hello')
-"""         )
+                """
+                from gluon import current
+                
+                hello = current.T('hello')
+                """)
         with open(pjoin(self.apppath, 'models', 'db.py'), 'w') as testmodel:
             testmodel.write(
-"""
-world = T("world")
-"""
+                """
+                world = T("world")
+                """
             )
         with open(pjoin(self.apppath, 'controllers', 'default.py'), 'w') as testcontroller:
             testcontroller.write(
-"""
-def index():
-    message = T('%s %%{shop}', 2)
-    return dict(message=message)
-"""
+                """
+                def index():
+                    message = T('%s %%{shop}', 2)
+                    return dict(message=message)
+                """
             )
         with open(pjoin(self.apppath, 'views', 'default', 'index.html'), 'w') as testview:
             testview.write(
-"""
-<html>
-    <head>
-    </head>
-    <body>
-    <h1>{{=T('ahoy')}}</h1>
-    </body>
-</html>
-"""
+                """
+                <html>
+                    <head>
+                    </head>
+                    <body>
+                    <h1>{{=T('ahoy')}}</h1>
+                    </body>
+                </html>
+                """
             )
 
     def tearDown(self):
@@ -325,6 +327,7 @@ def index():
         for key in ['hello', 'world', '%s %%{shop}', 'ahoy']:
             self.assertTrue(key in en_dict)
             self.assertTrue(key in pt_dict)
+
 
 class TestMessages(unittest.TestCase):
 
@@ -342,8 +345,9 @@ class TestMessages(unittest.TestCase):
     def test_decode(self):
         T = languages.translator(self.langpath, self.http_accept_language)
         messages = Messages(T)
-        messages.update({'email_sent':'Email sent', 'test': "ä"})
+        messages.update({'email_sent': 'Email sent', 'test': "ä"})
         self.assertEqual(to_unicode(messages.email_sent, 'utf-8'), 'Email sent')
+
 
 class TestHTMLTag(unittest.TestCase):
 

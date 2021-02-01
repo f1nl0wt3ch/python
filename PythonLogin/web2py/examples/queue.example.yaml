@@ -3,6 +3,6 @@
 #  See http://code.google.com/appengine/docs/python/config/queue.html
 
 queue:
-- name: default
-  rate: 20/m
-  bucket_size: 1
+  - name: default
+    rate: 20/m
+    bucket_size: 1

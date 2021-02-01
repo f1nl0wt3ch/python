@@ -14,14 +14,14 @@ import os
 ip = '0.0.0.0'
 port = 80
 interfaces = [('0.0.0.0', 80)]
-               #,('0.0.0.0',443,'ssl_private_key.pem','ssl_certificate.pem')]
+# ,('0.0.0.0',443,'ssl_private_key.pem','ssl_certificate.pem')]
 password = '<recycle>'  # ## <recycle> means use the previous password
 pid_filename = 'httpserver.pid'
 log_filename = 'httpserver.log'
 profiler_filename = None
 ssl_certificate = ''  # 'ssl_certificate.pem'  # ## path to certificate file
 ssl_private_key = ''  # 'ssl_private_key.pem'  # ## path to private key file
-#numthreads = 50 # ## deprecated; remove
+# numthreads = 50 # ## deprecated; remove
 minthreads = None
 maxthreads = None
 server_name = socket.gethostname()

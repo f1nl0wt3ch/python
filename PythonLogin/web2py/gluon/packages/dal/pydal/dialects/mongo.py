@@ -14,17 +14,17 @@ _aggregate_map = {
 }
 
 _extract_map = {
-    'dayofyear':    '$dayOfYear',
-    'day':          '$dayOfMonth',
-    'dayofweek':    '$dayOfWeek',
-    'year':         '$year',
-    'month':        '$month',
-    'week':         '$week',
-    'hour':         '$hour',
-    'minute':       '$minute',
-    'second':       '$second',
-    'millisecond':  '$millisecond',
-    'string':       '$dateToString',
+    'dayofyear': '$dayOfYear',
+    'day': '$dayOfMonth',
+    'dayofweek': '$dayOfWeek',
+    'year': '$year',
+    'month': '$month',
+    'week': '$week',
+    'hour': '$hour',
+    'minute': '$minute',
+    'second': '$second',
+    'millisecond': '$millisecond',
+    'string': '$dateToString',
 }
 
 
@@ -34,6 +34,7 @@ def needs_aggregation_pipeline(f):
         if len(args) > 0:
             self.adapter._parse_data(args[0], 'pipeline', True)
         return f(self, first, *args, **kwargs)
+
     return wrap
 
 
@@ -42,6 +43,7 @@ def validate_second(f):
         if len(args) < 3 or args[2] is None:
             raise RuntimeError("Cannot compare %s with None" % args[1])
         return f(*args, **kwargs)
+
     return wrap
 
 
@@ -55,6 +57,7 @@ def check_fields_for_cmp(f):
         else:
             pipeline = False
         return f(self, first, second, *args, pipeline=pipeline, **kwargs)
+
     return wrap
 
 
@@ -87,7 +90,7 @@ class MongoDialect(NoSQLDialect):
             # not(A or B)  -> not(A) and not(B)
             not_op = '$and' if op_k == '$or' else '$or'
             rv = {not_op: [self._not(val.first, query_env),
-                self._not(val.second, query_env)]}
+                           self._not(val.second, query_env)]}
         else:
             try:
                 sub_ops = list(op_body.keys())
@@ -106,7 +109,7 @@ class MongoDialect(NoSQLDialect):
                 return self.expand(first, query_env=query_env)
             return self.ne(first, first)
         return {'$and': [self.expand(first, query_env=query_env),
-            self.expand(second, query_env=query_env)]}
+                         self.expand(second, query_env=query_env)]}
 
     def _or(self, first, second, query_env={}):
         # pymongo expects: .find({'$or': [{'name':'1'}, {'name':'2'}]})
@@ -115,7 +118,7 @@ class MongoDialect(NoSQLDialect):
                 return self.expand(first, query_env=query_env)
             return True
         return {'$or': [self.expand(first, query_env=query_env),
-            self.expand(second, query_env=query_env)]}
+                        self.expand(second, query_env=query_env)]}
 
     def belongs(self, first, second, query_env={}):
         if isinstance(second, str):
@@ -124,7 +127,7 @@ class MongoDialect(NoSQLDialect):
             # work if adapter._select did not return SQL.
             raise RuntimeError("nested queries not supported")
         items = [self.expand(item, first.type, query_env=query_env)
-            for item in second]
+                 for item in second]
         return {self.expand(first, query_env=query_env): {"$in": items}}
 
     def _cmp_ops_aggregation_pipeline(self, op, first, second, query_env={}):
@@ -133,59 +136,59 @@ class MongoDialect(NoSQLDialect):
         except:
             type = None
         return {op: [self.expand(first, query_env=query_env),
-            self.expand(second, type, query_env=query_env)]}
+                     self.expand(second, type, query_env=query_env)]}
 
     @check_fields_for_cmp
     def eq(self, first, second=None, pipeline=False, query_env={}):
         if pipeline:
             return self._cmp_ops_aggregation_pipeline('$eq', first, second,
-                query_env)
+                                                      query_env)
         return {self.expand(first, query_env=query_env):
-            self.expand(second, first.type, query_env=query_env)}
+                    self.expand(second, first.type, query_env=query_env)}
 
     @check_fields_for_cmp
     def ne(self, first, second=None, pipeline=False, query_env={}):
         if pipeline:
             return self._cmp_ops_aggregation_pipeline('$ne', first, second,
-                query_env)
+                                                      query_env)
         return {self.expand(first, query_env=query_env):
-            {'$ne': self.expand(second, first.type, query_env=query_env)}}
+                    {'$ne': self.expand(second, first.type, query_env=query_env)}}
 
     @validate_second
     @check_fields_for_cmp
     def lt(self, first, second=None, pipeline=False, query_env={}):
         if pipeline:
             return self._cmp_ops_aggregation_pipeline('$lt', first, second,
-                query_env)
+                                                      query_env)
         return {self.expand(first, query_env=query_env):
-            {'$lt': self.expand(second, first.type, query_env=query_env)}}
+                    {'$lt': self.expand(second, first.type, query_env=query_env)}}
 
     @validate_second
     @check_fields_for_cmp
     def lte(self, first, second=None, pipeline=False, query_env={}):
         if pipeline:
             return self._cmp_ops_aggregation_pipeline('$lte', first, second,
-                query_env)
+                                                      query_env)
         return {self.expand(first, query_env=query_env):
-            {'$lte': self.expand(second, first.type, query_env=query_env)}}
+                    {'$lte': self.expand(second, first.type, query_env=query_env)}}
 
     @validate_second
     @check_fields_for_cmp
     def gt(self, first, second=None, pipeline=False, query_env={}):
         if pipeline:
             return self._cmp_ops_aggregation_pipeline('$gt', first, second,
-                query_env)
+                                                      query_env)
         return {self.expand(first, query_env=query_env):
-            {'$gt': self.expand(second, first.type, query_env=query_env)}}
+                    {'$gt': self.expand(second, first.type, query_env=query_env)}}
 
     @validate_second
     @check_fields_for_cmp
     def gte(self, first, second=None, pipeline=False, query_env={}):
         if pipeline:
             return self._cmp_ops_aggregation_pipeline('$gte', first, second,
-                query_env)
+                                                      query_env)
         return {self.expand(first, query_env=query_env):
-            {'$gte': self.expand(second, first.type, query_env=query_env)}}
+                    {'$gte': self.expand(second, first.type, query_env=query_env)}}
 
     @needs_aggregation_pipeline
     def add(self, first, second, query_env={}):
@@ -198,7 +201,7 @@ class MongoDialect(NoSQLDialect):
             except:
                 pass
         return {op_code: [self.expand(first, query_env=query_env),
-            self.expand(second, first.type, query_env=query_env)]}
+                          self.expand(second, first.type, query_env=query_env)]}
 
     @needs_aggregation_pipeline
     def sub(self, first, second, query_env={}):
@@ -234,7 +237,7 @@ class MongoDialect(NoSQLDialect):
                     self.expand(first, query_env=query_env)]}
         try:
             expanded = {_aggregate_map[what]:
-                self.expand(first, query_env=query_env)}
+                            self.expand(first, query_env=query_env)}
         except KeyError:
             raise NotImplementedError("'%s' not implemented" % what)
 
@@ -246,7 +249,7 @@ class MongoDialect(NoSQLDialect):
         self.adapter._parse_data(first, 'need_group', True)
         if distinct:
             ret = {self.GROUP_MARK: {"$addToSet":
-                self.expand(first, query_env=query_env)}}
+                                         self.expand(first, query_env=query_env)}}
             if self.adapter.server_version_major >= 2.6:
                 # '$size' not present in server versions < 2.6
                 ret = {'$size': ret}
@@ -264,7 +267,7 @@ class MongoDialect(NoSQLDialect):
     def epoch(self, first, query_env={}):
         return {"$divide": [
             {"$subtract": [self.expand(first, query_env=query_env),
-                self.adapter.epoch]}, 1000]}
+                           self.adapter.epoch]}, 1000]}
 
     @needs_aggregation_pipeline
     def case(self, query, true_false, query_env={}):
@@ -279,7 +282,7 @@ class MongoDialect(NoSQLDialect):
         # later from the string of the field name.
         if isinstance(first, Field):
             return [{self.AS_MARK: second},
-                self.expand(first, query_env=query_env)]
+                    self.expand(first, query_env=query_env)]
         else:
             result = self.expand(first, query_env=query_env)
             result[self.AS_MARK] = second
@@ -294,7 +297,7 @@ class MongoDialect(NoSQLDialect):
     def comma(self, first, second, query_env={}):
         # returns field name lists, to be separated via split(',')
         return '%s,%s' % (self.expand(first, query_env=query_env),
-            self.expand(second, query_env=query_env))
+                          self.expand(second, query_env=query_env))
 
     # TODO verify full compatibilty with official SQL Like operator
     def _build_like_regex(self, first, second, case_sensitive=True,
@@ -311,14 +314,14 @@ class MongoDialect(NoSQLDialect):
         if like_wildcards:
             if escape:
                 # protect % and _ which are escaped
-                expr = expr.replace(escape+'\\%', '%')
+                expr = expr.replace(escape + '\\%', '%')
                 if PY2:
-                    expr = expr.replace(escape+'\\_', '_')
-                elif escape+'_' in expr:
+                    expr = expr.replace(escape + '\\_', '_')
+                elif escape + '_' in expr:
                     set_aside = str(self.adapter.object_id('<random>'))
                     while set_aside in expr:
                         set_aside = str(self.adapter.object_id('<random>'))
-                    expr = expr.replace(escape+'_', set_aside)
+                    expr = expr.replace(escape + '_', set_aside)
                 else:
                     set_aside = None
             expr = expr.replace('\\%', '.*')
@@ -344,22 +347,22 @@ class MongoDialect(NoSQLDialect):
         return self.regexp(first, pattern % expr, case_sensitive, query_env)
 
     def like(self, first, second, case_sensitive=True, escape=None,
-        query_env={}):
+             query_env={}):
         return self._build_like_regex(
             first, second, case_sensitive=case_sensitive, escape=escape,
             like_wildcards=True, query_env=query_env)
 
     def ilike(self, first, second, escape=None, query_env={}):
         return self.like(first, second, case_sensitive=False, escape=escape,
-            query_env=query_env)
+                         query_env=query_env)
 
     def startswith(self, first, second, query_env={}):
         return self._build_like_regex(first, second, starts_with=True,
-            query_env=query_env)
+                                      query_env=query_env)
 
     def endswith(self, first, second, query_env={}):
         return self._build_like_regex(first, second, ends_with=True,
-            query_env=query_env)
+                                      query_env=query_env)
 
     # TODO verify full compatibilty with official oracle contains operator
     def contains(self, first, second, case_sensitive=True, query_env={}):
@@ -390,7 +393,7 @@ class MongoDialect(NoSQLDialect):
                     second.type)
         elif isinstance(second, (basestring, int)):
             whole_string = isinstance(first, Field) and \
-                first.type == 'list:string'
+                           first.type == 'list:string'
             ret = self._build_like_regex(
                 first, second, case_sensitive=case_sensitive,
                 whole_string=whole_string, query_env=query_env)
@@ -433,7 +436,7 @@ class MongoDialect(NoSQLDialect):
 
         parameters = parse_parameters(*parameters)
         return {'$substr': [self.expand(field, query_env=query_env),
-            parameters[0], parameters[1]]}
+                            parameters[0], parameters[1]]}
 
     @needs_aggregation_pipeline
     def lower(self, first, query_env={}):
@@ -456,7 +459,7 @@ class MongoDialect(NoSQLDialect):
                     first.name)}
         expanded_first = self.expand(first, query_env=query_env)
         regex_second = {'$regex': self.expand(second, 'string',
-            query_env=query_env)}
+                                              query_env=query_env)}
         if not case_sensitive:
             regex_second['$options'] = 'i'
         if (self.adapter._parse_data((first, second), 'pipeline')):
@@ -502,7 +505,7 @@ class MongoDialect(NoSQLDialect):
         if len(second) > 1:
             second = [self.coalesce(second[0], second[1:])]
         return {"$ifNull": [self.expand(first, query_env=query_env),
-            self.expand(second[0], query_env=query_env)]}
+                            self.expand(second[0], query_env=query_env)]}
 
     @property
     def random(self):

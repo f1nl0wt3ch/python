@@ -7,9 +7,7 @@ try:
 except ImportError:
     from io import StringIO
 
-
 __all__ = ['TestParser']
-
 
 _cfg_file = (r"""
 [default]

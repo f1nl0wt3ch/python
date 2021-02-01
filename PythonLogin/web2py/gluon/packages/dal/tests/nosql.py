@@ -20,12 +20,14 @@ from ._adapt import DEFAULT_URI, IS_IMAP, drop, IS_GAE, IS_MONGODB, _quote
 if IS_IMAP:
     from pydal.adapters import IMAPAdapter
     from pydal.contrib import mockimaplib
+
     IMAPAdapter.driver = mockimaplib
 elif IS_MONGODB:
     from pydal.adapters.mongo import Expansion
 elif IS_GAE:
     # setup GAE dummy database
     from google.appengine.ext import testbed
+
     gaetestbed = testbed.Testbed()
     gaetestbed.activate()
     gaetestbed.init_datastore_v3_stub()
@@ -47,7 +49,8 @@ ALLOWED_DATATYPES = [
     'upload',
     'password',
     'json',
-    ]
+]
+
 
 def setUpModule():
     if not IS_IMAP:
@@ -82,7 +85,7 @@ class TestMongo(unittest.TestCase):
     """
 
     def testVersionCheck(self):
-        driver_args={'fake_version': '2.9 Phony'}
+        driver_args = {'fake_version': '2.9 Phony'}
         with self.assertRaises(Exception):
             db = DAL(DEFAULT_URI, attempts=1, check_reserved=['all'],
                      driver_args=driver_args)
@@ -100,7 +103,7 @@ class TestMongo(unittest.TestCase):
         self.assertEqual(isinstance(db.tt.insert(aa='1'), long), True)
         self.assertEqual(isinstance(db.tt.insert(aa='0x1'), long), True)
         with self.assertRaises(RuntimeError):
-            db(db.tt.aa+1==1).update(aa=0)
+            db(db.tt.aa + 1 == 1).update(aa=0)
         drop(db.tt)
 
         db.define_table('tt', Field('aa', 'date'))
@@ -126,7 +129,7 @@ class TestMongo(unittest.TestCase):
         drop(db.tt)
 
         db.define_table('tt', Field('aa', 'integer'))
-        case=(db.tt.aa == 0).case(db.tt.aa + 2)
+        case = (db.tt.aa == 0).case(db.tt.aa + 2)
         with self.assertRaises(SyntaxError):
             db(case).count()
         drop(db.tt)
@@ -136,7 +139,7 @@ class TestMongo(unittest.TestCase):
         db.tt.insert(aa="aa")
 
         with self.assertRaises(NotImplementedError):
-            db((db.tt.aa+1).contains(db.tt.aa)).count()
+            db((db.tt.aa + 1).contains(db.tt.aa)).count()
         with self.assertRaises(NotImplementedError):
             db(db.tt.cc.contains(db.tt.aa)).count()
         with self.assertRaises(NotImplementedError):
@@ -155,15 +158,15 @@ class TestMongo(unittest.TestCase):
             db().select()
         with self.assertRaises(RuntimeError):
             Expansion(db._adapter, 'delete',
-                Query(db, db._adapter.dialect.eq, db.tt.aa, 'x'), [True])
+                      Query(db, db._adapter.dialect.eq, db.tt.aa, 'x'), [True])
         with self.assertRaises(RuntimeError):
             Expansion(db._adapter, 'delete',
-                Query(db, db._adapter.dialect.eq, db.tt.aa, 'x'), [True])
+                      Query(db, db._adapter.dialect.eq, db.tt.aa, 'x'), [True])
         with self.assertRaises(RuntimeError):
             expanded = Expansion(db._adapter, 'count',
-                Query(db, db._adapter.dialect.eq, db.tt.aa, 'x'), [True])
+                                 Query(db, db._adapter.dialect.eq, db.tt.aa, 'x'), [True])
         expanded = Expansion(db._adapter, 'count',
-            Query(db, db._adapter.dialect.eq, db.tt.aa, 'x'), [])
+                             Query(db, db._adapter.dialect.eq, db.tt.aa, 'x'), [])
         self.assertEqual(db._adapter.expand(expanded).query_dict, {'aa': 'x'})
 
         if db._adapter.server_version_major >= 2.6:
@@ -171,7 +174,7 @@ class TestMongo(unittest.TestCase):
                 db(db.tt).update(id=1)
         else:
             db(db.tt).update(id=1)
-        self.assertNotEqual(db(db.tt.aa=='aa').select(db.tt.id).response[0][0], 1)
+        self.assertNotEqual(db(db.tt.aa == 'aa').select(db.tt.id).response[0][0], 1)
         drop(db.tt)
 
         db.close()
@@ -184,13 +187,13 @@ class TestMongo(unittest.TestCase):
                 db._adapter.delete(db['tt'], 'x', safe=safe)
             self.assertEqual(db._adapter.delete(
                 db['tt'], Query(db, db._adapter.dialect.eq, db.tt.aa, 'x'), safe=safe), 1)
-            self.assertEqual(db(db.tt.aa=='x').count(), 0)
+            self.assertEqual(db(db.tt.aa == 'x').count(), 0)
             self.assertEqual(
                 db._adapter.update(
                     db['tt'],
                     Query(db, db._adapter.dialect.eq, db.tt.aa, 'x'),
                     db['tt']._fields_and_values_for_update(
-                        {'aa':'x'}).op_values(),
+                        {'aa': 'x'}).op_values(),
                     safe=safe
                 ), 0)
             drop(db.tt)
@@ -201,7 +204,7 @@ class TestMongo(unittest.TestCase):
         db.define_table('tt', Field('aa', 'integer'), Field('b', 'reference tt'))
         i1 = db.tt.insert(aa=1)
         db.tt.insert(aa=4, b=i1)
-        q = db.tt.b==db.tt.id
+        q = db.tt.b == db.tt.id
         with self.assertRaises(NotOnNOSQLError):
             db(db.tt).select(left=db.tt.on(q))
         with self.assertRaises(NotOnNOSQLError):
@@ -247,7 +250,7 @@ class TestFields(unittest.TestCase):
 
         # Check that Fields allows underscores in the body of a field name.
         self.assertTrue(Field('a_bc', 'string'),
-            "Field isn't allowing underscores in fieldnames.  It should.")
+                        "Field isn't allowing underscores in fieldnames.  It should.")
 
         # Check that Field names don't allow a python keyword
         self.assertRaises(SyntaxError, Field, 'True', 'string')
@@ -261,8 +264,8 @@ class TestFields(unittest.TestCase):
 
         # Check that Field names don't allow a unicode string
         non_valid_examples = non_valid_examples = ["ℙƴ☂ℌøἤ", u"ℙƴ☂ℌøἤ",
-                u'àè', u'ṧøмℯ', u'тεṧт', u'♥αłüℯṧ',
-                u'ℊεᾔ℮яαт℮∂', u'♭ƴ', u'ᾔ☤ρℌℓ☺ḓ']
+                                                   u'àè', u'ṧøмℯ', u'тεṧт', u'♥αłüℯṧ',
+                                                   u'ℊεᾔ℮яαт℮∂', u'♭ƴ', u'ᾔ☤ρℌℓ☺ḓ']
         for a in non_valid_examples:
             self.assertRaises(SyntaxError, Field, a, 'string')
 
@@ -271,24 +274,24 @@ class TestFields(unittest.TestCase):
         # Check that string, and password default length is 512
         for typ in ['string', 'password']:
             self.assertTrue(Field('abc', typ).length == 512,
-                         "Default length for type '%s' is not 512 or 255" % typ)
+                            "Default length for type '%s' is not 512 or 255" % typ)
 
         # Check that upload default length is 512
         self.assertTrue(Field('abc', 'upload').length == 512,
-                     "Default length for type 'upload' is not 512")
+                        "Default length for type 'upload' is not 512")
 
         # Check that Tables passed in the type creates a reference
         self.assertTrue(Field('abc', Table(None, 'temp')).type
-                      == 'reference temp',
-                     'Passing a Table does not result in a reference type.')
+                        == 'reference temp',
+                        'Passing a Table does not result in a reference type.')
 
     def testFieldLabels(self):
 
         # Check that a label is successfully built from the supplied fieldname
         self.assertTrue(Field('abc', 'string').label == 'Abc',
-                     'Label built is incorrect')
+                        'Label built is incorrect')
         self.assertTrue(Field('abc_def', 'string').label == 'Abc Def',
-                     'Label built is incorrect')
+                        'Label built is incorrect')
 
     def testFieldFormatters(self):  # Formatter should be called Validator
 
@@ -307,8 +310,8 @@ class TestFields(unittest.TestCase):
         # some db's only support milliseconds
         datetime_datetime_today = datetime.datetime.today()
         datetime_datetime_today = datetime_datetime_today.replace(
-            microsecond = datetime_datetime_today.microsecond -
-                          datetime_datetime_today.microsecond % 1000)
+            microsecond=datetime_datetime_today.microsecond -
+                        datetime_datetime_today.microsecond % 1000)
 
         insert_vals = [
             ('string', 'x', ''),
@@ -321,18 +324,18 @@ class TestFields(unittest.TestCase):
             ('boolean', True, True),
             ('date', datetime.date.today(), datetime.date.today()),
             ('datetime', datetime.datetime(1971, 12, 21, 10, 30, 55, 0),
-                datetime_datetime_today),
+             datetime_datetime_today),
             ('time', datetime_datetime_today.time(),
-                datetime_datetime_today.time()),
+             datetime_datetime_today.time()),
             ('blob', 'x', ''),
             ('blob', b'xyzzy', ''),
             # pickling a tuple will create a string which is not UTF-8 able.
             ('blob', pickle.dumps((0,), pickle.HIGHEST_PROTOCOL), ''),
-            ]
+        ]
 
         if not IS_GAE:
             # these are unsupported by GAE
-            insert_vals.append(('blob', bytearray('a','utf-8'), ''))
+            insert_vals.append(('blob', bytearray('a', 'utf-8'), ''))
             insert_vals.append(('json', {'a': 'b', 'c': [1, 2]}, {}))
 
         for iv in insert_vals:
@@ -358,28 +361,28 @@ class TestFields(unittest.TestCase):
 
         ## Row APIs
         db.define_table('tt', Field('aa', 'datetime',
-                        default=datetime.datetime.today()))
+                                    default=datetime.datetime.today()))
         t0 = datetime.datetime(1971, 12, 21, 10, 30, 55, 0)
         id = db.tt.insert(aa=t0)
         self.assertEqual(isinstance(id, long), True)
 
         row = db().select(db.tt.aa)[0]
-        self.assertEqual(db.tt[id].aa,t0)
-        self.assertEqual(db.tt['aa'],db.tt.aa)
-        self.assertEqual(db.tt(id).aa,t0)
-        self.assertTrue(db.tt(id,aa=None)==None)
-        self.assertFalse(db.tt(id,aa=t0)==None)
-        self.assertEqual(row.aa,t0)
-        self.assertEqual(row['aa'],t0)
-        self.assertEqual(row['tt.aa'],t0)
-        self.assertEqual(row('tt.aa'),t0)
+        self.assertEqual(db.tt[id].aa, t0)
+        self.assertEqual(db.tt['aa'], db.tt.aa)
+        self.assertEqual(db.tt(id).aa, t0)
+        self.assertTrue(db.tt(id, aa=None) == None)
+        self.assertFalse(db.tt(id, aa=t0) == None)
+        self.assertEqual(row.aa, t0)
+        self.assertEqual(row['aa'], t0)
+        self.assertEqual(row['tt.aa'], t0)
+        self.assertEqual(row('tt.aa'), t0)
 
         ## Lazy and Virtual fields
         db.tt.b = Field.Virtual(lambda row: row.tt.aa)
         db.tt.c = Field.Lazy(lambda row: row.tt.aa)
         row = db().select(db.tt.aa)[0]
-        self.assertEqual(row.b,t0)
-        self.assertEqual(row.c(),t0)
+        self.assertEqual(row.b, t0)
+        self.assertEqual(row.c(), t0)
 
         drop(db.tt)
         db.define_table('tt', Field('aa', 'time', default='11:30'))
@@ -419,7 +422,7 @@ class TestTables(unittest.TestCase):
 
         # Check that Table allows underscores in the body of a field name.
         self.assertTrue(Table(None, 'a_bc'),
-            "Table isn't allowing underscores in tablename.  It should.")
+                        "Table isn't allowing underscores in tablename.  It should.")
 
         # Check that Table names don't allow a python keyword
         self.assertRaises(SyntaxError, Table, None, 'True')
@@ -433,8 +436,8 @@ class TestTables(unittest.TestCase):
 
         # Check that Table names don't allow a unicode string
         non_valid_examples = ["ℙƴ☂ℌøἤ", u"ℙƴ☂ℌøἤ",
-                u'àè', u'ṧøмℯ', u'тεṧт', u'♥αłüℯṧ',
-                u'ℊεᾔ℮яαт℮∂', u'♭ƴ', u'ᾔ☤ρℌℓ☺ḓ']
+                              u'àè', u'ṧøмℯ', u'тεṧт', u'♥αłüℯṧ',
+                              u'ℊεᾔ℮яαт℮∂', u'♭ƴ', u'ᾔ☤ρℌℓ☺ḓ']
         for a in non_valid_examples:
             self.assertRaises(SyntaxError, Table, None, a)
 
@@ -443,39 +446,39 @@ class TestTables(unittest.TestCase):
 class TestAll(unittest.TestCase):
 
     def setUp(self):
-        self.pt = Table(None,'PseudoTable',Field('name'),Field('birthdate'))
+        self.pt = Table(None, 'PseudoTable', Field('name'), Field('birthdate'))
 
     def testSQLALL(self):
         ans = 'PseudoTable.id, PseudoTable.name, PseudoTable.birthdate'
         self.assertEqual(str(SQLALL(self.pt)), ans)
 
+
 @unittest.skipIf(IS_IMAP, "Skip IMAP")
 class TestTable(unittest.TestCase):
 
     def testTableCreation(self):
-
         # Check for error when not passing type other than Field or Table
 
         self.assertRaises(SyntaxError, Table, None, 'test', None)
 
         persons = Table(None, 'persons',
-                        Field('firstname','string'),
+                        Field('firstname', 'string'),
                         Field('lastname', 'string'))
 
         # Does it have the correct fields?
 
         self.assertTrue(set(persons.fields).issuperset(set(['firstname',
-                                                         'lastname'])))
+                                                            'lastname'])))
 
         # ALL is set correctly
 
         self.assertTrue('persons.firstname, persons.lastname'
-                      in str(persons.ALL))
+                        in str(persons.ALL))
 
     def testTableAlias(self):
         db = DAL(DEFAULT_URI, check_reserved=['all'])
         persons = Table(db, 'persons', Field('firstname',
-                           'string'), Field('lastname', 'string'))
+                                             'string'), Field('lastname', 'string'))
         aliens = persons.with_alias('aliens')
 
         # Are the different table instances with the same fields
@@ -486,10 +489,10 @@ class TestTable(unittest.TestCase):
 
     def testTableInheritance(self):
         persons = Table(None, 'persons', Field('firstname',
-                           'string'), Field('lastname', 'string'))
+                                               'string'), Field('lastname', 'string'))
         customers = Table(None, 'customers',
-                             Field('items_purchased', 'integer'),
-                             persons)
+                          Field('items_purchased', 'integer'),
+                          persons)
         self.assertTrue(set(customers.fields).issuperset(set(
             ['items_purchased', 'firstname', 'lastname'])))
 
@@ -524,6 +527,7 @@ class TestInsert(unittest.TestCase):
 
             def callable():
                 return 'aa'
+
             self.assertTrue(isinstance(db.tt.insert(aa=callable), long))
             self.assertEqual(db(db.tt.aa == 'aa').count(), 1)
 
@@ -543,7 +547,7 @@ class TestSelect(unittest.TestCase):
         self.assertEqual(db(db.tt.id > 0).count(), 3)
         self.assertEqual(db(db.tt.aa).count(), 3)
         self.assertEqual(db(db.tt.id).count(), 3)
-        self.assertEqual(db(db.tt.id!=None).count(), 3)
+        self.assertEqual(db(db.tt.id != None).count(), 3)
 
         self.assertEqual(db(db.tt.id > 0).select(orderby=~db.tt.aa | db.tt.id)[0].aa, '3')
         self.assertEqual(db(db.tt.id > 0).select(orderby=~db.tt.aa)[0].aa, '3')
@@ -575,9 +579,9 @@ class TestSelect(unittest.TestCase):
         db = DAL(DEFAULT_URI, check_reserved=['all'])
         db.define_table('tt',
                         Field('aa', 'list:integer'))
-        l=[0,1,2,3,4,5]
+        l = [0, 1, 2, 3, 4, 5]
         db.tt.insert(aa=l)
-        self.assertEqual(db(db.tt).select('tt.aa').first()[db.tt.aa],l)
+        self.assertEqual(db(db.tt).select('tt.aa').first()[db.tt.aa], l)
         drop(db.tt)
         db.close()
 
@@ -585,9 +589,9 @@ class TestSelect(unittest.TestCase):
         db = DAL(DEFAULT_URI, check_reserved=['all'])
         db.define_table('tt',
                         Field('aa', 'list:string'))
-        l=['a', 'b', 'c']
+        l = ['a', 'b', 'c']
         db.tt.insert(aa=l)
-        self.assertEqual(db(db.tt).select('tt.aa').first()[db.tt.aa],l)
+        self.assertEqual(db(db.tt).select('tt.aa').first()[db.tt.aa], l)
         drop(db.tt)
         db.close()
 
@@ -601,11 +605,11 @@ class TestSelect(unittest.TestCase):
             db.define_table('t0', Field('aa', 'string'))
             db.define_table('tt', Field('t0_id', 'list:reference t0',
                                         ondelete=ondelete))
-            id_a1=db.t0.insert(aa='test1')
-            id_a2=db.t0.insert(aa='test2')
-            ref1=[id_a1]
-            ref2=[id_a2]
-            ref3=[id_a1, id_a2]
+            id_a1 = db.t0.insert(aa='test1')
+            id_a2 = db.t0.insert(aa='test2')
+            ref1 = [id_a1]
+            ref2 = [id_a2]
+            ref3 = [id_a1, id_a2]
             db.tt.insert(t0_id=ref1)
             self.assertEqual(
                 db(db.tt).select(db.tt.t0_id).last()[db.tt.t0_id], ref1)
@@ -662,21 +666,21 @@ class TestSelect(unittest.TestCase):
                              groupby=db.tt.aa, orderby=~db.tt.aa)
         self.assertEqual(tuple(result.response[1]), ('3', 3))
         result = db().select(db.tt.aa, db.tt.bb, db.tt.cc.sum(),
-                             groupby=db.tt.aa|db.tt.bb,
-                             orderby=(db.tt.aa|~db.tt.bb))
+                             groupby=db.tt.aa | db.tt.bb,
+                             orderby=(db.tt.aa | ~db.tt.bb))
         self.assertEqual(tuple(result.response[4]), ('2', 3, 1))
         result = db().select(db.tt.aa, db.tt.bb.sum(),
-                             groupby=db.tt.aa, orderby=~db.tt.aa, limitby=(1,2))
+                             groupby=db.tt.aa, orderby=~db.tt.aa, limitby=(1, 2))
         self.assertEqual(len(result), 1)
         self.assertEqual(tuple(result.response[0]), ('3', 3))
         result = db().select(db.tt.aa, db.tt.bb.sum(),
-                             groupby=db.tt.aa, limitby=(0,3))
+                             groupby=db.tt.aa, limitby=(0, 3))
         self.assertEqual(len(result), 3)
         self.assertEqual(tuple(result.response[2]), ('3', 3))
 
         # test having
         self.assertEqual(len(db().select(db.tt.aa, db.tt.bb.sum(),
-                        groupby=db.tt.aa, having=db.tt.bb.sum() > 2)), 3)
+                                         groupby=db.tt.aa, having=db.tt.bb.sum() > 2)), 3)
 
         # test distinct
         result = db().select(db.tt.aa, db.tt.cc, distinct=True)
@@ -688,26 +692,26 @@ class TestSelect(unittest.TestCase):
         self.assertEqual(result[2].aa, '2')
         self.assertEqual(result[1].aa, '3')
         result = db().select(db.tt.aa, db.tt.bb,
-                             distinct=True, orderby=(db.tt.aa|~db.tt.bb))
+                             distinct=True, orderby=(db.tt.aa | ~db.tt.bb))
         self.assertEqual(tuple(result.response[4]), ('2', 3))
         result = db().select(db.tt.aa,
-                             distinct=db.tt.aa, orderby=~db.tt.aa, limitby=(1,2))
+                             distinct=db.tt.aa, orderby=~db.tt.aa, limitby=(1, 2))
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0].aa, '3')
 
         # test count distinct
         db.tt.insert(aa='2', bb=3, cc=1)
         self.assertEqual(db(db.tt).count(distinct=db.tt.aa), 4)
-        self.assertEqual(db(db.tt).count(distinct=db.tt.aa|db.tt.bb), 10)
-        self.assertEqual(db(db.tt).count(distinct=db.tt.aa|db.tt.bb|db.tt.cc), 10)
+        self.assertEqual(db(db.tt).count(distinct=db.tt.aa | db.tt.bb), 10)
+        self.assertEqual(db(db.tt).count(distinct=db.tt.aa | db.tt.bb | db.tt.cc), 10)
         self.assertEqual(db(db.tt).count(distinct=True), 10)
         self.assertEqual(db(db.tt.aa).count(db.tt.aa), 4)
         self.assertEqual(db(db.tt.aa).count(), 11)
-        count=db.tt.aa.count()
+        count = db.tt.aa.count()
         self.assertEqual(db(db.tt).select(count).first()[count], 11)
 
-        count=db.tt.aa.count(distinct=True)
-        sum=db.tt.bb.sum()
+        count = db.tt.aa.count(distinct=True)
+        sum = db.tt.bb.sum()
         result = db(db.tt).select(count, sum)
         self.assertEqual(tuple(result.response[0]), (4, 23))
         self.assertEqual(result.first()[count], 4)
@@ -715,7 +719,7 @@ class TestSelect(unittest.TestCase):
 
         if not IS_MONGODB or db._adapter.server_version_major >= 2.6:
             # mongo < 2.6 does not support $size
-            count=db.tt.aa.count(distinct=True)+db.tt.bb.count(distinct=True)
+            count = db.tt.aa.count(distinct=True) + db.tt.bb.count(distinct=True)
             self.assertEqual(db(db.tt).select(count).first()[count], 8)
 
         drop(db.tt)
@@ -755,8 +759,9 @@ class TestAddMethod(unittest.TestCase):
         db.define_table('tt', Field('aa'))
 
         @db.tt.add_method.all
-        def select_all(table,orderby=None):
+        def select_all(table, orderby=None):
             return table._db(table).select(orderby=orderby)
+
         self.assertEqual(isinstance(db.tt.insert(aa='1'), long), True)
         self.assertEqual(isinstance(db.tt.insert(aa='2'), long), True)
         self.assertEqual(isinstance(db.tt.insert(aa='3'), long), True)
@@ -795,11 +800,12 @@ class TestBelongs(unittest.TestCase):
         self.assertEqual(db(db.tt.aa.belongs(db(db.tt.id == self.i_id)._select(db.tt.aa))).count(), 1)
 
         self.assertEqual(db(db.tt.aa.belongs(db(db.tt.aa.belongs(('1',
-                     '3')))._select(db.tt.aa))).count(), 2)
+                                                                  '3')))._select(db.tt.aa))).count(), 2)
         self.assertEqual(db(db.tt.aa.belongs(db(db.tt.aa.belongs(db
-                     (db.tt.aa.belongs(('1', '3')))._select(db.tt.aa)))._select(
-                     db.tt.aa))).count(),
-                     2)
+                                                                 (db.tt.aa.belongs(('1', '3')))._select(
+            db.tt.aa)))._select(
+            db.tt.aa))).count(),
+                         2)
 
     def tearDown(self):
         db = self.db
@@ -812,10 +818,10 @@ class TestBelongs(unittest.TestCase):
 class TestContains(unittest.TestCase):
     def testRun(self):
         db = DAL(DEFAULT_URI, check_reserved=['all'])
-        db.define_table('tt', Field('aa', 'list:string'), Field('bb','string'))
-        self.assertEqual(isinstance(db.tt.insert(aa=['aaa','bbb'],bb='aaa'), long), True)
-        self.assertEqual(isinstance(db.tt.insert(aa=['bbb','ddd'],bb='abb'), long), True)
-        self.assertEqual(isinstance(db.tt.insert(aa=['eee','aaa'],bb='acc'), long), True)
+        db.define_table('tt', Field('aa', 'list:string'), Field('bb', 'string'))
+        self.assertEqual(isinstance(db.tt.insert(aa=['aaa', 'bbb'], bb='aaa'), long), True)
+        self.assertEqual(isinstance(db.tt.insert(aa=['bbb', 'ddd'], bb='abb'), long), True)
+        self.assertEqual(isinstance(db.tt.insert(aa=['eee', 'aaa'], bb='acc'), long), True)
         self.assertEqual(db(db.tt.aa.contains('aaa')).count(), 2)
         self.assertEqual(db(db.tt.aa.contains('bbb')).count(), 2)
         self.assertEqual(db(db.tt.aa.contains('aa')).count(), 0)
@@ -837,10 +843,10 @@ class TestContains(unittest.TestCase):
         db.tt.drop()
 
         # integers in string fields
-        db.define_table('tt', Field('aa', 'list:string'), Field('bb','string'), Field('cc','integer'))
-        self.assertEqual(isinstance(db.tt.insert(aa=['123','456'],bb='123', cc=12), long), True)
-        self.assertEqual(isinstance(db.tt.insert(aa=['124','456'],bb='123', cc=123), long), True)
-        self.assertEqual(isinstance(db.tt.insert(aa=['125','457'],bb='23', cc=125), long), True)
+        db.define_table('tt', Field('aa', 'list:string'), Field('bb', 'string'), Field('cc', 'integer'))
+        self.assertEqual(isinstance(db.tt.insert(aa=['123', '456'], bb='123', cc=12), long), True)
+        self.assertEqual(isinstance(db.tt.insert(aa=['124', '456'], bb='123', cc=123), long), True)
+        self.assertEqual(isinstance(db.tt.insert(aa=['125', '457'], bb='23', cc=125), long), True)
         self.assertEqual(db(db.tt.aa.contains(123)).count(), 1)
         self.assertEqual(db(db.tt.aa.contains(23)).count(), 0)
         self.assertEqual(db(db.tt.aa.contains(db.tt.cc)).count(), 1)
@@ -903,14 +909,14 @@ class TestLike(unittest.TestCase):
         self.assertEqual(db(db.tt.aa.ilike('%B%')).count(), 1)
         self.assertEqual(db(db.tt.aa.ilike('%C')).count(), 1)
 
-        #DAL maps like() (and contains(), startswith(), endswith())
-        #to the LIKE operator, that in ANSI-SQL is case-sensitive
-        #There are backends supporting case-sensitivity by default
-        #and backends that needs additional care to turn
-        #case-sensitivity on. To discern among those, let's run
-        #this query comparing previously inserted 'abc' with 'ABC':
-        #if the result is 0, then the backend recognizes
-        #case-sensitivity, if 1 it isn't
+        # DAL maps like() (and contains(), startswith(), endswith())
+        # to the LIKE operator, that in ANSI-SQL is case-sensitive
+        # There are backends supporting case-sensitivity by default
+        # and backends that needs additional care to turn
+        # case-sensitivity on. To discern among those, let's run
+        # this query comparing previously inserted 'abc' with 'ABC':
+        # if the result is 0, then the backend recognizes
+        # case-sensitivity, if 1 it isn't
         is_case_insensitive = db(db.tt.aa.like('%ABC%')).count()
         self.assertEqual(db(db.tt.aa.like('A%')).count(), is_case_insensitive)
         self.assertEqual(db(db.tt.aa.like('%B%')).count(), is_case_insensitive)
@@ -919,7 +925,7 @@ class TestLike(unittest.TestCase):
     def testUpperLower(self):
         db = self.db
         self.assertEqual(db(db.tt.aa.upper().like('A%')).count(), 1)
-        self.assertEqual(db(db.tt.aa.upper().like('%B%')).count(),1)
+        self.assertEqual(db(db.tt.aa.upper().like('%B%')).count(), 1)
         self.assertEqual(db(db.tt.aa.upper().like('%C')).count(), 1)
         self.assertEqual(db(db.tt.aa.lower().like('%c')).count(), 1)
 
@@ -932,14 +938,14 @@ class TestLike(unittest.TestCase):
 
     def testEscaping(self):
         db = self.db
-        term = 'ahbc'.replace('h', '\\') #funny but to avoid any doubts...
+        term = 'ahbc'.replace('h', '\\')  # funny but to avoid any doubts...
         db.tt.insert(aa='a%bc')
         db.tt.insert(aa='a_bc')
         db.tt.insert(aa=term)
         self.assertEqual(db(db.tt.aa.like('%ax%bc%', escape='x')).count(), 1)
         self.assertEqual(db(db.tt.aa.like('%ax_bc%', escape='x')).count(), 1)
-        self.assertEqual(db(db.tt.aa.like('%'+term+'%')).count(), 1)
-        db(db.tt.id>0).delete()
+        self.assertEqual(db(db.tt.aa.like('%' + term + '%')).count(), 1)
+        db(db.tt.id > 0).delete()
         # test "literal" like, i.e. exactly as LIKE in the backend
         db.tt.insert(aa='perc%ent')
         db.tt.insert(aa='percent')
@@ -949,7 +955,7 @@ class TestLike(unittest.TestCase):
         db.tt.insert(aa='underyscore')
         self.assertEqual(db(db.tt.aa.like('%perc%ent%')).count(), 3)
         self.assertEqual(db(db.tt.aa.like('%under_score%')).count(), 3)
-        db(db.tt.id>0).delete()
+        db(db.tt.id > 0).delete()
         # escaping with startswith and endswith
         db.tt.insert(aa='%percent')
         db.tt.insert(aa='xpercent')
@@ -962,7 +968,7 @@ class TestLike(unittest.TestCase):
 
     def testRegexp(self):
         db = self.db
-        db(db.tt.id>0).delete()
+        db(db.tt.id > 0).delete()
         db.tt.insert(aa='%percent')
         db.tt.insert(aa='xpercent')
         db.tt.insert(aa='discount%')
@@ -976,7 +982,7 @@ class TestLike(unittest.TestCase):
             self.assertEqual(db(db.tt.aa.upper().regexp('COUNT') &
                                 db.tt.aa.lower().regexp('count')).count(), 2)
             self.assertEqual(db(db.tt.aa.upper().regexp('COUNT') |
-                                (db.tt.aa.lower()=='xpercent')).count(), 3)
+                                (db.tt.aa.lower() == 'xpercent')).count(), 3)
 
     def testLikeInteger(self):
         db = self.db
@@ -1001,13 +1007,13 @@ class TestDatetime(unittest.TestCase):
         db = DAL(DEFAULT_URI, check_reserved=['all'])
         db.define_table('tt', Field('aa', 'datetime'))
         self.assertEqual(isinstance(db.tt.insert(aa=datetime.datetime(1971, 12, 21,
-                         11, 30)), long), True)
+                                                                      11, 30)), long), True)
         self.assertEqual(isinstance(db.tt.insert(aa=datetime.datetime(1971, 11, 21,
-                         10, 30)), long), True)
+                                                                      10, 30)), long), True)
         self.assertEqual(isinstance(db.tt.insert(aa=datetime.datetime(1970, 12, 21,
-                         9, 31)), long), True)
+                                                                      9, 31)), long), True)
         self.assertEqual(db(db.tt.aa == datetime.datetime(1971, 12,
-                         21, 11, 30)).count(), 1)
+                                                          21, 11, 30)).count(), 1)
         self.assertEqual(db(db.tt.aa >= datetime.datetime(1971, 1, 1)).count(), 2)
 
         if IS_MONGODB:
@@ -1017,7 +1023,7 @@ class TestDatetime(unittest.TestCase):
             self.assertEqual(db(db.tt.aa.hour() < 10).count(), 1)
             self.assertEqual(db(db.tt.aa.minutes() <= 30).count(), 2)
             self.assertEqual(db(db.tt.aa.seconds() != 31).count(), 3)
-            self.assertEqual(db(db.tt.aa.epoch() < 365*24*3600).delete(), 1)
+            self.assertEqual(db(db.tt.aa.epoch() < 365 * 24 * 3600).delete(), 1)
         drop(db.tt)
 
         db.define_table('tt', Field('aa', 'time'))
@@ -1040,7 +1046,7 @@ class TestExpressions(unittest.TestCase):
     def testRun(self):
         if IS_MONGODB:
             DAL_OPTS = (
-                (True,  {'adapter_args': {'safe': True}}),
+                (True, {'adapter_args': {'safe': True}}),
                 (False, {'adapter_args': {'safe': False}}),
             )
         for dal_opt in DAL_OPTS:
@@ -1061,7 +1067,7 @@ class TestExpressions(unittest.TestCase):
             self.assertEqual(db(db.tt.bb == 5).count(), 1)
             self.assertEqual(db(db.tt.aa + 1 == 9).count(), 1)
             self.assertEqual(db(db.tt.aa + 1 == 9).update(aa=db.tt.aa - 2,
-                                                      cc='cc'), 1)
+                                                          cc='cc'), 1)
             self.assertEqual(db(db.tt.cc == 'cc').count(), 1)
             self.assertEqual(db(db.tt.aa == 6).count(), 1)
             self.assertEqual(db(db.tt.aa == 6).update(bb=db.tt.aa *
@@ -1069,7 +1075,7 @@ class TestExpressions(unittest.TestCase):
             self.assertEqual(db(db.tt.bb == 12).count(), 1)
             self.assertEqual(db(db.tt.aa == 6).count(), 1)
             self.assertEqual(db(db.tt.aa == 6).update(aa=db.tt.aa % 4 + 1,
-                                                      cc=db.tt.cc + '1' +'1'), 1)
+                                                      cc=db.tt.cc + '1' + '1'), 1)
             self.assertEqual(db(db.tt.cc == 'cc11').count(), 1)
             self.assertEqual(db(db.tt.aa == 3).count(), 1)
 
@@ -1080,13 +1086,13 @@ class TestExpressions(unittest.TestCase):
             # test select aggregations
             sum = (db.tt.aa + 1).sum()
             self.assertEqual(db(db.tt.aa + 1 >= 3).select(sum).first()[sum], 7)
-            self.assertEqual(db((1==0) & (db.tt.aa >= db.tt.aa)).count(), 0)
+            self.assertEqual(db((1 == 0) & (db.tt.aa >= db.tt.aa)).count(), 0)
             self.assertEqual(db(db.tt.aa * 2 == -2).select(sum).first()[sum], None)
 
-            count=db.tt.aa.count()
-            avg=db.tt.aa.avg()
-            min=db.tt.aa.min()
-            max=db.tt.aa.max()
+            count = db.tt.aa.count()
+            avg = db.tt.aa.avg()
+            min = db.tt.aa.min()
+            max = db.tt.aa.max()
             result = db(db.tt).select(sum, count, avg, min, max).first()
             self.assertEqual(result[sum], 9)
             self.assertEqual(result[count], 3)
@@ -1095,19 +1101,19 @@ class TestExpressions(unittest.TestCase):
             self.assertEqual(result[max], 3)
 
             # Test basic expressions evaluated at python level
-            self.assertEqual(db((1==1) & (db.tt.aa >= 2)).count(), 2)
-            self.assertEqual(db((1==1) | (db.tt.aa >= 2)).count(), 3)
-            self.assertEqual(db((1==0) & (db.tt.aa >= 2)).count(), 0)
-            self.assertEqual(db((1==0) | (db.tt.aa >= 2)).count(), 2)
+            self.assertEqual(db((1 == 1) & (db.tt.aa >= 2)).count(), 2)
+            self.assertEqual(db((1 == 1) | (db.tt.aa >= 2)).count(), 3)
+            self.assertEqual(db((1 == 0) & (db.tt.aa >= 2)).count(), 0)
+            self.assertEqual(db((1 == 0) | (db.tt.aa >= 2)).count(), 2)
 
             # test abs()
-            self.assertEqual(db(db.tt.aa == 2).update(aa=db.tt.aa*-10), 1)
-            abs=db.tt.aa.abs().with_alias('abs')
+            self.assertEqual(db(db.tt.aa == 2).update(aa=db.tt.aa * -10), 1)
+            abs = db.tt.aa.abs().with_alias('abs')
             result = db(db.tt.aa == -20).select(abs).first()
             self.assertEqual(result[abs], 20)
             self.assertEqual(result['abs'], 20)
-            abs=db.tt.aa.abs()/10+5
-            exp=abs.min()*2+1
+            abs = db.tt.aa.abs() / 10 + 5
+            exp = abs.min() * 2 + 1
             result = db(db.tt.aa == -20).select(exp).first()
             self.assertEqual(result[exp], 15)
 
@@ -1137,25 +1143,25 @@ class TestExpressions(unittest.TestCase):
         # some db's only support seconds
         datetime_datetime_today = datetime.datetime.today()
         datetime_datetime_today = datetime_datetime_today.replace(
-            microsecond = 0)
+            microsecond=0)
         one_day = datetime.timedelta(1)
-        one_sec = datetime.timedelta(0,1)
+        one_sec = datetime.timedelta(0, 1)
 
         update_vals = (
-            ('string',   'x',  'y'),
-            ('text',     'x',  'y'),
-            ('password', 'x',  'y'),
-            ('integer',   1,    2),
-            ('bigint',    1,    2),
-            ('float',     1.0,  2.0),
-            ('double',    1.0,  2.0),
-            ('boolean',   True, False),
+            ('string', 'x', 'y'),
+            ('text', 'x', 'y'),
+            ('password', 'x', 'y'),
+            ('integer', 1, 2),
+            ('bigint', 1, 2),
+            ('float', 1.0, 2.0),
+            ('double', 1.0, 2.0),
+            ('boolean', True, False),
             ('date', datetime.date.today(), datetime.date.today() + one_day),
             ('datetime', datetime.datetime(1971, 12, 21, 10, 30, 55, 0),
-                datetime_datetime_today),
+             datetime_datetime_today),
             ('time', datetime_datetime_today.time(),
-                (datetime_datetime_today + one_sec).time()),
-            )
+             (datetime_datetime_today + one_sec).time()),
+        )
 
         for uv in update_vals:
             db.define_table('tt', Field('aa', 'integer', default=0),
@@ -1200,18 +1206,18 @@ class TestExpressions(unittest.TestCase):
         self.assertTrue(isinstance(db.t0.insert(vv=3), long))
         sum = db.t0.vv.sum()
         count = db.t0.vv.count()
-        avg=db.t0.vv.avg()
-        op = sum/count
-        op1 = (sum/count).with_alias('tot')
+        avg = db.t0.vv.avg()
+        op = sum / count
+        op1 = (sum / count).with_alias('tot')
         self.assertEqual(db(t0).select(op).first()[op], 2)
         self.assertEqual(db(t0).select(op1).first()[op1], 2)
         self.assertEqual(db(t0).select(op1).first()['tot'], 2)
-        op2 = avg*count
+        op2 = avg * count
         self.assertEqual(db(t0).select(op2).first()[op2], 6)
         # the following is not possible at least on sqlite
         sum = db.t0.vv.sum().with_alias('s')
         count = db.t0.vv.count().with_alias('c')
-        op = sum/count
+        op = sum / count
         with self.assertRaises(SyntaxError):
             self.assertEqual(db(t0).select(op).first()[op], 2)
         t0.drop()
@@ -1232,59 +1238,59 @@ class TestJoin(unittest.TestCase):
         db.t2.insert(aa='5', b=i2)
         db.t2.insert(aa='6', b=i2)
         self.assertEqual(len(db(db.t1.id
-                          == db.t2.b).select(orderby=db.t1.aa
-                          | db.t2.aa)), 3)
+                                == db.t2.b).select(orderby=db.t1.aa
+                                                           | db.t2.aa)), 3)
         self.assertEqual(db(db.t1.id == db.t2.b).select(orderby=db.t1.aa
-                          | db.t2.aa)[2].t1.aa, '2')
+                                                                | db.t2.aa)[2].t1.aa, '2')
         self.assertEqual(db(db.t1.id == db.t2.b).select(orderby=db.t1.aa
-                          | db.t2.aa)[2].t2.aa, '6')
+                                                                | db.t2.aa)[2].t2.aa, '6')
         self.assertEqual(len(db().select(db.t1.ALL, db.t2.ALL,
-                         left=db.t2.on(db.t1.id == db.t2.b),
-                         orderby=db.t1.aa | db.t2.aa)), 4)
+                                         left=db.t2.on(db.t1.id == db.t2.b),
+                                         orderby=db.t1.aa | db.t2.aa)), 4)
         self.assertEqual(db().select(db.t1.ALL, db.t2.ALL,
-                         left=db.t2.on(db.t1.id == db.t2.b),
-                         orderby=db.t1.aa | db.t2.aa)[2].t1.aa, '2')
+                                     left=db.t2.on(db.t1.id == db.t2.b),
+                                     orderby=db.t1.aa | db.t2.aa)[2].t1.aa, '2')
         self.assertEqual(db().select(db.t1.ALL, db.t2.ALL,
-                         left=db.t2.on(db.t1.id == db.t2.b),
-                         orderby=db.t1.aa | db.t2.aa)[2].t2.aa, '6')
+                                     left=db.t2.on(db.t1.id == db.t2.b),
+                                     orderby=db.t1.aa | db.t2.aa)[2].t2.aa, '6')
         self.assertEqual(db().select(db.t1.ALL, db.t2.ALL,
-                         left=db.t2.on(db.t1.id == db.t2.b),
-                         orderby=db.t1.aa | db.t2.aa)[3].t1.aa, '3')
+                                     left=db.t2.on(db.t1.id == db.t2.b),
+                                     orderby=db.t1.aa | db.t2.aa)[3].t1.aa, '3')
         self.assertEqual(db().select(db.t1.ALL, db.t2.ALL,
-                         left=db.t2.on(db.t1.id == db.t2.b),
-                         orderby=db.t1.aa | db.t2.aa)[3].t2.aa, None)
+                                     left=db.t2.on(db.t1.id == db.t2.b),
+                                     orderby=db.t1.aa | db.t2.aa)[3].t2.aa, None)
         self.assertEqual(len(db().select(db.t1.aa, db.t2.id.count(),
-                         left=db.t2.on(db.t1.id == db.t2.b),
-                         orderby=db.t1.aa, groupby=db.t1.aa)),
+                                         left=db.t2.on(db.t1.id == db.t2.b),
+                                         orderby=db.t1.aa, groupby=db.t1.aa)),
                          3)
         self.assertEqual(db().select(db.t1.aa, db.t2.id.count(),
-                         left=db.t2.on(db.t1.id == db.t2.b),
-                         orderby=db.t1.aa,
-                         groupby=db.t1.aa)[0]._extra[db.t2.id.count()],
+                                     left=db.t2.on(db.t1.id == db.t2.b),
+                                     orderby=db.t1.aa,
+                                     groupby=db.t1.aa)[0]._extra[db.t2.id.count()],
                          1)
         self.assertEqual(db().select(db.t1.aa, db.t2.id.count(),
-                         left=db.t2.on(db.t1.id == db.t2.b),
-                         orderby=db.t1.aa,
-                         groupby=db.t1.aa)[1]._extra[db.t2.id.count()],
+                                     left=db.t2.on(db.t1.id == db.t2.b),
+                                     orderby=db.t1.aa,
+                                     groupby=db.t1.aa)[1]._extra[db.t2.id.count()],
                          2)
         self.assertEqual(db().select(db.t1.aa, db.t2.id.count(),
-                         left=db.t2.on(db.t1.id == db.t2.b),
-                         orderby=db.t1.aa,
-                         groupby=db.t1.aa)[2]._extra[db.t2.id.count()],
+                                     left=db.t2.on(db.t1.id == db.t2.b),
+                                     orderby=db.t1.aa,
+                                     groupby=db.t1.aa)[2]._extra[db.t2.id.count()],
                          0)
         drop(db.t2)
         drop(db.t1)
 
-        db.define_table('person',Field('name'))
+        db.define_table('person', Field('name'))
         id = db.person.insert(name="max")
-        self.assertEqual(id.name,'max')
-        db.define_table('dog',Field('name'),Field('ownerperson','reference person'))
-        db.dog.insert(name='skipper',ownerperson=1)
-        row = db(db.person.id==db.dog.ownerperson).select().first()
-        self.assertEqual(row[db.person.name],'max')
-        self.assertEqual(row['person.name'],'max')
+        self.assertEqual(id.name, 'max')
+        db.define_table('dog', Field('name'), Field('ownerperson', 'reference person'))
+        db.dog.insert(name='skipper', ownerperson=1)
+        row = db(db.person.id == db.dog.ownerperson).select().first()
+        self.assertEqual(row[db.person.name], 'max')
+        self.assertEqual(row['person.name'], 'max')
         drop(db.dog)
-        self.assertEqual(len(db.person._referenced_by),0)
+        self.assertEqual(len(db.person._referenced_by), 0)
         drop(db.person)
         db.close()
 
@@ -1348,14 +1354,14 @@ class TestMigrations(unittest.TestCase):
 class TestReference(unittest.TestCase):
     def testRun(self):
         scenarios = (
-            (True,  'CASCADE'),
+            (True, 'CASCADE'),
             (False, 'CASCADE'),
             (False, 'SET NULL'),
         )
         for (b, ondelete) in scenarios:
             db = DAL(DEFAULT_URI, check_reserved=['all'], bigint_id=b)
             db.define_table('tt', Field('name'),
-                            Field('aa','reference tt',ondelete=ondelete))
+                            Field('aa', 'reference tt', ondelete=ondelete))
             db.commit()
             x = db.tt.insert(name='xxx')
             self.assertTrue(isinstance(x, long))
@@ -1366,7 +1372,7 @@ class TestReference(unittest.TestCase):
             x1 = db.tt[x]
             self.assertEqual(x1.aa, x)
             self.assertEqual(x1.aa.aa.aa.aa.aa.aa.name, 'xxx')
-            y=db.tt.insert(name='yyy', aa = x1)
+            y = db.tt.insert(name='yyy', aa=x1)
             self.assertEqual(y.aa, x1.id)
             self.assertTrue(isinstance(db.tt.insert(name='zzz'), long))
             self.assertEqual(db(db.tt.name).count(), 3)
@@ -1393,17 +1399,17 @@ class TestClientLevelOps(unittest.TestCase):
         db.define_table('tt', Field('aa'))
         db.commit()
         db.tt.insert(aa="test")
-        rows1 = db(db.tt.aa=='test').select()
-        rows2 = db(db.tt.aa=='test').select()
+        rows1 = db(db.tt.aa == 'test').select()
+        rows2 = db(db.tt.aa == 'test').select()
         rows3 = rows1 + rows2
         assert len(rows3) == 2
         rows4 = rows1 & rows2
         assert len(rows4) == 1
         rows5 = rows1 | rows2
         assert len(rows5) == 1
-        rows6 = rows1.find(lambda row: row.aa=="test")
+        rows6 = rows1.find(lambda row: row.aa == "test")
         assert len(rows6) == 1
-        rows7 = rows2.exclude(lambda row: row.aa=="test")
+        rows7 = rows2.exclude(lambda row: row.aa == "test")
         assert len(rows7) == 1
         rows8 = rows5.sort(lambda row: row.aa)
         assert len(rows8) == 1
@@ -1420,10 +1426,12 @@ class TestVirtualFields(unittest.TestCase):
         db.define_table('tt', Field('aa'))
         db.commit()
         db.tt.insert(aa="test")
+
         class Compute:
             def a_upper(row): return row.tt.aa.upper()
+
         db.tt.virtualfields.append(Compute())
-        assert db(db.tt.id>0).select().first().a_upper == 'TEST'
+        assert db(db.tt.id > 0).select().first().a_upper == 'TEST'
         drop(db.tt)
         db.commit()
         db.close()
@@ -1436,23 +1444,23 @@ class TestComputedFields(unittest.TestCase):
         db = DAL(DEFAULT_URI, check_reserved=['all'])
         db.define_table('tt',
                         Field('aa'),
-                        Field('bb',default='x'),
-                        Field('cc',compute=lambda r: r.aa+r.bb))
+                        Field('bb', default='x'),
+                        Field('cc', compute=lambda r: r.aa + r.bb))
         db.commit()
         id = db.tt.insert(aa="z")
-        self.assertEqual(db.tt[id].cc,'zx')
+        self.assertEqual(db.tt[id].cc, 'zx')
         drop(db.tt)
         db.commit()
 
         # test checking that a compute field can refer to earlier-defined computed fields
         db.define_table('tt',
                         Field('aa'),
-                        Field('bb',default='x'),
-                        Field('cc',compute=lambda r: r.aa+r.bb),
-                        Field('dd',compute=lambda r: r.bb + r.cc))
+                        Field('bb', default='x'),
+                        Field('cc', compute=lambda r: r.aa + r.bb),
+                        Field('dd', compute=lambda r: r.bb + r.cc))
         db.commit()
         id = db.tt.insert(aa="z")
-        self.assertEqual(db.tt[id].dd,'xzx')
+        self.assertEqual(db.tt[id].dd, 'xzx')
         drop(db.tt)
         db.commit()
         db.close()
@@ -1471,25 +1479,25 @@ class TestCommonFilters(unittest.TestCase):
         db.t2.insert(aa=4, b=i1)
         db.t2.insert(aa=5, b=i2)
         db.t2.insert(aa=6, b=i2)
-        db.t1._common_filter = lambda q: db.t1.aa>1
-        self.assertEqual(db(db.t1).count(),2)
-        self.assertEqual(db(db.t1).count(),2)
-        db.t2._common_filter = lambda q: db.t2.aa<6
+        db.t1._common_filter = lambda q: db.t1.aa > 1
+        self.assertEqual(db(db.t1).count(), 2)
+        self.assertEqual(db(db.t1).count(), 2)
+        db.t2._common_filter = lambda q: db.t2.aa < 6
         # test delete
-        self.assertEqual(db(db.t2).count(),2)
+        self.assertEqual(db(db.t2).count(), 2)
         db(db.t2).delete()
-        self.assertEqual(db(db.t2).count(),0)
+        self.assertEqual(db(db.t2).count(), 0)
         db.t2._common_filter = None
-        self.assertEqual(db(db.t2).count(),1)
+        self.assertEqual(db(db.t2).count(), 1)
         # test update
         db.t2.insert(aa=4, b=i1)
         db.t2.insert(aa=5, b=i2)
-        db.t2._common_filter = lambda q: db.t2.aa<6
-        self.assertEqual(db(db.t2).count(),2)
+        db.t2._common_filter = lambda q: db.t2.aa < 6
+        self.assertEqual(db(db.t2).count(), 2)
         db(db.t2).update(aa=6)
-        self.assertEqual(db(db.t2).count(),0)
+        self.assertEqual(db(db.t2).count(), 0)
         db.t2._common_filter = None
-        self.assertEqual(db(db.t2).count(),3)
+        self.assertEqual(db(db.t2).count(), 3)
         drop(db.t2)
         drop(db.t1)
         db.close()
@@ -1501,13 +1509,13 @@ class TestImportExportFields(unittest.TestCase):
     def testRun(self):
         db = DAL(DEFAULT_URI, check_reserved=['all'])
         db.define_table('person', Field('name'))
-        db.define_table('pet',Field('friend',db.person),Field('name'))
+        db.define_table('pet', Field('friend', db.person), Field('name'))
         for n in range(2):
             db(db.pet).delete()
             db(db.person).delete()
             for k in range(10):
                 id = db.person.insert(name=str(k))
-                db.pet.insert(friend=id,name=str(k))
+                db.pet.insert(friend=id, name=str(k))
         db.commit()
         stream = StringIO()
         db.export_to_csv_file(stream)
@@ -1515,8 +1523,8 @@ class TestImportExportFields(unittest.TestCase):
         db(db.person).delete()
         stream = StringIO(stream.getvalue())
         db.import_from_csv_file(stream)
-        assert db(db.person).count()==10
-        assert db(db.pet.name).count()==10
+        assert db(db.person).count() == 10
+        assert db(db.pet.name).count() == 10
         drop(db.pet)
         drop(db.person)
         db.commit()
@@ -1528,14 +1536,14 @@ class TestImportExportUuidFields(unittest.TestCase):
 
     def testRun(self):
         db = DAL(DEFAULT_URI, check_reserved=['all'])
-        db.define_table('person', Field('name'),Field('uuid'))
-        db.define_table('pet',Field('friend',db.person),Field('name'))
+        db.define_table('person', Field('name'), Field('uuid'))
+        db.define_table('pet', Field('friend', db.person), Field('name'))
         for n in range(2):
             db(db.pet).delete()
             db(db.person).delete()
             for k in range(10):
-                id = db.person.insert(name=str(k),uuid=str(k))
-                db.pet.insert(friend=id,name=str(k))
+                id = db.person.insert(name=str(k), uuid=str(k))
+                db.pet.insert(friend=id, name=str(k))
         db.commit()
         stream = StringIO()
         db.export_to_csv_file(stream)
@@ -1543,8 +1551,8 @@ class TestImportExportUuidFields(unittest.TestCase):
         db(db.pet).delete()
         stream = StringIO(stream.getvalue())
         db.import_from_csv_file(stream)
-        assert db(db.person).count()==10
-        assert db(db.pet).count()==10
+        assert db(db.person).count() == 10
+        assert db(db.pet).count() == 10
         drop(db.pet)
         drop(db.person)
         db.commit()
@@ -1556,8 +1564,8 @@ class TestDALDictImportExport(unittest.TestCase):
 
     def testRun(self):
         db = DAL(DEFAULT_URI, check_reserved=['all'])
-        db.define_table('person', Field('name', default="Michael"),Field('uuid'))
-        db.define_table('pet',Field('friend',db.person),Field('name'))
+        db.define_table('person', Field('name', default="Michael"), Field('uuid'))
+        db.define_table('pet', Field('friend', db.person), Field('name'))
         dbdict = db.as_dict(flat=True, sanitize=False)
         assert isinstance(dbdict, dict)
         uri = dbdict["uri"]
@@ -1586,9 +1594,9 @@ class TestDALDictImportExport(unittest.TestCase):
             if sys.version < "2.6.5":
                 unicode_keys = False
             db3 = DAL(**serializers.loads_json(dbjson,
-                          unicode_keys=unicode_keys))
-            assert hasattr(db3, "person") and hasattr(db3.person, "uuid") and\
-            db3.person.uuid.type == db.person.uuid.type
+                                               unicode_keys=unicode_keys))
+            assert hasattr(db3, "person") and hasattr(db3.person, "uuid") and \
+                   db3.person.uuid.type == db.person.uuid.type
             drop(db3.person)
             db3.commit()
             db3.close()
@@ -1597,18 +1605,18 @@ class TestDALDictImportExport(unittest.TestCase):
 
         mpfc = "Monty Python's Flying Circus"
         dbdict4 = {"uri": DEFAULT_URI,
-                   "tables":[{"tablename": "tvshow",
-                              "fields": [{"fieldname": "name",
-                                          "default":mpfc},
-                                         {"fieldname": "rating",
-                                          "type":"double"}]},
-                             {"tablename": "staff",
-                              "fields": [{"fieldname": "name",
-                                          "default":"Michael"},
-                                         {"fieldname": "food",
-                                          "default":"Spam"},
-                                         {"fieldname": "tvshow",
-                                          "type": "reference tvshow"}]}]}
+                   "tables": [{"tablename": "tvshow",
+                               "fields": [{"fieldname": "name",
+                                           "default": mpfc},
+                                          {"fieldname": "rating",
+                                           "type": "double"}]},
+                              {"tablename": "staff",
+                               "fields": [{"fieldname": "name",
+                                           "default": "Michael"},
+                                          {"fieldname": "food",
+                                           "default": "Spam"},
+                                          {"fieldname": "tvshow",
+                                           "type": "reference tvshow"}]}]}
         db4 = DAL(**dbdict4)
         assert "staff" in db4.tables
         assert "name" in db4.staff
@@ -1628,13 +1636,13 @@ class TestDALDictImportExport(unittest.TestCase):
         assert not (str(db5) in ("", None))
 
         dbdict6 = {"uri": DEFAULT_URI,
-                   "tables":[{"tablename": "staff"},
-                             {"tablename": "tvshow",
-                              "fields": [{"fieldname": "name"},
-                                         {"fieldname": "rating", "type":"double"}
-                                        ]
-                             }]
-                  }
+                   "tables": [{"tablename": "staff"},
+                              {"tablename": "tvshow",
+                               "fields": [{"fieldname": "name"},
+                                          {"fieldname": "rating", "type": "double"}
+                                          ]
+                               }]
+                   }
         db6 = DAL(**dbdict6)
 
         assert len(db6["staff"].fields) == 1
@@ -1642,7 +1650,6 @@ class TestDALDictImportExport(unittest.TestCase):
 
         assert db6.staff.insert() is not None
         assert isinstance(db6(db6.staff).select().first().id, long) == True
-
 
         drop(db6.staff)
         drop(db6.tvshow)
@@ -1663,7 +1670,7 @@ class TestSelectAsDict(unittest.TestCase):
             'a_table',
             Field('b_field'),
             Field('a_field'),
-            )
+        )
         db.a_table.insert(a_field="aa1", b_field="bb1")
         rtn = db(db.a_table).select(db.a_table.id, db.a_table.b_field, db.a_table.a_field).as_list()
         self.assertEqual(rtn[0]['b_field'], 'bb1')
@@ -1676,7 +1683,7 @@ class TestSelectAsDict(unittest.TestCase):
 
 @unittest.skipIf(IS_IMAP, "TODO: IMAP test")
 class TestRNameTable(unittest.TestCase):
-    #tests for highly experimental rname attribute
+    # tests for highly experimental rname attribute
     def testSelect(self):
         db = DAL(DEFAULT_URI, check_reserved=['all'])
         rname = _quote(db, 'a very complicated tablename')
@@ -1684,7 +1691,7 @@ class TestRNameTable(unittest.TestCase):
             'easy_name',
             Field('a_field'),
             rname=rname
-            )
+        )
         rtn = db.easy_name.insert(a_field='a')
         self.assertEqual(isinstance(rtn.id, long), True)
         rtn = db(db.easy_name.a_field == 'a').select()
@@ -1696,10 +1703,9 @@ class TestRNameTable(unittest.TestCase):
         rtn = db(db.easy_name.a_field == 'a').update(a_field='c')
         self.assertEqual(rtn, 1)
 
-        #clean up
+        # clean up
         drop(db.easy_name)
         db.close()
-
 
     @unittest.skip("JOIN queries are not supported")
     def testJoin(self):
@@ -1715,59 +1721,59 @@ class TestRNameTable(unittest.TestCase):
         db.t2.insert(aa='5', b=i2)
         db.t2.insert(aa='6', b=i2)
         self.assertEqual(len(db(db.t1.id
-                          == db.t2.b).select(orderby=db.t1.aa
-                          | db.t2.aa)), 3)
+                                == db.t2.b).select(orderby=db.t1.aa
+                                                           | db.t2.aa)), 3)
         self.assertEqual(db(db.t1.id == db.t2.b).select(orderby=db.t1.aa
-                          | db.t2.aa)[2].t1.aa, '2')
+                                                                | db.t2.aa)[2].t1.aa, '2')
         self.assertEqual(db(db.t1.id == db.t2.b).select(orderby=db.t1.aa
-                          | db.t2.aa)[2].t2.aa, '6')
+                                                                | db.t2.aa)[2].t2.aa, '6')
         self.assertEqual(len(db().select(db.t1.ALL, db.t2.ALL,
-                         left=db.t2.on(db.t1.id == db.t2.b),
-                         orderby=db.t1.aa | db.t2.aa)), 4)
+                                         left=db.t2.on(db.t1.id == db.t2.b),
+                                         orderby=db.t1.aa | db.t2.aa)), 4)
         self.assertEqual(db().select(db.t1.ALL, db.t2.ALL,
-                         left=db.t2.on(db.t1.id == db.t2.b),
-                         orderby=db.t1.aa | db.t2.aa)[2].t1.aa, '2')
+                                     left=db.t2.on(db.t1.id == db.t2.b),
+                                     orderby=db.t1.aa | db.t2.aa)[2].t1.aa, '2')
         self.assertEqual(db().select(db.t1.ALL, db.t2.ALL,
-                         left=db.t2.on(db.t1.id == db.t2.b),
-                         orderby=db.t1.aa | db.t2.aa)[2].t2.aa, '6')
+                                     left=db.t2.on(db.t1.id == db.t2.b),
+                                     orderby=db.t1.aa | db.t2.aa)[2].t2.aa, '6')
         self.assertEqual(db().select(db.t1.ALL, db.t2.ALL,
-                         left=db.t2.on(db.t1.id == db.t2.b),
-                         orderby=db.t1.aa | db.t2.aa)[3].t1.aa, '3')
+                                     left=db.t2.on(db.t1.id == db.t2.b),
+                                     orderby=db.t1.aa | db.t2.aa)[3].t1.aa, '3')
         self.assertEqual(db().select(db.t1.ALL, db.t2.ALL,
-                         left=db.t2.on(db.t1.id == db.t2.b),
-                         orderby=db.t1.aa | db.t2.aa)[3].t2.aa, None)
+                                     left=db.t2.on(db.t1.id == db.t2.b),
+                                     orderby=db.t1.aa | db.t2.aa)[3].t2.aa, None)
         self.assertEqual(len(db().select(db.t1.aa, db.t2.id.count(),
-                         left=db.t2.on(db.t1.id == db.t2.b),
-                         orderby=db.t1.aa, groupby=db.t1.aa)),
+                                         left=db.t2.on(db.t1.id == db.t2.b),
+                                         orderby=db.t1.aa, groupby=db.t1.aa)),
                          3)
         self.assertEqual(db().select(db.t1.aa, db.t2.id.count(),
-                         left=db.t2.on(db.t1.id == db.t2.b),
-                         orderby=db.t1.aa,
-                         groupby=db.t1.aa)[0]._extra[db.t2.id.count()],
+                                     left=db.t2.on(db.t1.id == db.t2.b),
+                                     orderby=db.t1.aa,
+                                     groupby=db.t1.aa)[0]._extra[db.t2.id.count()],
                          1)
         self.assertEqual(db().select(db.t1.aa, db.t2.id.count(),
-                         left=db.t2.on(db.t1.id == db.t2.b),
-                         orderby=db.t1.aa,
-                         groupby=db.t1.aa)[1]._extra[db.t2.id.count()],
+                                     left=db.t2.on(db.t1.id == db.t2.b),
+                                     orderby=db.t1.aa,
+                                     groupby=db.t1.aa)[1]._extra[db.t2.id.count()],
                          2)
         self.assertEqual(db().select(db.t1.aa, db.t2.id.count(),
-                         left=db.t2.on(db.t1.id == db.t2.b),
-                         orderby=db.t1.aa,
-                         groupby=db.t1.aa)[2]._extra[db.t2.id.count()],
+                                     left=db.t2.on(db.t1.id == db.t2.b),
+                                     orderby=db.t1.aa,
+                                     groupby=db.t1.aa)[2]._extra[db.t2.id.count()],
                          0)
         drop(db.t2)
         drop(db.t1)
 
-        db.define_table('person',Field('name'), rname=rname)
+        db.define_table('person', Field('name'), rname=rname)
         id = db.person.insert(name="max")
-        self.assertEqual(id.name,'max')
-        db.define_table('dog',Field('name'),Field('ownerperson','reference person'), rname=rname2)
-        db.dog.insert(name='skipper',ownerperson=1)
-        row = db(db.person.id==db.dog.ownerperson).select().first()
-        self.assertEqual(row[db.person.name],'max')
-        self.assertEqual(row['person.name'],'max')
+        self.assertEqual(id.name, 'max')
+        db.define_table('dog', Field('name'), Field('ownerperson', 'reference person'), rname=rname2)
+        db.dog.insert(name='skipper', ownerperson=1)
+        row = db(db.person.id == db.dog.ownerperson).select().first()
+        self.assertEqual(row[db.person.name], 'max')
+        self.assertEqual(row['person.name'], 'max')
         drop(db.dog)
-        self.assertEqual(len(db.person._referenced_by),0)
+        self.assertEqual(len(db.person._referenced_by), 0)
         drop(db.person)
         db.close()
 
@@ -1784,7 +1790,7 @@ class TestRNameFields(unittest.TestCase):
             'easy_name',
             Field('a_field', rname=rname),
             Field('rating', 'integer', rname=rname2, default=2)
-            )
+        )
         rtn = db.easy_name.insert(a_field='a')
         self.assertEqual(isinstance(rtn.id, long), True)
         rtn = db(db.easy_name.a_field == 'a').select()
@@ -1814,8 +1820,8 @@ class TestRNameFields(unittest.TestCase):
             'person',
             Field('name', default="Michael", rname=rname),
             Field('uuid')
-            )
-        michael = db.person.insert() #default insert
+        )
+        michael = db.person.insert()  # default insert
         john = db.person.insert(name='John')
         luke = db.person.insert(name='Luke')
 
@@ -1825,24 +1831,24 @@ class TestRNameFields(unittest.TestCase):
         self.assertEqual(rtn[0].name, 'Michael')
         self.assertEqual(rtn[1].id, john)
         self.assertEqual(rtn[1].name, 'John')
-        #fetch owners, eventually with pet
-        #main point is retrieving Luke with no pets
+        # fetch owners, eventually with pet
+        # main point is retrieving Luke with no pets
         rtn = db(db.person.id > 0).select()
         self.assertEqual(rtn[0].id, michael)
         self.assertEqual(rtn[0].name, 'Michael')
         self.assertEqual(rtn[2].name, 'Luke')
         self.assertEqual(rtn[2].id, luke)
-        #as dict
+        # as dict
         rtn = db(db.person.id > 0).select().as_dict()
         self.assertEqual(rtn[michael]['name'], 'Michael')
-        #as list
+        # as list
         rtn = db(db.person.id > 0).select().as_list()
         self.assertEqual(rtn[0]['name'], 'Michael')
-        #isempty
+        # isempty
         rtn = db(db.person.id > 0).isempty()
         self.assertEqual(rtn, False)
 
-        #clean up
+        # clean up
         drop(db.person)
         drop(db.easy_name)
         db.close()
@@ -1876,13 +1882,13 @@ class TestRNameFields(unittest.TestCase):
         self.assertEqual(db().select(db.tt.aa)[0].aa, {})
         drop(db.tt)
         db.define_table('tt', Field('aa', 'date',
-                        default=datetime.date.today(), rname=rname))
+                                    default=datetime.date.today(), rname=rname))
         t0 = datetime.date.today()
         self.assertEqual(isinstance(db.tt.insert(aa=t0), long), True)
         self.assertEqual(db().select(db.tt.aa)[0].aa, t0)
         drop(db.tt)
         db.define_table('tt', Field('aa', 'datetime',
-                        default=datetime.datetime.today(), rname=rname))
+                                    default=datetime.datetime.today(), rname=rname))
         t0 = datetime.datetime(
             1971,
             12,
@@ -1891,28 +1897,28 @@ class TestRNameFields(unittest.TestCase):
             30,
             55,
             0,
-            )
+        )
         id = db.tt.insert(aa=t0)
         self.assertEqual(db().select(db.tt.aa)[0].aa, t0)
 
         ## Row APIs
         row = db().select(db.tt.aa)[0]
-        self.assertEqual(db.tt[id].aa,t0)
-        self.assertEqual(db.tt['aa'],db.tt.aa)
-        self.assertEqual(db.tt(id).aa,t0)
-        self.assertTrue(db.tt(id,aa=None)==None)
-        self.assertFalse(db.tt(id,aa=t0)==None)
-        self.assertEqual(row.aa,t0)
-        self.assertEqual(row['aa'],t0)
-        self.assertEqual(row['tt.aa'],t0)
-        self.assertEqual(row('tt.aa'),t0)
+        self.assertEqual(db.tt[id].aa, t0)
+        self.assertEqual(db.tt['aa'], db.tt.aa)
+        self.assertEqual(db.tt(id).aa, t0)
+        self.assertTrue(db.tt(id, aa=None) == None)
+        self.assertFalse(db.tt(id, aa=t0) == None)
+        self.assertEqual(row.aa, t0)
+        self.assertEqual(row['aa'], t0)
+        self.assertEqual(row['tt.aa'], t0)
+        self.assertEqual(row('tt.aa'), t0)
 
         ## Lazy and Virtual fields
         db.tt.b = Field.Virtual(lambda row: row.tt.aa)
         db.tt.c = Field.Lazy(lambda row: row.tt.aa)
         row = db().select(db.tt.aa)[0]
-        self.assertEqual(row.b,t0)
-        self.assertEqual(row.c(),t0)
+        self.assertEqual(row.b, t0)
+        self.assertEqual(row.c(), t0)
 
         drop(db.tt)
         db.define_table('tt', Field('aa', 'time', default='11:30', rname=rname))
@@ -1939,7 +1945,6 @@ class TestRNameFields(unittest.TestCase):
         drop(db.tt)
         db.close()
 
-
     @unittest.skip("JOIN queries are not supported")
     def testJoin(self):
         db = DAL(DEFAULT_URI, check_reserved=['all'])
@@ -1954,59 +1959,59 @@ class TestRNameFields(unittest.TestCase):
         db.t2.insert(aa='5', b=i2)
         db.t2.insert(aa='6', b=i2)
         self.assertEqual(len(db(db.t1.id
-                          == db.t2.b).select(orderby=db.t1.aa
-                          | db.t2.aa)), 3)
+                                == db.t2.b).select(orderby=db.t1.aa
+                                                           | db.t2.aa)), 3)
         self.assertEqual(db(db.t1.id == db.t2.b).select(orderby=db.t1.aa
-                          | db.t2.aa)[2].t1.aa, '2')
+                                                                | db.t2.aa)[2].t1.aa, '2')
         self.assertEqual(db(db.t1.id == db.t2.b).select(orderby=db.t1.aa
-                          | db.t2.aa)[2].t2.aa, '6')
+                                                                | db.t2.aa)[2].t2.aa, '6')
         self.assertEqual(len(db().select(db.t1.ALL, db.t2.ALL,
-                         left=db.t2.on(db.t1.id == db.t2.b),
-                         orderby=db.t1.aa | db.t2.aa)), 4)
+                                         left=db.t2.on(db.t1.id == db.t2.b),
+                                         orderby=db.t1.aa | db.t2.aa)), 4)
         self.assertEqual(db().select(db.t1.ALL, db.t2.ALL,
-                         left=db.t2.on(db.t1.id == db.t2.b),
-                         orderby=db.t1.aa | db.t2.aa)[2].t1.aa, '2')
+                                     left=db.t2.on(db.t1.id == db.t2.b),
+                                     orderby=db.t1.aa | db.t2.aa)[2].t1.aa, '2')
         self.assertEqual(db().select(db.t1.ALL, db.t2.ALL,
-                         left=db.t2.on(db.t1.id == db.t2.b),
-                         orderby=db.t1.aa | db.t2.aa)[2].t2.aa, '6')
+                                     left=db.t2.on(db.t1.id == db.t2.b),
+                                     orderby=db.t1.aa | db.t2.aa)[2].t2.aa, '6')
         self.assertEqual(db().select(db.t1.ALL, db.t2.ALL,
-                         left=db.t2.on(db.t1.id == db.t2.b),
-                         orderby=db.t1.aa | db.t2.aa)[3].t1.aa, '3')
+                                     left=db.t2.on(db.t1.id == db.t2.b),
+                                     orderby=db.t1.aa | db.t2.aa)[3].t1.aa, '3')
         self.assertEqual(db().select(db.t1.ALL, db.t2.ALL,
-                         left=db.t2.on(db.t1.id == db.t2.b),
-                         orderby=db.t1.aa | db.t2.aa)[3].t2.aa, None)
+                                     left=db.t2.on(db.t1.id == db.t2.b),
+                                     orderby=db.t1.aa | db.t2.aa)[3].t2.aa, None)
         self.assertEqual(len(db().select(db.t1.aa, db.t2.id.count(),
-                         left=db.t2.on(db.t1.id == db.t2.b),
-                         orderby=db.t1.aa, groupby=db.t1.aa)),
+                                         left=db.t2.on(db.t1.id == db.t2.b),
+                                         orderby=db.t1.aa, groupby=db.t1.aa)),
                          3)
         self.assertEqual(db().select(db.t1.aa, db.t2.id.count(),
-                         left=db.t2.on(db.t1.id == db.t2.b),
-                         orderby=db.t1.aa,
-                         groupby=db.t1.aa)[0]._extra[db.t2.id.count()],
+                                     left=db.t2.on(db.t1.id == db.t2.b),
+                                     orderby=db.t1.aa,
+                                     groupby=db.t1.aa)[0]._extra[db.t2.id.count()],
                          1)
         self.assertEqual(db().select(db.t1.aa, db.t2.id.count(),
-                         left=db.t2.on(db.t1.id == db.t2.b),
-                         orderby=db.t1.aa,
-                         groupby=db.t1.aa)[1]._extra[db.t2.id.count()],
+                                     left=db.t2.on(db.t1.id == db.t2.b),
+                                     orderby=db.t1.aa,
+                                     groupby=db.t1.aa)[1]._extra[db.t2.id.count()],
                          2)
         self.assertEqual(db().select(db.t1.aa, db.t2.id.count(),
-                         left=db.t2.on(db.t1.id == db.t2.b),
-                         orderby=db.t1.aa,
-                         groupby=db.t1.aa)[2]._extra[db.t2.id.count()],
+                                     left=db.t2.on(db.t1.id == db.t2.b),
+                                     orderby=db.t1.aa,
+                                     groupby=db.t1.aa)[2]._extra[db.t2.id.count()],
                          0)
         drop(db.t2)
         drop(db.t1)
 
-        db.define_table('person',Field('name', rname=rname))
+        db.define_table('person', Field('name', rname=rname))
         id = db.person.insert(name="max")
-        self.assertEqual(id.name,'max')
-        db.define_table('dog',Field('name', rname=rname),Field('ownerperson','reference person', rname=rname2))
-        db.dog.insert(name='skipper',ownerperson=1)
-        row = db(db.person.id==db.dog.ownerperson).select().first()
-        self.assertEqual(row[db.person.name],'max')
-        self.assertEqual(row['person.name'],'max')
+        self.assertEqual(id.name, 'max')
+        db.define_table('dog', Field('name', rname=rname), Field('ownerperson', 'reference person', rname=rname2))
+        db.dog.insert(name='skipper', ownerperson=1)
+        row = db(db.person.id == db.dog.ownerperson).select().first()
+        self.assertEqual(row[db.person.name], 'max')
+        self.assertEqual(row['person.name'], 'max')
         drop(db.dog)
-        self.assertEqual(len(db.person._referenced_by),0)
+        self.assertEqual(len(db.person._referenced_by), 0)
         drop(db.person)
         db.close()
 
@@ -2021,7 +2026,7 @@ class TestQuoting(unittest.TestCase):
 
         # test table case
         t0 = db.define_table('B',
-                        Field('f', 'string'))
+                             Field('f', 'string'))
 
         t1 = db.define_table('b',
                              Field('B', t0),
@@ -2032,7 +2037,7 @@ class TestQuoting(unittest.TestCase):
         t1[0] = {'B': int(t0[1]['id']),
                  'words': blather}
 
-        r = db(db.B.id==db.b.B).select()
+        r = db(db.B.id == db.b.B).select()
 
         self.assertEqual(r[0].b.words, blather)
 
@@ -2067,7 +2072,8 @@ class TestQuoting(unittest.TestCase):
         t4 = db.define_table('t4', Field('f', length=100), Field('t0', t0), primarykey=['f'])
 
         try:
-            t5 = db.define_table('t5', Field('f', length=100), Field('t0', 'reference no_table_wrong_reference'), primarykey=['f'])
+            t5 = db.define_table('t5', Field('f', length=100), Field('t0', 'reference no_table_wrong_reference'),
+                                 primarykey=['f'])
         except Exception as e:
             self.assertTrue(isinstance(e, KeyError))
 
@@ -2084,6 +2090,7 @@ class TestTableAndFieldCase(unittest.TestCase):
     but it should be possible to map two different names into distinct tables "c" and "C" at the Python level
     By default Python models names should be mapped into lower case table names and assume case insensitivity.
     """
+
     def testme(self):
         return
 
@@ -2092,6 +2099,7 @@ class TestQuotesByDefault(unittest.TestCase):
     """
     all default tables names should be quoted unless an explicit mapping has been given for a table.
     """
+
     def testme(self):
         return
 
@@ -2102,7 +2110,7 @@ class TestRecordVersioning(unittest.TestCase):
     def testRun(self):
         db = DAL(DEFAULT_URI, check_reserved=['all'])
         tt = db.define_table('tt', Field('name'),
-                        Field('is_active', 'boolean', default=True))
+                             Field('is_active', 'boolean', default=True))
         db.tt._enable_record_versioning(archive_name='tt_archive')
         self.assertTrue('tt_archive' in db)
         i_id = db.tt.insert(name='web2py1')
@@ -2164,13 +2172,14 @@ class TestConnection(unittest.TestCase):
             c.close()
         db3._adapter.POOLS[DEFAULT_URI] = []
 
+
 @unittest.skipIf(IS_IMAP, "TODO: IMAP test")
 class TestBasicOps(unittest.TestCase):
 
     def testRun(self):
         db = DAL(DEFAULT_URI, check_reserved=['all'])
         tt = db.define_table('tt', Field('name'),
-                        Field('is_active', 'boolean', default=True))
+                             Field('is_active', 'boolean', default=True))
         i_id = db.tt.insert(name='web2py1')
         db.tt.insert(name='web2py2')
         db(db.tt.name == 'web2py2').delete()
@@ -2198,15 +2207,15 @@ class TestSQLCustomType(unittest.TestCase):
                 native_string = db._adapter.types['string'] % {'length': 256}
             except:
                 native_string = db._adapter.types['string']
-        basic_t = SQLCustomType(type = "double", native = native_double)
-        basic_t_str = SQLCustomType(type = "string", native = native_string)
-        t0=db.define_table('t0', Field("price", basic_t), Field("product", basic_t_str))
+        basic_t = SQLCustomType(type="double", native=native_double)
+        basic_t_str = SQLCustomType(type="string", native=native_string)
+        t0 = db.define_table('t0', Field("price", basic_t), Field("product", basic_t_str))
         r_id = t0.insert(price=None, product=None)
         row = db(t0.id == r_id).select(t0.ALL).first()
         self.assertEqual(row['price'], None)
         self.assertEqual(row['product'], None)
         r_id = t0.insert(price=1.2, product="car")
-        row=db(t0.id == r_id).select(t0.ALL).first()
+        row = db(t0.id == r_id).select(t0.ALL).first()
         self.assertEqual(row['price'], 1.2)
         self.assertEqual(row['product'], 'car')
         t0.drop()
@@ -2226,23 +2235,23 @@ class TestLazy(unittest.TestCase):
         db.close()
 
     def testLazyGetter(self):
-        db=DAL(DEFAULT_URI, lazy_tables=True)
-        db.define_table('tt',  Field('value', 'integer'))
+        db = DAL(DEFAULT_URI, lazy_tables=True)
+        db.define_table('tt', Field('value', 'integer'))
         db.define_table('ttt',
-            Field('value', 'integer'),
-            Field('tt_id', 'reference tt'),
-        )
+                        Field('value', 'integer'),
+                        Field('tt_id', 'reference tt'),
+                        )
         # Force table definition
-        db.ttt.value.writable=False
-        idd=db.tt.insert(value=0)
+        db.ttt.value.writable = False
+        idd = db.tt.insert(value=0)
         db.ttt.insert(tt_id=idd)
         db.ttt.drop()
         db.tt.drop()
         db.close()
 
     def testRowNone(self):
-        db=DAL(DEFAULT_URI, lazy_tables=True)
-        tt = db.define_table('tt',  Field('value', 'integer'))
+        db = DAL(DEFAULT_URI, lazy_tables=True)
+        tt = db.define_table('tt', Field('value', 'integer'))
         db.tt.insert(value=None)
         row = db(db.tt).select(db.tt.ALL).first()
         self.assertEqual(row.value, None)
@@ -2268,6 +2277,7 @@ class TestRedefine(unittest.TestCase):
         self.assertTrue('code_a' in db.t_a)
         self.assertTrue('code_a' in db['t_a'])
         db.close()
+
 
 @unittest.skipIf(IS_IMAP, "TODO: IMAP test")
 class TestUpdateInsert(unittest.TestCase):
@@ -2295,13 +2305,15 @@ class TestBulkInsert(unittest.TestCase):
         t0 = db.define_table('t0', Field('name'))
         global ctr
         ctr = 0
+
         def test_after_insert(i, r):
             self.assertIsInstance(i, OpRow)
             global ctr
             ctr += 1
             return True
+
         t0._after_insert.append(test_after_insert)
-        items = [{'name':'web2py_%s' % pos} for pos in range(0, 10, 1)]
+        items = [{'name': 'web2py_%s' % pos} for pos in range(0, 10, 1)]
         t0.bulk_insert(items)
         self.assertTrue(db(t0).count() == len(items))
         for pos in range(0, 10, 1):

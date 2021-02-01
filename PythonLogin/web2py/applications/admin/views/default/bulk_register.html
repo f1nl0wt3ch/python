@@ -11,10 +11,10 @@ form.element('input[type=submit]',replace=lambda button: DIV(button,_class="cont
 }}
 <h2>{{=T('Bulk Student Registration').capitalize()}}</h2>
 <div id="web2py_user_form">
-{{=form.custom.begin}}
-{{for e in form.components[0]:}}
-  {{= e[0][0]}}
-  {{= e[1][0]}}
-{{pass}}
-{{=form.custom.end}}
+    {{=form.custom.begin}}
+    {{for e in form.components[0]:}}
+    {{= e[0][0]}}
+    {{= e[1][0]}}
+    {{pass}}
+    {{=form.custom.end}}
 </div>

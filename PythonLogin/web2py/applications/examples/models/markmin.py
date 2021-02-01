@@ -4,9 +4,9 @@ from gluon.fileutils import open_file
 markmin_dict = dict(
     code_python=lambda code: str(CODE(code)),
     template=lambda
-    code: gluon.template.render(code, context=globals()),
+        code: gluon.template.render(code, context=globals()),
     sup=lambda
-    code: '<sup style="font-size:0.5em;">%s</sup>' % code,
+        code: '<sup style="font-size:0.5em;">%s</sup>' % code,
     br=lambda n: '<br>' * int(n),
     groupdates=lambda group: group_feed_reader(group),
 )

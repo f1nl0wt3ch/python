@@ -28,6 +28,7 @@ except ImportError:
     # do not have web2py
     current = None
 
+
     def RestrictedError(a, b, c):
         logging.error(str(a) + ':' + str(b) + ':' + str(c))
         return RuntimeError
@@ -37,6 +38,7 @@ class Node(object):
     """
     Basic Container Object
     """
+
     def __init__(self, value=None, pre_extend=False):
         self.value = value
         self.pre_extend = pre_extend
@@ -89,6 +91,7 @@ class BlockNode(Node):
         {{ end }}
 
     """
+
     def __init__(self, name='', pre_extend=False, delimiters=('{{', '}}')):
         """
         name - Name of this Node.
@@ -155,6 +158,7 @@ class Content(BlockNode):
     Args:
         name: Unique name for this BlockNode
     """
+
     def __init__(self, name="ContentBlock", pre_extend=False):
         self.name = name
         self.nodes = []
@@ -252,7 +256,7 @@ class TemplateParser(object):
                  writer='response.write',
                  lexers={},
                  delimiters=('{{', '}}'),
-                 _super_nodes = [],
+                 _super_nodes=[],
                  ):
 
         # Keep a root level name.
@@ -510,8 +514,8 @@ class TemplateParser(object):
                     pre.append(node)
                     continue
 
-            # Otherwise, it should go int the
-            # Parent templates {{include}} section.
+                # Otherwise, it should go int the
+                # Parent templates {{include}} section.
                 buf.append(node)
             else:
                 buf.append(node)
@@ -567,7 +571,7 @@ class TemplateParser(object):
 
                     # Get rid of delimiters
                     line = line[len(self.delimiters[0]): \
-                                    -len(self.delimiters[1])].strip()
+                                -len(self.delimiters[1])].strip()
 
                     # This is bad juju, but let's do it anyway
                     if not line:
@@ -759,6 +763,7 @@ class TemplateParser(object):
         if extend:
             self.extend(extend)
 
+
 # We need this for integration with gluon
 
 
@@ -823,11 +828,13 @@ class NOESCAPE():
     """
     A little helper to avoid escaping.
     """
+
     def __init__(self, text):
         self.text = text
 
     def xml(self):
         return self.text
+
 
 # And this is a generic render function.
 # Here for integration with gluon.

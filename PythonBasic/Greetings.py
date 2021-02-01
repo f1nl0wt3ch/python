@@ -5,12 +5,15 @@ In the function, create an empty list that will contain each greeting. Add the s
 
 Return the new list containing the greetings.
 """
-#Write your function here
+
+
+# Write your function here
 def add_greetings(names):
     greetings = []
     for name in names:
-        greetings.append("Hello, "+name)
+        greetings.append("Hello, " + name)
     return greetings
 
-#Uncomment the line below when your function is done
+
+# Uncomment the line below when your function is done
 print(add_greetings(["Owen", "Max", "Sophie"]))

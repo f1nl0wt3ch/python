@@ -63,6 +63,7 @@ else:
         # of system since the early 2000s.
         from StringIO import StringIO
 
+
 # Could make this the base class; will need to add 'publish'
 
 
@@ -149,17 +150,21 @@ class DateElement:
 
     Converts the datetime to RFC 2822 timestamp (4-digit year).
     """
+
     def __init__(self, name, dt):
         self.name = name
         self.dt = dt
 
     def publish(self, handler):
         _element(handler, self.name, _format_date(self.dt))
+
+
 ####
 
 
 class Category:
     """Publish a category element"""
+
     def __init__(self, category, domain=None):
         self.category = category
         self.domain = domain
@@ -173,6 +178,7 @@ class Category:
 
 class Cloud:
     """Publish a cloud"""
+
     def __init__(self, domain, port, path,
                  registerProcedure, protocol):
         self.domain = domain
@@ -231,6 +237,7 @@ class Guid:
     Defaults to being a permalink, which is the assumption if it's
     omitted.  Hence strings are always permalinks.
     """
+
     def __init__(self, guid, isPermaLink=1):
         self.guid = guid
         self.isPermaLink = isPermaLink
@@ -268,6 +275,7 @@ class TextInput:
 
 class Enclosure:
     """Publish an enclosure"""
+
     def __init__(self, url, length, type):
         self.url = url
         self.length = length
@@ -283,6 +291,7 @@ class Enclosure:
 
 class Source:
     """Publish the item's original source, used by aggregators"""
+
     def __init__(self, name, url):
         self.name = name
         self.url = url
@@ -352,16 +361,16 @@ class RSS2(WriteXmlMixin):
                  categories=None,  # list of strings or Category
                  generator=_generator_name,
                  docs="http://blogs.law.harvard.edu/tech/rss",
-                 cloud=None,    # a Cloud
-                 ttl=None,      # integer number of minutes
+                 cloud=None,  # a Cloud
+                 ttl=None,  # integer number of minutes
 
-                 image=None,     # an Image
-                 rating=None,    # a string; I don't know how it's used
+                 image=None,  # an Image
+                 rating=None,  # a string; I don't know how it's used
                  textInput=None,  # a TextInput
                  skipHours=None,  # a SkipHours with a list of integers
                  skipDays=None,  # a SkipDays with a list of strings
 
-                 items=None,     # list of RSSItems
+                 items=None,  # list of RSSItems
                  ):
         self.title = title
         self.link = link
@@ -460,13 +469,13 @@ class RSSItem(WriteXmlMixin):
 
     def __init__(self,
                  title=None,  # string
-                 link=None,   # url as string
+                 link=None,  # url as string
                  description=None,  # string
-                 author=None,      # email address as string
+                 author=None,  # email address as string
                  categories=None,  # list of string or Category
                  comments=None,  # url as string
                  enclosure=None,  # an Enclosure
-                 guid=None,    # a unique string
+                 guid=None,  # a unique string
                  pubDate=None,  # a datetime
                  source=None,  # a Source
                  ):

@@ -7,7 +7,6 @@ from gluon.dal import DAL
 
 def motp_auth(db=DAL('sqlite://storage.sqlite'),
               time_offset=60):
-
     """
     motp allows you to login with a one time password(OTP) generated on a motp client,
     motp clients are available for practically all platforms.
@@ -108,4 +107,5 @@ def motp_auth(db=DAL('sqlite://storage.sqlite'),
                 else:
                     return False
         return False
+
     return motp_auth_aux

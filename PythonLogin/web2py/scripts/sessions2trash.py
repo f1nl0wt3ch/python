@@ -201,6 +201,7 @@ def total_seconds(delta):
     return (delta.microseconds + (delta.seconds + (delta.days * 24 * 3600)) *
             10 ** 6) / 10 ** 6
 
+
 def single_loop(expiration=None, force=False, verbose=False):
     if expiration is None:
         try:
@@ -254,6 +255,7 @@ def main():
             if options.verbose:
                 print('Sleeping %s seconds' % (options.sleep))
             time.sleep(options.sleep)
+
 
 if __name__ == '__main__':
     main()

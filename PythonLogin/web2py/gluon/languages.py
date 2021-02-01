@@ -56,15 +56,15 @@ else:
     Utf8 = str
 
 # pattern to find T(blah blah blah) expressions
-PY_STRING_LITERAL_RE = r'(?<=[^\w]T\()(?P<name>'\
-    + r"[uU]?[rR]?(?:'''(?:[^']|'{1,2}(?!'))*''')|"\
-    + r"(?:'(?:[^'\\]|\\.)*')|" + r'(?:"""(?:[^"]|"{1,2}(?!"))*""")|'\
-    + r'(?:"(?:[^"\\]|\\.)*"))'
+PY_STRING_LITERAL_RE = r'(?<=[^\w]T\()(?P<name>' \
+                       + r"[uU]?[rR]?(?:'''(?:[^']|'{1,2}(?!'))*''')|" \
+                       + r"(?:'(?:[^'\\]|\\.)*')|" + r'(?:"""(?:[^"]|"{1,2}(?!"))*""")|' \
+                       + r'(?:"(?:[^"\\]|\\.)*"))'
 
-PY_M_STRING_LITERAL_RE = r'(?<=[^\w]T\.M\()(?P<name>'\
-    + r"[uU]?[rR]?(?:'''(?:[^']|'{1,2}(?!'))*''')|"\
-    + r"(?:'(?:[^'\\]|\\.)*')|" + r'(?:"""(?:[^"]|"{1,2}(?!"))*""")|'\
-    + r'(?:"(?:[^"\\]|\\.)*"))'
+PY_M_STRING_LITERAL_RE = r'(?<=[^\w]T\.M\()(?P<name>' \
+                         + r"[uU]?[rR]?(?:'''(?:[^']|'{1,2}(?!'))*''')|" \
+                         + r"(?:'(?:[^'\\]|\\.)*')|" + r'(?:"""(?:[^"]|"{1,2}(?!"))*""")|' \
+                         + r'(?:"(?:[^"\\]|\\.)*"))'
 
 regex_translate = re.compile(PY_STRING_LITERAL_RE, re.DOTALL)
 regex_translate_m = re.compile(PY_M_STRING_LITERAL_RE, re.DOTALL)
@@ -97,14 +97,17 @@ def safe_eval(text):
             return eval(text, {}, {})
     return None
 
+
 # used as default filter in translator.M()
 
 
 def markmin(s):
     def markmin_aux(m):
         return '{%s}' % markmin_escape(m.group('s'))
+
     return render(regex_param.sub(markmin_aux, s),
                   sep='br', autolinks=None, id_prefix='')
+
 
 # UTF8 helper functions
 
@@ -212,6 +215,7 @@ def read_possible_plural_rules():
         logging.warn('Unable to import plural rules: %s' % e)
     return plurals
 
+
 PLURAL_RULES = read_possible_plural_rules()
 
 
@@ -237,15 +241,15 @@ def read_possible_languages_aux(langdir):
         else:
             pluraldict_fname = None
             pluraldict_mtime = 0
-        return (langcode,        # language code from !langcode!
+        return (langcode,  # language code from !langcode!
                 langname,
                 # language name in national spelling from !langname!
                 langfile_mtime,  # m_time of language file
                 pluraldict_fname,  # name of plural dictionary file or None (when default.py is not exist)
                 pluraldict_mtime,  # m_time of plural dictionary file or 0 if file is not exist
                 prules_langcode,  # code of plural rules language or 'default'
-                nplurals,        # nplurals for current language
-                get_plural_id,   # get_plural_id() for current language
+                nplurals,  # nplurals for current language
+                get_plural_id,  # get_plural_id() for current language
                 construct_plural_form)  # construct_plural_form() for current language
 
     plurals = {}
@@ -264,7 +268,7 @@ def read_possible_languages_aux(langdir):
             d = read_dict(fname_with_path)
             lang = fname[:-3]
             langcode = d.get('!langcode!', lang if lang != 'default'
-                             else DEFAULT_LANGUAGE)
+            else DEFAULT_LANGUAGE)
             langname = d.get('!langname!', langcode)
             langfile_mtime = ostat(fname_with_path).st_mtime
             langs[lang] = get_lang_struct(lang, langcode,
@@ -310,7 +314,8 @@ def write_plural_dict(filename, contents):
     fp = None
     try:
         fp = LockedFile(filename, 'w')
-        fp.write('#!/usr/bin/env python\n# -*- coding: utf-8 -*-\n{\n# "singular form (0)": ["first plural form (1)", "second plural form (2)", ...],\n')
+        fp.write(
+            '#!/usr/bin/env python\n# -*- coding: utf-8 -*-\n{\n# "singular form (0)": ["first plural form (1)", "second plural form (2)", ...],\n')
         for key in sorted(contents, key=sort_function):
             forms = '[' + ','.join([repr(Utf8(form))
                                     for form in contents[key]]) + ']'
@@ -358,13 +363,13 @@ class lazyT(object):
     M = is_copy = False
 
     def __init__(
-        self,
-        message,
-        symbols={},
-        T=None,
-        filter=None,
-        ftag=None,
-        M=False
+            self,
+            message,
+            symbols={},
+            T=None,
+            filter=None,
+            ftag=None,
+            M=False
     ):
         if isinstance(message, lazyT):
             self.m = message.m
@@ -384,7 +389,7 @@ class lazyT(object):
             self.is_copy = False
 
     def __repr__(self):
-        return "<lazyT %s>" % (repr(Utf8(self.m)), )
+        return "<lazyT %s>" % (repr(Utf8(self.m)),)
 
     def __str__(self):
         return str(self.T.apply_filter(self.m, self.s, self.f, self.t) if self.M else
@@ -453,6 +458,7 @@ class lazyT(object):
 
 def pickle_lazyT(c):
     return str, (c.xml(),)
+
 
 copyreg.pickle(lazyT, pickle_lazyT)
 
@@ -631,6 +637,7 @@ class translator(object):
         of them matches possible_languages.
         """
         pl_info = read_possible_languages(self.langpath)
+
         def set_plural(language):
             """
             initialize plural forms subsystem
@@ -658,6 +665,7 @@ class translator(object):
                 self.construct_plural_form = DEFAULT_CONSTRUCT_PLURAL_FORM
                 self.plural_file = None
                 self.plural_dict = {}
+
         language = ''
         if len(languages) == 1 and isinstance(languages[0], str):
             languages = regex_language.findall(languages[0].lower())
@@ -667,7 +675,7 @@ class translator(object):
         if languages:
             all_languages = set(lang for lang in pl_info
                                 if lang != 'default') \
-                | set(self.current_languages)
+                            | set(self.current_languages)
             for lang in languages:
                 # compare "aa-bb" | "aa" from *language* parameter
                 # with strings from langlist using such alghorythm:
@@ -752,6 +760,7 @@ class translator(object):
         def get_tr(message, prefix, filter):
             s = self.get_t(message, prefix)
             return filter(s) if filter else self.filter(s)
+
         if filter:
             prefix = '@' + (ftag or 'userdef') + '\x01'
         else:
@@ -839,6 +848,7 @@ class translator(object):
         Note:
             *symbols* MUST BE OR tuple OR dict of parameters!
         """
+
         def sub_plural(m):
             """String in `%{}` is transformed by this rules:
                If string starts with  `!` or `?` such transformations
@@ -887,6 +897,7 @@ class translator(object):
                Other strings, (those not starting with  `!` or `?`)
                are processed by self.plural
             """
+
             def sub_tuple(m):
                 """ word
                     !word, !!word, !!!word
@@ -983,6 +994,7 @@ class translator(object):
                 if part == s:
                     return m.group(0)
             return part
+
         message = message % symbols
         message = regex_plural.sub(sub_plural, message)
         return message
@@ -1022,6 +1034,7 @@ def findT(path, language=DEFAULT_LANGUAGE):
     cp = pjoin(path, 'controllers')
     vp = pjoin(path, 'views')
     mop = pjoin(path, 'modules')
+
     def add_message(message):
         if not message.startswith('#') and not '\n' in message:
             tokens = message.rsplit('##', 1)
@@ -1032,14 +1045,17 @@ def findT(path, language=DEFAULT_LANGUAGE):
             message = tokens[0].strip() + '##' + tokens[1].strip()
         if message and not message in sentences:
             sentences[message] = message.replace("@markmin\x01", "")
+
     for filename in \
-            listdir(mp, '^.+\.py$', 0) + listdir(cp, '^.+\.py$', 0)\
+            listdir(mp, '^.+\.py$', 0) + listdir(cp, '^.+\.py$', 0) \
             + listdir(vp, '^.+\.html$', 0) + listdir(mop, '^.+\.py$', 0):
         data = to_native(read_locked(filename))
         items = regex_translate.findall(data)
         for x in regex_translate_m.findall(data):
-            if x[0:3] in ["'''", '"""']: items.append("%s@markmin\x01%s" %(x[0:3], x[3:]))
-            else: items.append("%s@markmin\x01%s" %(x[0], x[1:]))
+            if x[0:3] in ["'''", '"""']:
+                items.append("%s@markmin\x01%s" % (x[0:3], x[3:]))
+            else:
+                items.append("%s@markmin\x01%s" % (x[0], x[1:]))
         for item in items:
             try:
                 message = safe_eval(item)
@@ -1091,4 +1107,5 @@ def update_from_langfile(target, source, force_update=False):
 
 if __name__ == '__main__':
     import doctest
+
     doctest.testmod()

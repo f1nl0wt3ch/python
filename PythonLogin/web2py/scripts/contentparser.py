@@ -89,7 +89,8 @@ if __name__ == '__main__':
         sys.stdout.write('\nContenttype.py database is up to date\n')
         exit()
     try:
-        raw_input('\nContenttype.py database updates are available from:\n%s (approx. 0.5MB)\nPress enter to continue or CTRL-C to quit now\nWARNING: this will replace contenttype.py file content IN PLACE' % url)
+        raw_input(
+            '\nContenttype.py database updates are available from:\n%s (approx. 0.5MB)\nPress enter to continue or CTRL-C to quit now\nWARNING: this will replace contenttype.py file content IN PLACE' % url)
     except:
         exit()
     sys.stdout.write('\nDownloading new database:')
@@ -122,7 +123,8 @@ if __name__ == '__main__':
         io.seek(0)
         contenttype = open('contenttype.py', 'w')
         try:
-            contenttype.write(re.sub(vregex, 'database version %s.\n' % nversion, re.sub('CONTENT_TYPE = \{(.|\n)+?\}', io.getvalue(), current)))
+            contenttype.write(re.sub(vregex, 'database version %s.\n' % nversion,
+                                     re.sub('CONTENT_TYPE = \{(.|\n)+?\}', io.getvalue(), current)))
         finally:
             contenttype.close()
         if not current.closed:

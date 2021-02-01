@@ -12,10 +12,10 @@
 
 """Pythonic simple SOAP Client transport"""
 
-
 import logging
 import ssl
 import sys
+
 try:
     import urllib2
     from cookielib import CookieJar
@@ -37,12 +37,17 @@ log = logging.getLogger(__name__)
 
 if False:
     import socket
+
     realsocket = socket.socket
+
+
     def socketwrap(family=socket.AF_INET, type=socket.SOCK_STREAM, proto=0):
         sockobj = realsocket(family, type, proto)
         if type == socket.SOCK_STREAM:
             sockobj.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
         return sockobj
+
+
     socket.socket = socketwrap
 
 #
@@ -57,23 +62,30 @@ class TransportBase:
     def supports_feature(cls, feature_name):
         return cls._wrapper_name in _http_facilities[feature_name]
 
+
 #
 # httplib2 support.
 #
 try:
     import httplib2
+
     if sys.version > '3' and httplib2.__version__ <= "0.7.7":
         import http.client
-        # httplib2 workaround: check_hostname needs a SSL context with either 
+
+        # httplib2 workaround: check_hostname needs a SSL context with either
         #                      CERT_OPTIONAL or CERT_REQUIRED
         # see https://code.google.com/p/httplib2/issues/detail?id=173
-        orig__init__ = http.client.HTTPSConnection.__init__ 
+        orig__init__ = http.client.HTTPSConnection.__init__
+
+
         def fixer(self, host, port, key_file, cert_file, timeout, context,
-                        check_hostname, *args, **kwargs):
+                  check_hostname, *args, **kwargs):
             chk = kwargs.get('disable_ssl_certificate_validation', True) ^ True
             orig__init__(self, host, port=port, key_file=key_file,
-                cert_file=cert_file, timeout=timeout, context=context,
-                check_hostname=chk)
+                         cert_file=cert_file, timeout=timeout, context=context,
+                         check_hostname=chk)
+
+
         http.client.HTTPSConnection.__init__ = fixer
 except ImportError:
     TIMEOUT = None  # timeout not supported by urllib2
@@ -84,7 +96,7 @@ else:
         _wrapper_name = 'httplib2'
 
         def __init__(self, timeout, proxy=None, cacert=None, sessions=False):
-#            httplib2.debuglevel=4 
+            #            httplib2.debuglevel=4
             kwargs = {}
             if proxy:
                 import socks
@@ -99,11 +111,13 @@ else:
                 kwargs['ca_certs'] = cacert
             httplib2.Http.__init__(self, **kwargs)
 
+
     _http_connectors['httplib2'] = Httplib2Transport
     _http_facilities.setdefault('proxy', []).append('httplib2')
     _http_facilities.setdefault('cacert', []).append('httplib2')
 
     import inspect
+
     if 'timeout' in inspect.getargspec(httplib2.Http.__init__)[0]:
         _http_facilities.setdefault('timeout', []).append('httplib2')
 
@@ -122,19 +136,19 @@ class urllib2Transport(TransportBase):
             raise RuntimeError('proxy is not supported with urllib2 transport')
         if cacert:
             raise RuntimeError('cacert is not support with urllib2 transport')
-        
+
         handlers = []
 
-        if ((sys.version_info[0] == 2 and sys.version_info >= (2,7,9)) or
-            (sys.version_info[0] == 3 and sys.version_info >= (3,2,0))):
+        if ((sys.version_info[0] == 2 and sys.version_info >= (2, 7, 9)) or
+                (sys.version_info[0] == 3 and sys.version_info >= (3, 2, 0))):
             context = ssl.create_default_context()
             context.check_hostname = False
             context.verify_mode = ssl.CERT_NONE
             handlers.append(urllib2.HTTPSHandler(context=context))
-        
+
         if sessions:
             handlers.append(urllib2.HTTPCookieProcessor(CookieJar()))
-        
+
         opener = urllib2.build_opener(*handlers)
         self.request_opener = opener.open
         self._timeout = timeout
@@ -148,6 +162,7 @@ class urllib2Transport(TransportBase):
             if f.code != 500:
                 raise
             return f.info(), f.read()
+
 
 _http_connectors['urllib2'] = urllib2Transport
 _http_facilities.setdefault('sessions', []).append('urllib2')
@@ -172,6 +187,7 @@ else:
         except ImportError:
             from io import StringIO
 
+
     class pycurlTransport(TransportBase):
         _wrapper_version = pycurl.version
         _wrapper_name = 'pycurl'
@@ -192,9 +208,9 @@ else:
                 c.setopt(pycurl.PROXYUSERPWD, "%(proxy_user)s:%(proxy_pass)s" % self.proxy)
             self.buf = StringIO()
             c.setopt(pycurl.WRITEFUNCTION, self.buf.write)
-            #c.setopt(pycurl.READFUNCTION, self.read)
-            #self.body = StringIO(body)
-            #c.setopt(pycurl.HEADERFUNCTION, self.header)
+            # c.setopt(pycurl.READFUNCTION, self.read)
+            # self.body = StringIO(body)
+            # c.setopt(pycurl.HEADERFUNCTION, self.header)
             if self.cacert:
                 c.setopt(c.CAINFO, self.cacert)
             c.setopt(pycurl.SSL_VERIFYPEER, self.cacert and 1 or 0)
@@ -211,6 +227,7 @@ else:
             c.perform()
             c.close()
             return {}, self.buf.getvalue()
+
 
     _http_connectors['pycurl'] = pycurlTransport
     _http_facilities.setdefault('proxy', []).append('pycurl')

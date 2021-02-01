@@ -29,7 +29,6 @@ from gluon.storage import Storage
 from gluon.utils import web2py_uuid, simple_hash, compare
 from gluon.highlight import highlight
 
-
 regex_crlf = re.compile('\r|\n')
 
 join = ''.join
@@ -37,7 +36,6 @@ join = ''.join
 # name2codepoint is incomplete respect to xhtml (and xml): 'apos' is missing.
 entitydefs = dict(map(lambda k_v: (k_v[0], unichr(k_v[1]).encode('utf-8')), iteritems(name2codepoint)))
 entitydefs.setdefault('apos', u"'".encode('utf-8'))
-
 
 __all__ = [
     'A',
@@ -124,7 +122,7 @@ def xmlescape(data, quote=True):
     if hasattr(data, 'xml') and callable(data.xml):
         return to_bytes(data.xml())
 
-    if not(isinstance(data, (text_type, bytes))):
+    if not (isinstance(data, (text_type, bytes))):
         # i.e., integers
         data = str(data)
     data = to_bytes(data, 'utf8', 'xmlcharrefreplace')
@@ -470,11 +468,11 @@ def verifyURL(request, hmac_key=None, hash_vars=True, salt=None, user_signature=
             list_vars.append((key, val))
 
     # which of the vars are to be included?
-    if hash_vars is True:       # include them all
+    if hash_vars is True:  # include them all
         h_vars = list_vars
-    elif hash_vars is False:    # include none of them
+    elif hash_vars is False:  # include none of them
         h_vars = ''
-    else:                       # include just those specified
+    else:  # include just those specified
         # wrap in a try - if the desired vars have been removed it'll fail
         try:
             if hash_vars and not isinstance(hash_vars, (list, tuple)):
@@ -497,6 +495,7 @@ def verifyURL(request, hmac_key=None, hash_vars=True, salt=None, user_signature=
     # (I.E. was the message the same as the one we originally signed)
 
     return compare(original_sig, sig)
+
 
 URL.verify = verifyURL
 
@@ -558,33 +557,33 @@ class XML(XmlComponent):
     """
 
     def __init__(
-        self,
-        text,
-        sanitize=False,
-        permitted_tags=[
-            'a',
-            'b',
-            'blockquote',
-            'br/',
-            'i',
-            'li',
-            'ol',
-            'ul',
-            'p',
-            'cite',
-            'code',
-            'pre',
-            'img/',
-            'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-            'table', 'tr', 'td', 'div',
-            'strong', 'span',
-        ],
-        allowed_attributes={
-            'a': ['href', 'title', 'target'],
-            'img': ['src', 'alt'],
-            'blockquote': ['type'],
-            'td': ['colspan'],
-        },
+            self,
+            text,
+            sanitize=False,
+            permitted_tags=[
+                'a',
+                'b',
+                'blockquote',
+                'br/',
+                'i',
+                'li',
+                'ol',
+                'ul',
+                'p',
+                'cite',
+                'code',
+                'pre',
+                'img/',
+                'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+                'table', 'tr', 'td', 'div',
+                'strong', 'span',
+            ],
+            allowed_attributes={
+                'a': ['href', 'title', 'target'],
+                'img': ['src', 'alt'],
+                'blockquote': ['type'],
+                'td': ['colspan'],
+            },
     ):
         """
         Args:
@@ -627,9 +626,9 @@ class XML(XmlComponent):
     def __hash__(self):
         return hash(str(self))
 
-#    why was this here? Break unpickling in sessions
-#    def __getattr__(self, name):
-#        return getattr(str(self), name)
+    #    why was this here? Break unpickling in sessions
+    #    def __getattr__(self, name):
+    #        return getattr(str(self), name)
 
     def __getitem__(self, i):
         return str(self)[i]
@@ -661,6 +660,7 @@ class XML(XmlComponent):
         """
         return []
 
+
 # ## important to allow safe session.flash=T(....)
 
 
@@ -670,6 +670,8 @@ def XML_unpickle(data):
 
 def XML_pickle(data):
     return XML_unpickle, (marshal.dumps(str(data)),)
+
+
 copyreg.pickle(XML, XML_pickle, XML_unpickle)
 
 
@@ -1149,7 +1151,7 @@ class DIV(XmlComponent):
             is_regex = not isinstance(find, (str, int))
             for c in self.components:
                 if (isinstance(c, str) and ((is_regex and find.search(c)) or
-                   (str(find) in c))):
+                                            (str(find) in c))):
                     check = True
         # if found, return the component
         if check:
@@ -1168,6 +1170,7 @@ class DIV(XmlComponent):
             else:
                 self[i] = replace(self[i]) if callable(replace) else replace
                 return i + 1
+
         # loop the components
         if find_text or find_components:
             i = 0
@@ -1217,10 +1220,10 @@ class DIV(XmlComponent):
                 check = True
                 tag = getattr(c, 'tag').replace("/", "")
                 if args and tag not in args:
-                        check = False
+                    check = False
                 for (key, value) in iteritems(kargs):
                     if c[key] != value:
-                            check = False
+                        check = False
                 if check:
                     matches.append(c)
                     if first_only:
@@ -1242,7 +1245,6 @@ class DIV(XmlComponent):
 
 
 class CAT(DIV):
-
     tag = ''
 
 
@@ -1262,11 +1264,11 @@ class __tag_div__(DIV):
         DIV.__init__(self, *a, **b)
         self.tag = name
 
+
 copyreg.pickle(__tag_div__, TAG_pickler, TAG_unpickler)
 
 
 class __TAG__(XmlComponent):
-
     """
     TAG factory
 
@@ -1287,6 +1289,7 @@ class __TAG__(XmlComponent):
 
     def __call__(self, html):
         return web2pyHTMLParser(decoder.decoder(html)).tree
+
 
 TAG = __TAG__()
 
@@ -1398,27 +1401,22 @@ class XHTML(DIV):
 
 
 class HEAD(DIV):
-
     tag = 'head'
 
 
 class TITLE(DIV):
-
     tag = 'title'
 
 
 class META(DIV):
-
     tag = 'meta/'
 
 
 class LINK(DIV):
-
     tag = 'link/'
 
 
 class SCRIPT(DIV):
-
     tag = b'script'
     tagname = to_bytes(tag)
 
@@ -1427,7 +1425,7 @@ class SCRIPT(DIV):
         fa = to_bytes(fa)
         # no escaping of subcomponents
         co = b'\n'.join([to_bytes(component) for component in
-                       self.components])
+                         self.components])
         if co:
             # <script [attributes]><!--//--><![CDATA[//><!--
             # script body
@@ -1439,7 +1437,6 @@ class SCRIPT(DIV):
 
 
 class STYLE(DIV):
-
     tag = 'style'
     tagname = to_bytes(tag)
 
@@ -1448,7 +1445,7 @@ class STYLE(DIV):
         fa = to_bytes(fa)
         # no escaping of subcomponents
         co = b'\n'.join([to_bytes(component) for component in
-                       self.components])
+                         self.components])
         if co:
             # <style [attributes]><!--/*--><![CDATA[/*><!--*/
             # style body
@@ -1459,47 +1456,38 @@ class STYLE(DIV):
 
 
 class IMG(DIV):
-
     tag = 'img/'
 
 
 class SPAN(DIV):
-
     tag = 'span'
 
 
 class BODY(DIV):
-
     tag = 'body'
 
 
 class H1(DIV):
-
     tag = 'h1'
 
 
 class H2(DIV):
-
     tag = 'h2'
 
 
 class H3(DIV):
-
     tag = 'h3'
 
 
 class H4(DIV):
-
     tag = 'h4'
 
 
 class H5(DIV):
-
     tag = 'h5'
 
 
 class H6(DIV):
-
     tag = 'h6'
 
 
@@ -1520,22 +1508,18 @@ class P(DIV):
 
 
 class STRONG(DIV):
-
     tag = 'strong'
 
 
 class B(DIV):
-
     tag = 'b'
 
 
 class BR(DIV):
-
     tag = 'br/'
 
 
 class HR(DIV):
-
     tag = 'hr/'
 
 
@@ -1596,37 +1580,30 @@ class A(DIV):
 
 
 class BUTTON(DIV):
-
     tag = 'button'
 
 
 class EM(DIV):
-
     tag = 'em'
 
 
 class EMBED(DIV):
-
     tag = 'embed/'
 
 
 class TT(DIV):
-
     tag = 'tt'
 
 
 class PRE(DIV):
-
     tag = 'pre'
 
 
 class CENTER(DIV):
-
     tag = 'center'
 
 
 class CODE(DIV):
-
     """
     Displays code in HTML with syntax highlighting.
 
@@ -1675,12 +1652,10 @@ class CODE(DIV):
 
 
 class LABEL(DIV):
-
     tag = 'label'
 
 
 class LI(DIV):
-
     tag = 'li'
 
 
@@ -1699,17 +1674,14 @@ class UL(DIV):
 
 
 class OL(UL):
-
     tag = 'ol'
 
 
 class TD(DIV):
-
     tag = 'td'
 
 
 class TH(DIV):
-
     tag = 'th'
 
 
@@ -1742,7 +1714,6 @@ class __TRHEAD__(DIV):
 
 
 class THEAD(DIV):
-
     tag = 'thead'
 
     def _fixup(self):
@@ -1750,7 +1721,6 @@ class THEAD(DIV):
 
 
 class TBODY(DIV):
-
     tag = 'tbody'
 
     def _fixup(self):
@@ -1758,7 +1728,6 @@ class TBODY(DIV):
 
 
 class TFOOT(DIV):
-
     tag = 'tfoot'
 
     def _fixup(self):
@@ -1766,12 +1735,10 @@ class TFOOT(DIV):
 
 
 class COL(DIV):
-
     tag = 'col/'
 
 
 class COLGROUP(DIV):
-
     tag = 'colgroup'
 
 
@@ -1791,17 +1758,14 @@ class TABLE(DIV):
 
 
 class I(DIV):
-
     tag = 'i'
 
 
 class IFRAME(DIV):
-
     tag = 'iframe'
 
 
 class INPUT(DIV):
-
     """
     INPUT Component
 
@@ -1933,7 +1897,6 @@ class INPUT(DIV):
 
 
 class TEXTAREA(INPUT):
-
     """
     Examples::
 
@@ -1957,7 +1920,6 @@ class TEXTAREA(INPUT):
 
 
 class OPTION(DIV):
-
     tag = 'option'
 
     def _fixup(self):
@@ -1966,12 +1928,10 @@ class OPTION(DIV):
 
 
 class OBJECT(DIV):
-
     tag = 'object'
 
 
 class OPTGROUP(DIV):
-
     tag = 'optgroup'
 
     def _fixup(self):
@@ -2036,17 +1996,14 @@ class SELECT(INPUT):
 
 
 class FIELDSET(DIV):
-
     tag = 'fieldset'
 
 
 class LEGEND(DIV):
-
     tag = 'legend'
 
 
 class FORM(DIV):
-
     """
     Examples:
 
@@ -2376,6 +2333,7 @@ class FORM(DIV):
                     return str(newobj)
             else:
                 return newobj
+
         return flatten(d)
 
     def as_json(self, sanitize=True):
@@ -2782,6 +2740,7 @@ class MARKMIN(XmlComponent):
     """
     For documentation: http://web2py.com/examples/static/markmin.html
     """
+
     def __init__(self,
                  text, extra=None, allowed=None, sep='p',
                  url=None, environment=None, latex='google',
@@ -2844,4 +2803,5 @@ def ASSIGNJS(**kargs):
 
 if __name__ == '__main__':
     import doctest
+
     doctest.testmod()

@@ -43,11 +43,11 @@ def _default_validators(db, field):
     elif field_type == 'double' or field_type == 'float':
         requires.append(validators.IS_FLOAT_IN_RANGE(-1e100, 1e100))
     elif field_type == 'integer':
-        requires.append(validators.IS_INT_IN_RANGE(-2**31, 2**31))
+        requires.append(validators.IS_INT_IN_RANGE(-2 ** 31, 2 ** 31))
     elif field_type == 'bigint':
-        requires.append(validators.IS_INT_IN_RANGE(-2**63, 2**63))
+        requires.append(validators.IS_INT_IN_RANGE(-2 ** 63, 2 ** 63))
     elif field_type.startswith('decimal'):
-        requires.append(validators.IS_DECIMAL_IN_RANGE(-10**10, 10**10))
+        requires.append(validators.IS_DECIMAL_IN_RANGE(-10 ** 10, 10 ** 10))
     elif field_type == 'date':
         requires.append(validators.IS_DATE())
     elif field_type == 'time':
@@ -58,16 +58,16 @@ def _default_validators(db, field):
         if field_type.find('.') < 0 and field_type[10:] in db.tables:
             referenced = db[field_type[10:]]
             if hasattr(referenced, '_format') and referenced._format:
-                requires = validators.IS_IN_DB(db, referenced._id,referenced._format)
+                requires = validators.IS_IN_DB(db, referenced._id, referenced._format)
             else:
                 requires = validators.IS_IN_DB(db, referenced._id)
         elif field_type.find('.') > 0 and field_type[10:].split('.')[0] in db.tables:
             table_field = field_type[10:].split('.')
-            table_name=table_field[0]
-            field_name=table_field[1]
+            table_name = table_field[0]
+            field_name = table_field[1]
             referenced = db[table_name]
             if hasattr(referenced, '_format') and referenced._format:
-                requires = validators.IS_IN_DB(db, referenced[field_name],referenced._format)
+                requires = validators.IS_IN_DB(db, referenced[field_name], referenced._format)
             else:
                 requires = validators.IS_IN_DB(db, referenced[field_name])
         if field.unique:
@@ -86,8 +86,8 @@ def _default_validators(db, field):
                                                multiple=True)
         elif field_type.find('.') > 0 and field_type[15:].split('.')[0] in db.tables:
             table_field = field_type[15:].split('.')
-            table_name=table_field[0]
-            field_name=table_field[1]
+            table_name = table_field[0]
+            field_name = table_field[1]
             referenced = db[table_name]
             if hasattr(referenced, '_format') and referenced._format:
                 requires = validators.IS_IN_DB(db, referenced[field_name],
@@ -99,8 +99,8 @@ def _default_validators(db, field):
             requires._and = validators.IS_NOT_IN_DB(db, field)
         if not field.notnull:
             requires = validators.IS_EMPTY_OR(requires)
-        return requires    
-    # does not get here for reference and list:reference
+        return requires
+        # does not get here for reference and list:reference
     if isinstance(requires, list):
         if field.unique:
             requires.insert(0, validators.IS_NOT_IN_DB(db, field))
@@ -108,9 +108,10 @@ def _default_validators(db, field):
         if (field.notnull or field.unique) and field_type not in excluded_fields:
             requires.insert(0, validators.IS_NOT_EMPTY())
         elif not field.notnull and not field.unique and requires:
-            null = null='' if field.type in ('string', 'text', 'password') else None
+            null = null = '' if field.type in ('string', 'text', 'password') else None
             requires[0] = validators.IS_EMPTY_OR(requires[0], null=null)
     return requires
+
 
 DAL.serializers = {'json': custom_json, 'xml': xml}
 DAL.validators_method = _default_validators
@@ -126,18 +127,21 @@ DAL.Table = Table
 if not DRIVERS.get('pymysql'):
     try:
         from .contrib import pymysql
+
         DRIVERS['pymysql'] = pymysql
     except:
         pass
 if not DRIVERS.get('pyodbc'):
     try:
         from .contrib import pypyodbc as pyodbc
+
         DRIVERS['pyodbc'] = pyodbc
     except:
         pass
 if not DRIVERS.get('pg8000'):
     try:
         from .contrib import pg8000
+
         DRIVERS['pg8000'] = pg8000
     except:
         pass

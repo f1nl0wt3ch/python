@@ -9,8 +9,8 @@ import base64
 import os
 from gluon._compat import StringIO
 
-
 service = Service(globals())
+
 
 @service.jsonrpc
 def login():
@@ -90,7 +90,7 @@ def attach_debugger(host='localhost', port=6000, authkey='secret password'):
 
     if not hasattr(gluon.debug, 'dbg_listener'):
         # create a remote debugger server and wait for connection
-        address = (host, port)     # family is deduced to be 'AF_INET'
+        address = (host, port)  # family is deduced to be 'AF_INET'
         gluon.debug.dbg_listener = Listener(address, authkey=authkey)
         gluon.debug.dbg_connection = gluon.debug.dbg_listener.accept()
         # create the backend
@@ -98,7 +98,7 @@ def attach_debugger(host='localhost', port=6000, authkey='secret password'):
         gluon.debug.dbg = gluon.debug.dbg_debugger
         # welcome message (this should be displayed on the frontend)
         print('debugger connected to', gluon.debug.dbg_listener.last_accepted)
-    return True     # connection successful!
+    return True  # connection successful!
 
 
 @service.jsonrpc

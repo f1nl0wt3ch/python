@@ -40,20 +40,20 @@ class OracleDialect(SQLDialect):
     @sqltype_for('reference')
     def type_reference(self):
         return 'NUMBER, CONSTRAINT %(constraint_name)s FOREIGN KEY ' + \
-            '(%(field_name)s) REFERENCES %(foreign_key)s ON DELETE ' + \
-            '%(on_delete_action)s'
+               '(%(field_name)s) REFERENCES %(foreign_key)s ON DELETE ' + \
+               '%(on_delete_action)s'
 
     @sqltype_for('reference FK')
     def type_reference_fk(self):
         return ', CONSTRAINT FK_%(constraint_name)s FOREIGN KEY ' + \
-            '(%(field_name)s) REFERENCES %(foreign_key)s ' + \
-            'ON DELETE %(on_delete_action)s'
+               '(%(field_name)s) REFERENCES %(foreign_key)s ' + \
+               'ON DELETE %(on_delete_action)s'
 
     @sqltype_for('reference TFK')
     def type_reference_tfk(self):
         return ' CONSTRAINT FK_%(constraint_name)s_PK FOREIGN KEY ' + \
-            '(%(field_name)s) REFERENCES %(foreign_table)s' + \
-            '(%(foreign_key)s) ON DELETE %(on_delete_action)s'
+               '(%(field_name)s) REFERENCES %(foreign_table)s' + \
+               '(%(foreign_key)s) ON DELETE %(on_delete_action)s'
 
     def left_join(self, val):
         return 'LEFT OUTER JOIN %s' % val
@@ -74,7 +74,7 @@ class OracleDialect(SQLDialect):
 
     def not_null(self, default, field_type):
         return 'DEFAULT %s NOT NULL' % \
-            self.adapter.represent(default, field_type)
+               self.adapter.represent(default, field_type)
 
     def regexp(self, first, second, query_env={}):
         return 'REGEXP_LIKE(%s, %s)' % (
@@ -104,10 +104,10 @@ class OracleDialect(SQLDialect):
                 whr2 = self.where('w_row > %i' % lmin)
 
             return ('SELECT%s %s FROM (SELECT w_tmp.*, ROWNUM w_row FROM '
-                '(SELECT %s FROM %s%s%s%s) w_tmp WHERE ROWNUM<=%i) %s%s%s%s;') \
-                % (
-                    dst, fields, fields, tables, whr, grp, order, lmax, tables,
-                    whr2, grp, order)
+                    '(SELECT %s FROM %s%s%s%s) w_tmp WHERE ROWNUM<=%i) %s%s%s%s;') \
+                   % (
+                       dst, fields, fields, tables, whr, grp, order, lmax, tables,
+                       whr2, grp, order)
         if for_update:
             upd = ' FOR UPDATE'
         return 'SELECT%s %s FROM %s%s%s%s%s%s%s;' % (

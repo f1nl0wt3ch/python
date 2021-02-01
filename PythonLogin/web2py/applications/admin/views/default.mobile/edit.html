@@ -1,13 +1,24 @@
 {{extend 'default.mobile/layout.html'}}
 <script>
-var current_theme = "{{=editor_settings['theme']}}";  //Default theme
-var current_editor = "{{=editor_settings['editor']}}";  //Default editor
-{{if editor_settings['closetag'] == 'true':}}
+    var current_theme = "{{=editor_settings['theme']}}";  //Default theme
+    var current_editor = "{{=editor_settings['editor']}}";  //Default editor
+    {
+        {
+            if editor_settings['closetag'] == 'true':
+        }
+    }
     var current_closetag = true;  //Default closetag
-{{else:}}
+    {
+        {else:
+        }
+    }
     var current_closetag = false;  //Default closetag
-{{pass}}
-var current_font_incr = 0; // Default font-size, 0 means don't set
+    {
+        {
+            pass
+        }
+    }
+    var current_font_incr = 0; // Default font-size, 0 means don't set
 </script>
 {{cm=URL('static', 'codemirror')}}
 <link rel="stylesheet" href="{{=cm}}/lib/codemirror.css">
@@ -15,7 +26,8 @@ var current_font_incr = 0; // Default font-size, 0 means don't set
 <script src="{{=cm}}/lib/codemirror.js"></script>
 <script src="{{=cm}}/addon/edit/matchbrackets.js"></script>
 <script src="{{=cm}}/addon/edit/closetag.js"></script>
-{{if editor_settings['editor'] != 'default':}}<script src="{{='%s/keymap/%s.js' % (cm, editor_settings['editor'])}}"></script>{{pass}}
+{{if editor_settings['editor'] != 'default':}}
+<script src="{{='%s/keymap/%s.js' % (cm, editor_settings['editor'])}}"></script>{{pass}}
 <script src="{{=cm}}/mode/python/python.js"></script>
 <script src="{{=cm}}/mode/xml/xml.js"></script>
 <script src="{{=cm}}/mode/css/css.js"></script>
@@ -38,4 +50,6 @@ var current_font_incr = 0; // Default font-size, 0 means don't set
 <link rel="stylesheet" href="{{=URL('static/css','web2py-codemirror.css')}}">
 
 
-<div id='edit_placeholder'><div id="{{=id}}" class="tab-pane active" >{{=XML(plain_html)}}</div></div>
+<div id='edit_placeholder'>
+    <div id="{{=id}}" class="tab-pane active">{{=XML(plain_html)}}</div>
+</div>

@@ -21,7 +21,7 @@ class OracleRepresenter(SQLRepresenter):
             if isinstance(obj, datetime.datetime):
                 obj = obj.isoformat()[:19].replace('T', ' ')
             elif isinstance(obj, datetime.date):
-                obj = obj.isoformat()[:10]+' 00:00:00'
+                obj = obj.isoformat()[:10] + ' 00:00:00'
             else:
                 obj = str(obj)
             return "to_date('%s','yyyy-mm-dd hh24:mi:ss')" % obj

@@ -1,7 +1,7 @@
 def group_feed_reader(group, mode='div', counter='5'):
     """parse group feeds"""
 
-    url = "http://groups.google.com/group/%s/feed/rss_v2_0_topics.xml?num=%s" %\
+    url = "http://groups.google.com/group/%s/feed/rss_v2_0_topics.xml?num=%s" % \
           (group, counter)
     from gluon.contrib import feedparser
     g = feedparser.parse(url)
@@ -9,7 +9,7 @@ def group_feed_reader(group, mode='div', counter='5'):
     if mode == 'div':
         html = XML(TAG.BLOCKQUOTE(UL(*[LI(A(entry['title'] + ' - ' +
                                             entry['author'][
-                                                entry['author'].rfind('('):],
+                                            entry['author'].rfind('('):],
                                             _href=entry['link'], _target='_blank'))
                                        for entry in g['entries']]),
                                   _class="boxInfo",

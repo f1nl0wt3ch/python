@@ -1,10 +1,12 @@
 import sys
+
 try:
     import unittest2 as unittest
 except ImportError:
     import unittest
 
 import pymysql
+
 _mysql = pymysql
 from pymysql.constants import FIELD_TYPE
 from pymysql.tests import base
@@ -70,13 +72,12 @@ class CoreAPI(unittest.TestCase):
 
     def test_affected_rows(self):
         self.assertEqual(self.conn.affected_rows(), 0,
-                          "Should return 0 before we do anything.")
+                         "Should return 0 before we do anything.")
 
-
-    #def test_debug(self):
-        ## FIXME Only actually tests if you lack SUPER
-        #self.assertRaises(pymysql.OperationalError,
-                          #self.conn.dump_debug_info)
+    # def test_debug(self):
+    ## FIXME Only actually tests if you lack SUPER
+    # self.assertRaises(pymysql.OperationalError,
+    # self.conn.dump_debug_info)
 
     def test_charset_name(self):
         self.assertTrue(isinstance(self.conn.character_set_name(), basestring),
@@ -96,6 +97,7 @@ class CoreAPI(unittest.TestCase):
         else:
             self.assertTrue(isinstance(self.conn.get_server_info(), basestring),
                             "Should return an str.")
+
 
 if __name__ == "__main__":
     unittest.main()

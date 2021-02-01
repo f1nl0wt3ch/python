@@ -29,6 +29,6 @@ When we iterate through the rows of our user_reader object, we access all of the
 import csv
 
 with open('cool_csv.csv') as cool_csv_file:
-  cool_csv_dict = csv.DictReader(cool_csv_file)
-  for row in cool_csv_dict:
-    print(row['Cool Fact'])
+    cool_csv_dict = csv.DictReader(cool_csv_file)
+    for row in cool_csv_dict:
+        print(row['Cool Fact'])

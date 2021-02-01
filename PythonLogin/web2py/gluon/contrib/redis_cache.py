@@ -94,7 +94,6 @@ def RedisCache(redis_conn=None, debug=False, with_lock=False, fail_gracefully=Fa
 
 
 class RedisClient(object):
-
     meta_storage = {}
     MAX_RETRIES = 5
     RETRIES = 0

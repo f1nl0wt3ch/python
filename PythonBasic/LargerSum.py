@@ -3,7 +3,9 @@ Create a function named larger_sum() that takes two lists of numbers as paramete
 
 The function should return the list whose elements sum to the greater number. If the sum of the elements of each list are equal, return lst1.
 """
-#Write your function here
+
+
+# Write your function here
 def larger_sum(lst1, lst2):
     lst1_sum = 0
     lst2_sum = 0
@@ -12,10 +14,10 @@ def larger_sum(lst1, lst2):
     for j in lst2:
         lst2_sum += j
     if lst1_sum >= lst2_sum:
-       return lst1
+        return lst1
     else:
-       return lst2
-        
+        return lst2
 
-#Uncomment the line below when your function is done
+
+# Uncomment the line below when your function is done
 print(larger_sum([1, 9, 5], [2, 3, 7]))

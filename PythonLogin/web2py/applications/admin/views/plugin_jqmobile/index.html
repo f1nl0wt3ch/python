@@ -15,19 +15,19 @@
 <div>Search results for tag: {{='tag'}}</div>
 
 <ul data-role="listview" data-inset="true">
-  {{if True:}}
-  <li data-role='list-divider'>Pages</li>
-  {{for child in ('dog','cat','mouse'):}}
-  {{title = child}}
-  <li><a href="{{=URL('index', vars=dict(title=child))}}">{{=child}}</a></li>
-  {{pass}}
-  {{pass}}
+    {{if True:}}
+    <li data-role='list-divider'>Pages</li>
+    {{for child in ('dog','cat','mouse'):}}
+    {{title = child}}
+    <li><a href="{{=URL('index', vars=dict(title=child))}}">{{=child}}</a></li>
+    {{pass}}
+    {{pass}}
 </ul>
 
 <div>
-  {{for tag in ('dog','cat','mouse'):}}
-  <a data-inline="true" href={{=URL('index', vars=dict(tag=tag))}} data-role="button">{{=tag}}</a>
-  {{pass}}
+    {{for tag in ('dog','cat','mouse'):}}
+    <a data-inline="true" href={{=URL('index', vars=dict(tag=tag))}} data-role="button">{{=tag}}</a>
+    {{pass}}
 </div>
 
 

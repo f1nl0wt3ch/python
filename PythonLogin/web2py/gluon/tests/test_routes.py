@@ -40,15 +40,15 @@ def setUpModule():
         #  applications/admin/controllers/*.py
         for ctr in ('appadmin', 'default', 'gae', 'mercurial', 'shell', 'wizard'):
             open(abspath('applications', 'admin',
-                 'controllers', '%s.py' % ctr), 'w').close()
+                         'controllers', '%s.py' % ctr), 'w').close()
         #  applications/examples/controllers/*.py
         for ctr in ('ajax_examples', 'appadmin', 'default', 'global', 'spreadsheet'):
             open(abspath('applications', 'examples',
-                 'controllers', '%s.py' % ctr), 'w').close()
+                         'controllers', '%s.py' % ctr), 'w').close()
         #  applications/welcome/controllers/*.py
         for ctr in ('appadmin', 'default'):
             open(abspath('applications', 'welcome',
-                 'controllers', '%s.py' % ctr), 'w').close()
+                         'controllers', '%s.py' % ctr), 'w').close()
         #  create an app-specific routes.py for examples app
         routes = open(abspath('applications', 'examples', 'routes.py'), 'w')
         routes.write("default_function='exdef'\n")
@@ -59,8 +59,8 @@ def setUpModule():
         oldcwd = os.getcwd()
         if not os.path.isdir('gluon'):
             os.chdir(os.path.realpath(
-                '../../'))    # run from web2py base directory
-        from gluon import main   # for initialization after chdir
+                '../../'))  # run from web2py base directory
+        from gluon import main  # for initialization after chdir
         global logger
         logger = logging.getLogger('web2py.rewrite')
         global_settings.applications_parent = tempfile.mkdtemp()
@@ -104,7 +104,7 @@ class TestRoutes(unittest.TestCase):
         self.assertEqual(filter_url(
             'http://domain.com/abc/def/ghi/j%20kl'), "/abc/def/ghi ['j_kl']")
         self.assertEqual(filter_url('http://domain.com/welcome/static/path/to/static'),
-            norm_root("%s/applications/welcome/static/path/to/static" % root))
+                         norm_root("%s/applications/welcome/static/path/to/static" % root))
         # no more necessary since explcit check for directory traversal attacks
         """
         self.assertRaises(HTTP, filter_url, 'http://domain.com/welcome/static/bad/path/to/st~tic')
@@ -116,10 +116,10 @@ class TestRoutes(unittest.TestCase):
         """
         # outgoing
         self.assertEqual(filter_url('http://domain.com/init/default/index',
-                         out=True), '/init/default/index')
+                                    out=True), '/init/default/index')
         self.assertEqual(filter_url('http://domain.com/init/default/index/arg1', out=True), '/init/default/index/arg1')
         self.assertEqual(filter_url('http://domain.com/init/default/abc',
-                         out=True), '/init/default/abc')
+                                    out=True), '/init/default/abc')
 
     def test_routes_query(self):
         """ Test query appending """
@@ -129,8 +129,10 @@ routes_in = (
 )
 '''
         load(data=data)
-        self.assertEqual(filter_url('http://localhost:8000/service/person/create'), "/app/default/call ['json', 'create'] ?model=person")
-        self.assertEqual(filter_url('http://localhost:8000/service/person/create?var1=val1'), "/app/default/call ['json', 'create'] ?model=person&var1=val1")
+        self.assertEqual(filter_url('http://localhost:8000/service/person/create'),
+                         "/app/default/call ['json', 'create'] ?model=person")
+        self.assertEqual(filter_url('http://localhost:8000/service/person/create?var1=val1'),
+                         "/app/default/call ['json', 'create'] ?model=person&var1=val1")
 
     def test_routes_specific(self):
         """
@@ -170,7 +172,7 @@ default_application = 'defapp'
         self.assertEqual(filter_url('http://domain.com/welcome/static/abc'),
                          norm_root('%s/applications/welcome/static/abc' % root))
         self.assertEqual(filter_url('http://domain.com/defapp/static/path/to/static'),
-            norm_root("%s/applications/defapp/static/path/to/static" % root))
+                         norm_root("%s/applications/defapp/static/path/to/static" % root))
 
     def test_routes_raise(self):
         '''
@@ -191,24 +193,24 @@ default_application = 'defapp'
         self.assertRaises(HTTP, filter_url, 'http://domain.com/ctl/bad!fcn')
         self.assertRaises(
             HTTP, filter_url, 'http://domain.com/ctl/fcn.bad!ext')
-        #self.assertRaises(
+        # self.assertRaises(
         #    HTTP, filter_url, 'http://domain.com/ctl/fcn/bad!arg')
-        #try:
+        # try:
         #    # 2.7+ only
         #    self.assertRaisesRegexp(HTTP, '400 BAD REQUEST \[invalid path\]', filter_url, 'http://domain.com/init/bad!ctl')
         #    self.assertRaisesRegexp(HTTP, '400 BAD REQUEST \[invalid path\]', filter_url, 'http://domain.com/init/ctlr/bad!fcn')
         #    self.assertRaisesRegexp(HTTP, '400 BAD REQUEST \[invalid path\]', filter_url, 'http://domain.com/init/ctlr/fcn.bad!ext')
         #    self.assertRaisesRegexp(HTTP, '400 BAD REQUEST \[invalid path\]', filter_url, 'http://domain.com/appc/init/fcn/bad!arg')
-        #except AttributeError:
+        # except AttributeError:
         #    pass
 
         self.assertEqual(filter_url('http://domain.com/welcome/default/fcn_1'),
                          "/welcome/default/fcn_1")
-        #self.assertRaises(HTTP, filter_url, 'http://domain.com/welcome/default/fcn-1')
-        #try:
+        # self.assertRaises(HTTP, filter_url, 'http://domain.com/welcome/default/fcn-1')
+        # try:
         #    # 2.7+ only
         #    self.assertRaisesRegexp(HTTP, '400 BAD REQUEST \[invalid path\]', filter_url, 'http://domain.com/welcome/default/fcn-1')
-        #except AttributeError:
+        # except AttributeError:
         #    pass
 
     def test_routes_error(self):
@@ -308,7 +310,7 @@ routes_out = [
         self.assertEqual(str(URL(
             a='welcome', c='default', f='f', args=['arg1', ''])), "/f/arg1//")
         self.assertEqual(str(URL(a='welcome', c='default', f='f',
-                         args=['arg1', '', 'arg3'])), "/f/arg1//arg3")
+                                 args=['arg1', '', 'arg3'])), "/f/arg1//arg3")
         self.assertEqual(str(
             URL(a='welcome', c='default', f='f', args=['ar g'])), "/f/ar%20g")
         self.assertEqual(str(URL(
@@ -375,7 +377,7 @@ routes_out = [
             "/?var=abc")
         self.assertEqual(
             str(URL(a='init', c='default', f='index',
-                vars=query, anchor='anchor')),
+                    vars=query, anchor='anchor')),
             "/?var=abc#anchor")
 
     def test_routes_absolute(self):
@@ -425,7 +427,7 @@ routes_out = [
             "httpx://host.com:1234/a/c/f")
         self.assertEqual(
             str(URL(r=r, a='a', c='c', f='f', scheme='wss',
-                host='host.com', port=1234)),
+                    host='host.com', port=1234)),
             "wss://host.com:1234/a/c/f")
 
     def test_request_uri(self):

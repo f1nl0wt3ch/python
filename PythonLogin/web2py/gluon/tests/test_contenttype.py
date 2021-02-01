@@ -7,9 +7,9 @@
 
 import unittest
 
-
 from gluon.contenttype import contenttype
 from gluon._compat import iteritems
+
 
 class TestContentType(unittest.TestCase):
 

@@ -319,6 +319,6 @@ class TestSmartQuery(unittest.TestCase):
         # drop(db.referred_table)
         # -----------------------------------------------------------------------------
 
+
 if __name__ == '__main__':
     unittest.main()
-

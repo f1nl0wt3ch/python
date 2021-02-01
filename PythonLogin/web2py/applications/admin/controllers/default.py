@@ -22,6 +22,7 @@ import platform
 
 try:
     import git
+
     if git.__version__ < '0.3.1':
         raise ImportError("Your version of git is %s. Upgrade to 0.3.1 or better." % git.__version__)
     have_git = True
@@ -31,7 +32,6 @@ except ImportError as e:
 
 from gluon.languages import (read_possible_languages, read_dict, write_dict,
                              read_plural_dict, write_plural_dict)
-
 
 if DEMO_MODE and request.function in ['change_password', 'pack',
                                       'pack_custom', 'pack_plugin', 'upgrade_web2py', 'uninstall',
@@ -53,7 +53,6 @@ if not is_manager() and request.function in ['change_password', 'upgrade_web2py'
 if FILTER_APPS and request.args(0) and not request.args(0) in FILTER_APPS:
     session.flash = T('disabled in demo mode')
     redirect(URL('site'))
-
 
 if not session.token:
     session.token = web2py_uuid()
@@ -82,6 +81,7 @@ def safe_open(a, b):
 
             def close(self):
                 pass
+
         return tmp()
     if PY2 or 'b' in b:
         return open(a, b)
@@ -108,8 +108,8 @@ def safe_write(a, value, b='w'):
 def get_app(name=None):
     app = name or request.args(0)
     if (app and os.path.exists(apath(app, r=request)) and
-        (not MULTI_USER_MODE or is_manager() or
-         db(db.app.name == app)(db.app.owner == auth.user.id).count())):
+            (not MULTI_USER_MODE or is_manager() or
+             db(db.app.name == app)(db.app.owner == auth.user.id).count())):
         return app
     session.flash = T('App does not exist or you are not authorized')
     redirect(URL('site'))
@@ -185,7 +185,6 @@ def logout():
 
 
 def change_password():
-
     if session.pam_user:
         session.flash = T(
             'PAM authenticated user, cannot change password here')
@@ -415,6 +414,7 @@ def pack_custom():
     def ignore(fs):
         return [f for f in fs if not (
                 f[:1] in '#' or f.endswith('~') or f.endswith('.bak'))]
+
     files = {}
     for (r, d, f) in os.walk(base):
         files[r] = {'folders': ignore(d), 'files': ignore(f)}
@@ -510,8 +510,8 @@ def compile_app():
     elif isinstance(c, list):
         session.flash = DIV(*[T('application compiled'), BR(), BR(),
                               T('WARNING: The following views could not be compiled:'), BR()] +
-                            [CAT(BR(), view) for view in c] +
-                            [BR(), BR(), T('DO NOT use the "Pack compiled" feature.')])
+                             [CAT(BR(), view) for view in c] +
+                             [BR(), BR(), T('DO NOT use the "Pack compiled" feature.')])
     else:
         session.flash = DIV(T('Cannot compile: there are errors in your app:'),
                             CODE(c))
@@ -551,6 +551,7 @@ def delete():
                               dict(filename=filename))
         redirect(URL(sender, anchor=request.vars.id2))
     return dict(dialog=dialog, filename=filename)
+
 
 def enable():
     if not URL.verify(request, hmac_key=session.hmac_key): raise HTTP(401)
@@ -619,6 +620,7 @@ def search():
         if keywords in read_file(filename, 'rb'):
             return True
         return False
+
     path = apath(request.args[0], r=request)
     files1 = glob(os.path.join(path, '*/*.py'))
     files2 = glob(os.path.join(path, '*/*.html'))
@@ -633,12 +635,13 @@ def edit():
     # Load json only if it is ajax edited...
     app = get_app(request.vars.app)
     app_path = apath(app, r=request)
-    preferences = {'theme': 'web2py', 'editor': 'default', 'closetag': 'true', 'codefolding': 'false', 'tabwidth': '4', 'indentwithtabs': 'false', 'linenumbers': 'true', 'highlightline': 'true'}
+    preferences = {'theme': 'web2py', 'editor': 'default', 'closetag': 'true', 'codefolding': 'false', 'tabwidth': '4',
+                   'indentwithtabs': 'false', 'linenumbers': 'true', 'highlightline': 'true'}
     config = Config(os.path.join(request.folder, 'settings.cfg'),
                     section='editor', default_values={})
     preferences.update(config.read())
 
-    if not(request.ajax) and not(is_mobile):
+    if not (request.ajax) and not (is_mobile):
         # return the scaffolding, the rest will be through ajax requests
         response.title = T('Editing %s') % app
         return response.render('default/edit.html', dict(app=app, editor_settings=preferences))
@@ -656,7 +659,9 @@ def edit():
                 response.headers["web2py-component-flash"] = T('Preferences saved correctly')
             else:
                 response.headers["web2py-component-flash"] = T('Preferences saved on session only')
-            response.headers["web2py-component-command"] = "update_editor(%s);$('a[href=#editor_settings] button.close').click();" % response.json(config.read())
+            response.headers[
+                "web2py-component-command"] = "update_editor(%s);$('a[href=#editor_settings] button.close').click();" % response.json(
+                config.read())
             return
         else:
             details = {'realfilename': 'settings', 'filename': 'settings', 'id': 'editor_settings', 'force': False}
@@ -758,7 +763,7 @@ def edit():
             else:
                 offset = 0
             highlight = {'start': start, 'end': start +
-                         offset + 1, 'lineno': e.lineno, 'offset': offset}
+                                                offset + 1, 'lineno': e.lineno, 'offset': offset}
             try:
                 ex_name = e.__class__.__name__
             except:
@@ -820,7 +825,9 @@ def edit():
         (controller, functions) = (None, None)
 
     if 'from_ajax' in request.vars:
-        return response.json({'file_hash': file_hash, 'saved_on': saved_on, 'functions': functions, 'controller': controller, 'application': request.args[0], 'highlight': highlight})
+        return response.json(
+            {'file_hash': file_hash, 'saved_on': saved_on, 'functions': functions, 'controller': controller,
+             'application': request.args[0], 'highlight': highlight})
     else:
         file_details = dict(app=request.args[0],
                             lineno=request.vars.lineno or 1,
@@ -945,9 +952,9 @@ def resolve():
     else:
         # Making the short circuit compatible with <= python2.4
         gen_data = lambda index, item: not item[:1] in ['+', '-'] and "" \
-            or INPUT(_type='checkbox',
-                     _name='line%i' % index,
-                     value=item[0] == '+')
+                                       or INPUT(_type='checkbox',
+                                                _name='line%i' % index,
+                                                value=item[0] == '+')
 
         diff = TABLE(*[TR(TD(gen_data(i, item)),
                           TD(item[0]),
@@ -1043,10 +1050,15 @@ def edit_plurals():
             forms.extend(None for i in xrange(nplurals - len(forms)))
         tab_col1 = DIV(CAT(LABEL(T("Singular Form")), B(key,
                                                         _class='fake-input')))
-        tab_inputs = [SPAN(LABEL(T("Plural Form #%s", n + 1)), INPUT(_type='text', _name=name + '_' + str(n), value=forms[n], _size=20), _class='span6') for n in xnplurals]
+        tab_inputs = [SPAN(LABEL(T("Plural Form #%s", n + 1)),
+                           INPUT(_type='text', _name=name + '_' + str(n), value=forms[n], _size=20), _class='span6') for
+                      n in xnplurals]
         tab_col2 = DIV(CAT(*tab_inputs))
-        tab_col3 = DIV(CAT(LABEL(XML('&nbsp;')), TAG.BUTTON(T('delete'), _onclick='return delkey("%s")' % name, _class='btn'), _class='span6'))
-        tab_row = DIV(DIV(tab_col1, '\n', tab_col2, '\n', tab_col3, _class='well well-small'), _id=name, _class='row-fluid tab_row')
+        tab_col3 = DIV(
+            CAT(LABEL(XML('&nbsp;')), TAG.BUTTON(T('delete'), _onclick='return delkey("%s")' % name, _class='btn'),
+                _class='span6'))
+        tab_row = DIV(DIV(tab_col1, '\n', tab_col2, '\n', tab_col3, _class='well well-small'), _id=name,
+                      _class='row-fluid tab_row')
         tab_rows.append(tab_row)
 
     tab_rows.append(DIV(TAG['button'](T('update'), _type='submit',
@@ -1521,11 +1533,13 @@ def files_menu():
             {'name': 'private', 'reg': '.*\.py$'}]
     result_files = []
     for dir in dirs:
-        result_files.append(TAG[''](LI(dir['name'], _class="nav-header component", _onclick="collapse('" + dir['name'] + "_files');"),
-                                    LI(UL(*[LI(editfile(dir['name'], f, dict(id=dir['name'] + f.replace('.', '__')), app), _style="overflow:hidden", _id=dir['name'] + "__" + f.replace('.', '__'))
-                                            for f in listfiles(app, dir['name'], regexp=dir['reg'])],
-                                          _class="nav nav-list small-font"),
-                                       _id=dir['name'] + '_files', _style="display: none;")))
+        result_files.append(
+            TAG[''](LI(dir['name'], _class="nav-header component", _onclick="collapse('" + dir['name'] + "_files');"),
+                    LI(UL(*[LI(editfile(dir['name'], f, dict(id=dir['name'] + f.replace('.', '__')), app),
+                               _style="overflow:hidden", _id=dir['name'] + "__" + f.replace('.', '__'))
+                            for f in listfiles(app, dir['name'], regexp=dir['reg'])],
+                          _class="nav nav-list small-font"),
+                       _id=dir['name'] + '_files', _style="display: none;")))
     return dict(result_files=result_files)
 
 
@@ -1754,7 +1768,7 @@ def make_link(path):
             if ext.lower() == editable[key] and check_extension:
                 return to_native(A('"' + tryFile + '"',
                                    _href=URL(r=request,
-                                   f='edit/%s/%s/%s' % (app, key, filename))).xml())
+                                             f='edit/%s/%s/%s' % (app, key, filename))).xml())
     return ''
 
 
@@ -1899,6 +1913,7 @@ def bulk_register():
         redirect(URL('site'))
     return locals()
 
+
 # Begin experimental stuff need fixes:
 # 1) should run in its own process - cannot os.chdir
 # 2) should not prompt user at console
@@ -1926,14 +1941,16 @@ def git_pull():
             session.flash = T("Pull failed, certain files could not be checked out. Check logs for details.")
             redirect(URL('site'))
         except git.UnmergedEntriesError:
-            session.flash = T("Pull is not possible because you have unmerged files. Fix them up in the work tree, and then try again.")
+            session.flash = T(
+                "Pull is not possible because you have unmerged files. Fix them up in the work tree, and then try again.")
             redirect(URL('site'))
         except git.GitCommandError:
             session.flash = T(
                 "Pull failed, git exited abnormally. See logs for details.")
             redirect(URL('site'))
         except AssertionError:
-            session.flash = T("Pull is not possible because you have unmerged files. Fix them up in the work tree, and then try again.")
+            session.flash = T(
+                "Pull is not possible because you have unmerged files. Fix them up in the work tree, and then try again.")
             redirect(URL('site'))
     elif 'cancel' in request.vars:
         redirect(URL('site'))
@@ -1962,7 +1979,8 @@ def git_push():
                 "Git repo updated with latest application changes.")
             redirect(URL('site'))
         except git.UnmergedEntriesError:
-            session.flash = T("Push failed, there are unmerged entries in the cache. Resolve merge issues manually and try again.")
+            session.flash = T(
+                "Push failed, there are unmerged entries in the cache. Resolve merge issues manually and try again.")
             redirect(URL('site'))
     return dict(app=app, form=form)
 
@@ -1989,7 +2007,7 @@ def install_plugin():
     if not (source and app):
         raise HTTP(500, T("Invalid request"))
     # make sure no XSS attacks in source
-    if not source.lower().split('://')[0] in ('http','https'):
+    if not source.lower().split('://')[0] in ('http', 'https'):
         raise HTTP(500, T("Invalid request"))
     form = SQLFORM.factory()
     result = None
@@ -1997,7 +2015,7 @@ def install_plugin():
         # get w2p plugin
         if "web2py.plugin." in source:
             filename = "web2py.plugin.%s.w2p" % \
-                source.split("web2py.plugin.")[-1].split(".w2p")[0]
+                       source.split("web2py.plugin.")[-1].split(".w2p")[0]
         else:
             filename = "web2py.plugin.%s.w2p" % cleanpath(plugin)
         if plugin_install(app, urlopen(source),

@@ -19,7 +19,6 @@ from gluon.storage import Storage
 
 
 class DropboxAccount(object):
-
     """
     from gluon.contrib.login_methods.dropbox_account import DropboxAccount
     auth.settings.actions_disabled=['register','change_password',
@@ -52,7 +51,7 @@ class DropboxAccount(object):
             self.key, self.secret, self.access_type)
 
     def get_token(self):
-        if not current.session.dropbox_access_token:            
+        if not current.session.dropbox_access_token:
             request_token = current.session.dropbox_request_token
             self.sess.set_request_token(request_token[0], request_token[1])
             access_token = self.sess.obtain_access_token(self.sess.token)
@@ -81,7 +80,7 @@ class DropboxAccount(object):
     def login_form(self):
 
         request_token = self.sess.obtain_request_token()
-        current.session.dropbox_request_token =  \
+        current.session.dropbox_request_token = \
             (request_token.key, request_token.secret)
         dropbox_url = self.sess.build_authorize_url(request_token,
                                                     self.login_url)
@@ -102,15 +101,15 @@ class DropboxAccount(object):
         self.client = client.DropboxClient(self.sess)
 
     def put(self, filename, file):
-        if not hasattr(self,'client'): self.get_client()
+        if not hasattr(self, 'client'): self.get_client()
         return self.client.put_file(filename, file)['bytes']
 
     def get(self, filename):
-        if not hasattr(self,'client'): self.get_client()
+        if not hasattr(self, 'client'): self.get_client()
         return self.client.get_file(filename)
 
     def dir(self, path):
-        if not hasattr(self,'client'): self.get_client()
+        if not hasattr(self, 'client'): self.get_client()
         return self.client.metadata(path)
 
 
@@ -121,7 +120,7 @@ def use_dropbox(auth, filename='private/dropbox.key', **kwargs):
         key, secret, access_type = open(path, 'r').read().strip().split(':')
         host = current.request.env.http_host
         login_url = "http://%s/%s/default/user/login" % \
-            (host, request.application)
+                    (host, request.application)
         auth.settings.actions_disabled = \
             ['register', 'change_password', 'request_reset_password']
         auth.settings.login_form = DropboxAccount(

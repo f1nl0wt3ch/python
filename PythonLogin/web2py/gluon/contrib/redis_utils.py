@@ -25,7 +25,6 @@ except ImportError:
     logger.error("Needs redis library to work")
     raise RuntimeError('Needs redis library to work')
 
-
 locker = Lock()
 
 
@@ -42,6 +41,7 @@ def RConn(*args, **vars):
         return getattr(RConn, instance_name)
     finally:
         locker.release()
+
 
 def acquire_lock(conn, lockname, identifier, ltime=10):
     while True:

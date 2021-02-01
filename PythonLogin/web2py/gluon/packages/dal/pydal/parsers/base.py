@@ -129,7 +129,7 @@ class DecimalParser(Parser):
 class JSONParser(Parser):
     @for_type('json')
     def _json(self, value):
-        #if 'loads' not in self.driver_auto_json:
+        # if 'loads' not in self.driver_auto_json:
         if not isinstance(value, basestring):
             raise RuntimeError('json data not a string')
         if PY2 and isinstance(value, unicode):

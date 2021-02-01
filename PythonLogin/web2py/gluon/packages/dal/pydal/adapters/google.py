@@ -32,7 +32,7 @@ class GoogleSQL(GoogleMigratorMixin, MySQL):
         super(GoogleSQL, self)._initialize_(do_connect)
         self.folder = self.folder or pjoin(
             '$HOME', THREAD_LOCAL._pydal_folder_.split(
-                os.sep+'applications'+os.sep, 1)[1])
+                os.sep + 'applications' + os.sep, 1)[1])
         ruri = self.uri.split('://', 1)[1]
         m = self.REGEX_URI.match(ruri)
         if not m:
@@ -100,6 +100,7 @@ class GoogleMySQL(GoogleMigratorMixin, MySQL):
         self.execute("SET FOREIGN_KEY_CHECKS=1;")
         self.execute("SET sql_mode='NO_BACKSLASH_ESCAPES,TRADITIONAL';")
 
+
 @adapters.register_for('google:psycopg2')
 class GooglePostgres(GoogleMigratorMixin, PostgrePsyco):
     uploads_in_blob = True
@@ -143,11 +144,11 @@ class GoogleDatastore(NoSQLAdapter):
         myfields = {}
         for field in table:
             if isinstance(polymodel, Table) and \
-               field.name in polymodel.fields():
+                    field.name in polymodel.fields():
                 continue
             attr = {}
             if isinstance(field.custom_qualifier, dict):
-                #this is custom properties to add to the GAE field declartion
+                # this is custom properties to add to the GAE field declartion
                 attr = field.custom_qualifier
             field_type = field.type
             if isinstance(field_type, SQLCustomType):
@@ -181,17 +182,17 @@ class GoogleDatastore(NoSQLAdapter):
         if not polymodel:
             model_cls = ndb.Model
             table._tableobj = classobj(
-                table._tablename, (model_cls, ), myfields)
+                table._tablename, (model_cls,), myfields)
             # Set NDB caching variables
             if self.ndb_settings and (table._tablename in self.ndb_settings):
                 for k, v in self.ndb_settings.iteritems():
                     setattr(table._tableobj, k, v)
         elif polymodel == True:
             pm_cls = NDBPolyModel
-            table._tableobj = classobj(table._tablename, (pm_cls, ), myfields)
+            table._tableobj = classobj(table._tablename, (pm_cls,), myfields)
         elif isinstance(polymodel, Table):
             table._tableobj = classobj(
-                table._tablename, (polymodel._tableobj, ), myfields)
+                table._tablename, (polymodel._tableobj,), myfields)
         else:
             raise SyntaxError(
                 "polymodel must be None, True, a table or a tablename")
@@ -208,7 +209,7 @@ class GoogleDatastore(NoSQLAdapter):
         elif isinstance(expression, (Expression, Query)):
             if expression.second is not None:
                 return expression.op(expression.first, expression.second,
-                    query_env=query_env)
+                                     query_env=query_env)
             elif expression.first is not None:
                 return expression.op(expression.first, query_env=query_env)
             else:
@@ -280,7 +281,7 @@ class GoogleDatastore(NoSQLAdapter):
             if use_common_filters(query):
                 query = self.common_filter(query, [table])
 
-        #tableobj is a GAE/NDB Model class (or subclass)
+        # tableobj is a GAE/NDB Model class (or subclass)
         tableobj = table._tableobj
         filters = self.expand(query)
 
@@ -308,7 +309,7 @@ class GoogleDatastore(NoSQLAdapter):
         # it will be added to the result later
         if projection and args_get('projection') == True:
             query_projection = [f.name for f in projection
-                    if f.name != table._id.name]
+                                if f.name != table._id.name]
         else:
             query_projection = None
         ## DONE WITH PROJECTION
@@ -356,7 +357,7 @@ class GoogleDatastore(NoSQLAdapter):
 
             if args_get('limitby', None):
                 (lmin, lmax) = attributes['limitby']
-                limit = lmax-lmin
+                limit = lmax - lmin
                 fetch_args = {'offset': lmin, 'keys_only': True}
 
                 keys, cursor, more = items.fetch_page(limit, **fetch_args)

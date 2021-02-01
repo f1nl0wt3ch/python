@@ -37,12 +37,12 @@ class FireBirdDialect(SQLDialect):
     @sqltype_for('reference')
     def type_reference(self):
         return 'INTEGER REFERENCES %(foreign_key)s ' + \
-            'ON DELETE %(on_delete_action)s'
+               'ON DELETE %(on_delete_action)s'
 
     @sqltype_for('big-reference')
     def type_big_reference(self):
         return 'BIGINT REFERENCES %(foreign_key)s ' + \
-            'ON DELETE %(on_delete_action)s'
+               'ON DELETE %(on_delete_action)s'
 
     def sequence_name(self, tablename):
         return self.quote('genid_%s' % tablename)
@@ -56,11 +56,11 @@ class FireBirdDialect(SQLDialect):
 
     def not_null(self, default, field_type):
         return 'DEFAULT %s NOT NULL' % \
-            self.adapter.represent(default, field_type)
+               self.adapter.represent(default, field_type)
 
     def epoch(self, val, query_env={}):
         return "DATEDIFF(second, '1970-01-01 00:00:00', %s)" % \
-            self.expand(val, query_env=query_env)
+               self.expand(val, query_env=query_env)
 
     def substring(self, field, parameters, query_env={}):
         return 'SUBSTRING(%s from %s for %s)' % (

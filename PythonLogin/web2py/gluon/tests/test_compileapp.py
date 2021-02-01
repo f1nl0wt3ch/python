@@ -14,7 +14,6 @@ from gluon.admin import app_compile, app_create, app_cleanup, check_new_version
 from gluon.admin import app_uninstall
 from gluon.main import global_settings
 
-
 WEB2PY_VERSION_URL = "http://web2py.com/examples/default/version"
 
 
@@ -22,7 +21,7 @@ class TestPack(unittest.TestCase):
     """ Tests the compileapp.py module """
 
     def test_compile(self):
-        #apps = ['welcome', 'admin', 'examples']
+        # apps = ['welcome', 'admin', 'examples']
         apps = ['welcome']
         for appname in apps:
             appname_path = os.path.join(os.getcwd(), 'applications', appname)
@@ -36,7 +35,7 @@ class TestPack(unittest.TestCase):
         return
 
     def test_admin_compile(self):
-        #apps = ['welcome', 'admin', 'examples']
+        # apps = ['welcome', 'admin', 'examples']
         request = Request(env={})
         request.application = 'a'
         request.controller = 'c'
@@ -48,7 +47,7 @@ class TestPack(unittest.TestCase):
             self.assertEqual(app_compile(appname_path, request), None)
             # remove any existing test_app
             new_app = 'test_app_%s' % (appname)
-            if(os.path.exists('applications/%s' % (new_app))):
+            if (os.path.exists('applications/%s' % (new_app))):
                 shutil.rmtree('applications/%s' % (new_app))
             self.assertEqual(app_create(new_app, request), True)
             self.assertEqual(os.path.exists('applications/test_app_%s/controllers/default.py' % (appname)), True)

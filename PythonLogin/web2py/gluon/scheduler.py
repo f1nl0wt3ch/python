@@ -110,6 +110,7 @@ class Task(object):
     """Defines a "task" object that gets passed from the main thread to the
     executor's one
     """
+
     def __init__(self, app, function, timeout, args='[]', vars='{}', **kwargs):
         logger.debug(' new task allocated: %s.%s', app, function)
         self.app = app
@@ -127,6 +128,7 @@ class TaskReport(object):
     """Defines a "task report" object that gets passed from the executor's
     thread to the main one
     """
+
     def __init__(self, status, result=None, output=None, tb=None):
         logger.debug('    new task report: %s', status)
         if tb:
@@ -295,7 +297,7 @@ class CronParser(object):
                             val = '%s/1' % val
                         else:
                             val = '-'.join([str(refdict[v])
-                                           for v in val.split('-')])
+                                            for v in val.split('-')])
                     if val != '-1' and '-' in val and '/' not in val:
                         val = '%s/1' % val
                     if '/' in val:
@@ -407,6 +409,7 @@ class CronParser(object):
 
     __next__ = next = get_next
 
+
 # the two functions below deal with simplejson decoding as unicode, esp for the dict decode
 # and subsequent usage as function Keyword arguments unicode variable names won't work!
 # borrowed from http://stackoverflow.com/questions/956867/
@@ -462,10 +465,10 @@ def executor(queue, task, out):
             self.out_queue.put(data)
 
     W2P_TASK = Storage({
-                       'id': task.task_id,
-                       'uuid': task.uuid,
-                       'run_id': task.run_id
-                       })
+        'id': task.task_id,
+        'uuid': task.uuid,
+        'run_id': task.run_id
+    })
     stdout = LogOutput(out)
     try:
         if task.app:
@@ -521,8 +524,8 @@ class MetaScheduler(threading.Thread):
 
     def __init__(self):
         threading.Thread.__init__(self)
-        self.process = None     # the background process
-        self.have_heartbeat = True   # set to False to kill
+        self.process = None  # the background process
+        self.have_heartbeat = True  # set to False to kill
         self.empty_runs = 0
 
     def local_async(self, task):
@@ -576,7 +579,7 @@ class MetaScheduler(threading.Thread):
                     logger.debug(' partial output: "%s"', str(tout))
                     if CLEAROUT in tout:
                         task_output = tout[
-                            tout.rfind(CLEAROUT) + len(CLEAROUT):]
+                                      tout.rfind(CLEAROUT) + len(CLEAROUT):]
                     else:
                         task_output += tout
         except:
@@ -664,10 +667,12 @@ TASK_STATUS = (QUEUED, RUNNING, COMPLETED, FAILED, TIMEOUT, STOPPED, EXPIRED)
 RUN_STATUS = (RUNNING, COMPLETED, FAILED, TIMEOUT, STOPPED)
 WORKER_STATUS = (ACTIVE, PICK, DISABLED, TERMINATE, KILL, STOP_TASK)
 
+
 class IS_CRONLINE(object):
     """
     Validates cronline
     """
+
     def __init__(self, error_message=None):
         self.error_message = error_message
 
@@ -680,6 +685,7 @@ class IS_CRONLINE(object):
             if not self.error_message:
                 return (value, e)
             return (value, self.error_message)
+
 
 class TYPE(object):
     """
@@ -1320,19 +1326,19 @@ class Scheduler(MetaScheduler):
             (~sd.task_child.belongs(
                 db(sd.can_visit == False)._select(sd.task_parent)
             )
-            )
+             )
         )._select(sd.task_child)
         no_deps = db(
             (st.status.belongs((QUEUED, ASSIGNED))) &
             (
-                (sd.id == None) | (st.id.belongs(deps_with_no_deps))
+                    (sd.id == None) | (st.id.belongs(deps_with_no_deps))
 
             )
         )._select(st.id, distinct=True, left=sd.on(
-                 (st.id == sd.task_parent) &
-                 (sd.can_visit == False)
+            (st.id == sd.task_parent) &
+            (sd.can_visit == False)
         )
-        )
+                  )
 
         all_available = db(
             (st.status.belongs((QUEUED, ASSIGNED))) &
@@ -1369,29 +1375,29 @@ class Scheduler(MetaScheduler):
                 ws = wkgroups.get(gname)
                 if ws:
                     if task.broadcast:
-                        for worker in ws['workers']:                       
+                        for worker in ws['workers']:
                             new_task = db.scheduler_task.insert(
-                                application_name = task.application_name,
-                                task_name = task.task_name,
-                                group_name = task.group_name,
-                                status = ASSIGNED,
-                                broadcast = False,
-                                function_name = task.function_name,
-                                args = task.args,
-                                start_time = now,
-                                repeats = 1,
-                                retry_failed = task.retry_failed,
-                                sync_output = task.sync_output,
-                                assigned_worker_name = worker['name'])
+                                application_name=task.application_name,
+                                task_name=task.task_name,
+                                group_name=task.group_name,
+                                status=ASSIGNED,
+                                broadcast=False,
+                                function_name=task.function_name,
+                                args=task.args,
+                                start_time=now,
+                                repeats=1,
+                                retry_failed=task.retry_failed,
+                                sync_output=task.sync_output,
+                                assigned_worker_name=worker['name'])
                         if task.period:
-                            next_run_time = now+datetime.timedelta(seconds=task.period)
+                            next_run_time = now + datetime.timedelta(seconds=task.period)
                         else:
                             # must be cronline
                             raise NotImplementedError
-                        db(st.id == task.id).update(times_run=task.times_run+1,
+                        db(st.id == task.id).update(times_run=task.times_run + 1,
                                                     next_run_time=next_run_time,
                                                     last_run_time=now)
-                        db.commit()                          
+                        db.commit()
                     else:
                         counter = 0
                         myw = 0
@@ -1527,7 +1533,7 @@ class Scheduler(MetaScheduler):
             args=targs,
             vars=tvars,
             uuid=tuuid,
-            )
+        )
         if cronline:
             try:
                 start_time = kwargs.get('start_time', self.now)
@@ -1596,8 +1602,8 @@ class Scheduler(MetaScheduler):
         ).first()
         if row and output:
             row.result = row.scheduler_run.run_result and \
-                loads(row.scheduler_run.run_result,
-                      object_hook=_decode_dict) or None
+                         loads(row.scheduler_run.run_result,
+                               object_hook=_decode_dict) or None
         return row
 
     def stop_task(self, ref):
@@ -1708,7 +1714,7 @@ def main():
     parser.add_option(
         "-t", "--tasks", dest="tasks", default=None,
         help="file containing task files, must define" +
-        "tasks = {'task_name':(lambda: 'output')} or similar set of tasks")
+             "tasks = {'task_name':(lambda: 'output')} or similar set of tasks")
     parser.add_option(
         "-U", "--utc-time", dest="utc_time", default=False,
         help="work with UTC timestamps"
@@ -1746,6 +1752,7 @@ def main():
     signal.signal(signal.SIGTERM, lambda signum, stack_frame: sys.exit(1))
     print('starting main worker loop...')
     scheduler.loop()
+
 
 if __name__ == '__main__':
     main()

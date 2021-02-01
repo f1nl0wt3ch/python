@@ -13,7 +13,7 @@ from gluon.globals import current
 from gluon.storage import Storage
 from gluon.http import HTTP, redirect
 
-#requires M2Crypto
+# requires M2Crypto
 from M2Crypto import X509
 from functools import reduce
 
@@ -38,12 +38,11 @@ class X509Auth(object):
         # since we cannot access the web server ssl engine directly
 
         if self.ssl_client_raw_cert:
-
             x509 = X509.load_cert_string(
                 self.ssl_client_raw_cert, X509.FORMAT_PEM)
             # extract it from the cert
             self.serial = self.request.env.ssl_client_serial or (
-                '%x' % x509.get_serial_number()).upper()
+                    '%x' % x509.get_serial_number()).upper()
 
             subject = x509.get_subject()
 

@@ -18,6 +18,7 @@ class TestHTTP(unittest.TestCase):
 
         def gen_status_str(code, message):
             return str(code) + ' ' + str(message)
+
         message = '1423 This is a custom message'
         code = 1423
         self.assertEqual(str(h(gen_status_str(code, message))),

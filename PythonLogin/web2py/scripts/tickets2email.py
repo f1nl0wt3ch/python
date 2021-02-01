@@ -11,7 +11,6 @@ from gluon.utils import md5_hash
 from gluon.restricted import RestrictedError
 from gluon.tools import Mail
 
-
 path = os.path.join(request.folder, 'errors')
 hashes = {}
 mail = Mail()

@@ -1,132 +1,132 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Lutin</class>
- <widget class="QMainWindow" name="Lutin">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>379</width>
-    <height>241</height>
-   </rect>
-  </property>
-  <property name="font">
-   <font>
-    <family>Tahoma</family>
-   </font>
-  </property>
-  <property name="windowTitle">
-   <string>Lutin</string>
-  </property>
-  <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <widget class="QLabel" name="welcome_label">
-      <property name="font">
-       <font>
-        <family>Tahoma</family>
-        <pointsize>20</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Welcome to Lutin AI</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>379</width>
-     <height>22</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menuLutinAI">
-    <property name="title">
-     <string>LutinAI</string>
-    </property>
-    <addaction name="main_action"/>
-    <addaction name="add_action"/>
-    <addaction name="data_action"/>
-    <addaction name="separator"/>
-    <addaction name="exit_action"/>
-   </widget>
-   <widget class="QMenu" name="menuAuthor">
-    <property name="title">
-     <string>Author</string>
-    </property>
-   </widget>
-   <addaction name="menuLutinAI"/>
-   <addaction name="menuAuthor"/>
-  </widget>
-  <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionAbout">
-   <property name="text">
-    <string>About</string>
-   </property>
-  </action>
-  <action name="actionQuit_Lutin_AI">
-   <property name="text">
-    <string>Exit</string>
-   </property>
-  </action>
-  <action name="actionMain_Program">
-   <property name="text">
-    <string>Program</string>
-   </property>
-  </action>
-  <action name="actionForm">
-   <property name="text">
-    <string>Form</string>
-   </property>
-  </action>
-  <action name="add_action">
-   <property name="text">
-    <string>Add</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+A</string>
-   </property>
-  </action>
-  <action name="main_action">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Main</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+M</string>
-   </property>
-  </action>
-  <action name="data_action">
-   <property name="text">
-    <string>Data</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+D</string>
-   </property>
-  </action>
-  <action name="exit_action">
-   <property name="text">
-    <string>Exit</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Alt+Q</string>
-   </property>
-  </action>
- </widget>
- <resources/>
- <connections/>
+    <class>Lutin</class>
+    <widget class="QMainWindow" name="Lutin">
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>379</width>
+                <height>241</height>
+            </rect>
+        </property>
+        <property name="font">
+            <font>
+                <family>Tahoma</family>
+            </font>
+        </property>
+        <property name="windowTitle">
+            <string>Lutin</string>
+        </property>
+        <widget class="QWidget" name="centralwidget">
+            <layout class="QVBoxLayout" name="verticalLayout">
+                <item>
+                    <widget class="QLabel" name="welcome_label">
+                        <property name="font">
+                            <font>
+                                <family>Tahoma</family>
+                                <pointsize>20</pointsize>
+                                <weight>75</weight>
+                                <bold>true</bold>
+                            </font>
+                        </property>
+                        <property name="text">
+                            <string>Welcome to Lutin AI</string>
+                        </property>
+                        <property name="alignment">
+                            <set>Qt::AlignCenter</set>
+                        </property>
+                    </widget>
+                </item>
+            </layout>
+        </widget>
+        <widget class="QMenuBar" name="menubar">
+            <property name="geometry">
+                <rect>
+                    <x>0</x>
+                    <y>0</y>
+                    <width>379</width>
+                    <height>22</height>
+                </rect>
+            </property>
+            <widget class="QMenu" name="menuLutinAI">
+                <property name="title">
+                    <string>LutinAI</string>
+                </property>
+                <addaction name="main_action"/>
+                <addaction name="add_action"/>
+                <addaction name="data_action"/>
+                <addaction name="separator"/>
+                <addaction name="exit_action"/>
+            </widget>
+            <widget class="QMenu" name="menuAuthor">
+                <property name="title">
+                    <string>Author</string>
+                </property>
+            </widget>
+            <addaction name="menuLutinAI"/>
+            <addaction name="menuAuthor"/>
+        </widget>
+        <widget class="QStatusBar" name="statusbar"/>
+        <action name="actionAbout">
+            <property name="text">
+                <string>About</string>
+            </property>
+        </action>
+        <action name="actionQuit_Lutin_AI">
+            <property name="text">
+                <string>Exit</string>
+            </property>
+        </action>
+        <action name="actionMain_Program">
+            <property name="text">
+                <string>Program</string>
+            </property>
+        </action>
+        <action name="actionForm">
+            <property name="text">
+                <string>Form</string>
+            </property>
+        </action>
+        <action name="add_action">
+            <property name="text">
+                <string>Add</string>
+            </property>
+            <property name="shortcut">
+                <string>Ctrl+A</string>
+            </property>
+        </action>
+        <action name="main_action">
+            <property name="checkable">
+                <bool>true</bool>
+            </property>
+            <property name="checked">
+                <bool>true</bool>
+            </property>
+            <property name="text">
+                <string>Main</string>
+            </property>
+            <property name="shortcut">
+                <string>Ctrl+M</string>
+            </property>
+        </action>
+        <action name="data_action">
+            <property name="text">
+                <string>Data</string>
+            </property>
+            <property name="shortcut">
+                <string>Ctrl+D</string>
+            </property>
+        </action>
+        <action name="exit_action">
+            <property name="text">
+                <string>Exit</string>
+            </property>
+            <property name="shortcut">
+                <string>Ctrl+Alt+Q</string>
+            </property>
+        </action>
+    </widget>
+    <resources/>
+    <connections/>
 </ui>

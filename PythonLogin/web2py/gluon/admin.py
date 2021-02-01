@@ -346,7 +346,7 @@ def check_new_version(myversion, version_url):
         print(traceback.format_exc())
         return -1, myversion
 
-    if pversion[:3]+pversion[-6:] > pmyversion[:3]+pmyversion[-6:]:
+    if pversion[:3] + pversion[-6:] > pmyversion[:3] + pmyversion[-6:]:
         return True, version
     else:
         return False, version
@@ -434,7 +434,7 @@ def upgrade(request, url='http://web2py.com'):
 
 def add_path_first(path):
     sys.path = [path] + [p for p in sys.path if (
-        not p == path and not p == (path + '/'))]
+            not p == path and not p == (path + '/'))]
     if not global_settings.web2py_runtime_gae:
         site.addsitedir(path)
 

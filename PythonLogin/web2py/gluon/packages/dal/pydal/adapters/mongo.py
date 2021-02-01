@@ -16,6 +16,8 @@ try:
 except:
     class Binary(object):
         pass
+
+
     USER_DEFINED_SUBTYPE = 0
 
 
@@ -80,7 +82,7 @@ class Mongo(ConnectionConfigurationMixin, NoSQLAdapter):
         self.server_version = tuple(
             [int(x) for x in self._server_version.split('.')])
         self.server_version_major = (
-            self.server_version[0] + self.server_version[1] / 10.0)
+                self.server_version[0] + self.server_version[1] / 10.0)
 
     def object_id(self, arg=None):
         """ Convert input to a valid Mongodb ObjectId instance
@@ -104,7 +106,7 @@ class Mongo(ConnectionConfigurationMixin, NoSQLAdapter):
                     arg = int(arg, 0)
                 except ValueError as e:
                     raise ValueError(
-                            "invalid objectid argument string: %s" % e)
+                        "invalid objectid argument string: %s" % e)
             else:
                 raise ValueError("Invalid objectid argument string. " +
                                  "Requires an integer or base 16 value")
@@ -183,7 +185,7 @@ class Mongo(ConnectionConfigurationMixin, NoSQLAdapter):
                 result = op(**optional_args)
         elif isinstance(expression, Expansion):
             expression.query = (self.expand(expression.query, field_type,
-                query_env=query_env))
+                                            query_env=query_env))
             result = expression
         elif isinstance(expression, (list, tuple)):
             result = [self.represent(item, field_type) for item in expression]
@@ -213,7 +215,7 @@ class Mongo(ConnectionConfigurationMixin, NoSQLAdapter):
                 distinct_fields = [distinct]
             else:
                 while (isinstance(distinct, Expression) and
-                        isinstance(distinct.second, Field)):
+                       isinstance(distinct.second, Field)):
                     distinct_fields += [distinct.second]
                     distinct = distinct.first
                 if isinstance(distinct, Field):
@@ -263,8 +265,8 @@ class Mongo(ConnectionConfigurationMixin, NoSQLAdapter):
                 table = self.db[tablename]
                 orderby = [
                     table[x] for x in (
-                        hasattr(table, '_primarykey') and
-                        table._primarykey or ['_id'])]
+                            hasattr(table, '_primarykey') and
+                            table._primarykey or ['_id'])]
 
         if not orderby:
             mongosort_list = []
@@ -589,7 +591,7 @@ class Expansion(object):
         self.NULL_QUERY = {'_id': {
             '$gt': self.adapter.ObjectId('000000000000000000000000')}}
         self._parse_data = {'pipeline': False, 'need_group':
-                            bool(groupby or distinct or having)}
+            bool(groupby or distinct or having)}
         self.crud = crud
         self.having = having
         self.distinct = distinct
@@ -611,7 +613,7 @@ class Expansion(object):
                            for f in (fields or [])]
 
         self.tablename = (tablename or
-                adapter.get_table(query, *self.fields)._tablename)
+                          adapter.get_table(query, *self.fields)._tablename)
         if use_common_filters(query):
             query = adapter.common_filter(query, [self.tablename])
         self.query = self.annotate_expression(query)
@@ -677,7 +679,7 @@ class Expansion(object):
                 self.pipeline.append(
                     {'$group': {"_id": None, 'count': {"$sum": 1}}})
 
-            #elif crud == 'delete':
+            # elif crud == 'delete':
             #    pass
 
     @property

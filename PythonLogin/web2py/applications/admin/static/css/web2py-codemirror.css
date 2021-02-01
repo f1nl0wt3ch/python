@@ -1,8 +1,9 @@
 /* TODO rename this file as web2py-editor.css */
 /* Fullscreen */
 .CodeMirror-fullscreen {
-	z-index: 1030;
+    z-index: 1030;
 }
+
 .CodeMirror {
     border-top: 1px solid #ddd;
     /*border-left: 1px solid #ddd;*/
@@ -11,15 +12,20 @@
 
 /* BREAKPOINTS */
 
-.breakpoints {width: .8em;}
-.breakpoint { color: #822; }
+.breakpoints {
+    width: .8em;
+}
+
+.breakpoint {
+    color: #822;
+}
 
 /* Trailing Whitespace */
 
 .cm-trailingspace {
-	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAACCAYAAAB/qH1jAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3QUXCToH00Y1UgAAACFJREFUCNdjPMDBUc/AwNDAAAFMTAwMDA0OP34wQgX/AQBYgwYEx4f9lQAAAABJRU5ErkJggg==);
-	background-position: bottom left;
-	background-repeat: repeat-x;
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAACCAYAAAB/qH1jAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3QUXCToH00Y1UgAAACFJREFUCNdjPMDBUc/AwNDAAAFMTAwMDA0OP34wQgX/AQBYgwYEx4f9lQAAAABJRU5ErkJggg==);
+    background-position: bottom left;
+    background-repeat: repeat-x;
 }
 
 /* Close button on tab*/
@@ -31,7 +37,7 @@
     padding-right: 5px;
 }
 
-.nav-tabs>li>a {
+.nav-tabs > li > a {
     overflow: hidden;
     white-space: nowrap;
     word-wrap: normal;
@@ -56,8 +62,8 @@
 }
 
 #editor_main {
-    margin-top:40px;
-    margin-bottom:40px;
+    margin-top: 40px;
+    margin-bottom: 40px;
 }
 
 #editform {

@@ -135,7 +135,7 @@ class ConnectionPool(object):
         self.after_connection()
 
     def after_connection(self):
-        #this it is supposed to be overloaded by adapters
+        # this it is supposed to be overloaded by adapters
         pass
 
     def reconnect(self):

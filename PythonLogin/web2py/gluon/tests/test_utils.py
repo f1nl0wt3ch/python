@@ -84,17 +84,17 @@ class TestUtils(unittest.TestCase):
 
     def test_pad(self):
         test_cases = [
-            (16, b'mydata'), # verify data padding and unpad identity
-            (32, b'mydata '), # verify space is not stripped
-            (8, b'mydata\x01'), # verify "padding" bytes are ignored
-            (4, b'mydata'), # verify multiblock behavior
-            (2, b''), # verify empty string behavior
+            (16, b'mydata'),  # verify data padding and unpad identity
+            (32, b'mydata '),  # verify space is not stripped
+            (8, b'mydata\x01'),  # verify "padding" bytes are ignored
+            (4, b'mydata'),  # verify multiblock behavior
+            (2, b''),  # verify empty string behavior
         ]
-        for (testlen,teststr) in test_cases:
-            padded = gluon.utils.pad(teststr,testlen)
-            unpadded = gluon.utils.unpad(padded,testlen)
+        for (testlen, teststr) in test_cases:
+            padded = gluon.utils.pad(teststr, testlen)
+            unpadded = gluon.utils.unpad(padded, testlen)
             self.assertTrue(len(padded) > len(teststr))
-            self.assertTrue(len(padded)%testlen == 0)
+            self.assertTrue(len(padded) % testlen == 0)
             self.assertEqual(teststr, unpadded)
 
         testobj = {'a': 1, 'b': 2}
@@ -105,7 +105,7 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(pickled, unpadded)
         self.assertEqual(testobj, unpickled)
         self.assertTrue(len(padded) > len(pickled))
-        self.assertTrue(len(padded)%32==0)
+        self.assertTrue(len(padded) % 32 == 0)
 
     def test_secure_dumps_and_loads(self):
         """ Tests secure_dumps and secure_loads"""

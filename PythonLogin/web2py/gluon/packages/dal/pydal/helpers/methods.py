@@ -10,7 +10,7 @@ from .._compat import (
 from .regex import REGEX_NOPASSWD, REGEX_UNPACK, REGEX_CONST_STRING, REGEX_W
 from .classes import SQLCustomType
 
-UNIT_SEPARATOR = '\x1f' # ASCII unit separater for delimiting data
+UNIT_SEPARATOR = '\x1f'  # ASCII unit separater for delimiting data
 
 PLURALIZE_RULES = [
     (re.compile('child$'), re.compile('child$'), 'children'),
@@ -26,7 +26,7 @@ PLURALIZE_RULES = [
     (re.compile('[^aeioudgkprt]h$'), re.compile('$'), 'es'),
     (re.compile('(qu|[^aeiou])y$'), re.compile('y$'), 'ies'),
     (re.compile('$'), re.compile('$'), 's'),
-    ]
+]
 
 
 def pluralize(singular, rules=PLURALIZE_RULES):
@@ -95,13 +95,13 @@ def merge_tablemaps(*maplist):
 
 def bar_escape(item):
     item = str(item).replace('|', '||')
-    if item.startswith('||'): item='%s%s' % (UNIT_SEPARATOR, item)
-    if item.endswith('||'): item='%s%s' % (item, UNIT_SEPARATOR)
+    if item.startswith('||'): item = '%s%s' % (UNIT_SEPARATOR, item)
+    if item.endswith('||'): item = '%s%s' % (item, UNIT_SEPARATOR)
     return item
 
 
 def bar_unescape(item):
-    item = item.replace('||','|')
+    item = item.replace('||', '|')
     if item.startswith(UNIT_SEPARATOR): item = item[1:]
     if item.endswith(UNIT_SEPARATOR): item = item[:-1]
     return item
@@ -163,7 +163,7 @@ def smart_query(fields, text):
     while True:
         m = REGEX_CONST_STRING.search(text)
         if not m: break
-        text = text[:m.start()]+('#%i' % i)+text[m.end():]
+        text = text[:m.start()] + ('#%i' % i) + text[m.end():]
         constants[str(i)] = m.group()[1:-1]
         i += 1
     text = re.sub('\s+', ' ', text).lower()
@@ -200,7 +200,7 @@ def smart_query(fields, text):
                  (' in ', 'belongs'),
                  (' is ', '=')]:
         if a[0] == ' ':
-            text = text.replace(' is'+a, ' %s ' % b)
+            text = text.replace(' is' + a, ' %s ' % b)
         text = text.replace(a, ' %s ' % b)
     text = re.sub('\s+', ' ', text).lower()
     text = re.sub('(?P<a>[\<\>\!\=])\s+(?P<b>[\<\>\!\=])', '\g<a>\g<b>', text)
@@ -226,28 +226,46 @@ def smart_query(fields, text):
                 value = item
                 if field.type in ('text', 'string', 'json'):
                     if op == '=': op = 'like'
-            if op == '=': new_query = field == value
-            elif op == '<': new_query = field < value
-            elif op == '>': new_query = field > value
-            elif op == '<=': new_query = field <= value
-            elif op == '>=': new_query = field >= value
-            elif op == '!=': new_query = field != value
-            elif op == 'belongs': new_query = field.belongs(value.split(','))
-            elif op == 'notbelongs': new_query = ~field.belongs(value.split(','))
+            if op == '=':
+                new_query = field == value
+            elif op == '<':
+                new_query = field < value
+            elif op == '>':
+                new_query = field > value
+            elif op == '<=':
+                new_query = field <= value
+            elif op == '>=':
+                new_query = field >= value
+            elif op == '!=':
+                new_query = field != value
+            elif op == 'belongs':
+                new_query = field.belongs(value.split(','))
+            elif op == 'notbelongs':
+                new_query = ~field.belongs(value.split(','))
             elif field.type == 'list:string':
-                if op == 'contains': new_query = field.contains(value)
-                else: raise RuntimeError("Invalid operation")
+                if op == 'contains':
+                    new_query = field.contains(value)
+                else:
+                    raise RuntimeError("Invalid operation")
             elif field.type in ('text', 'string', 'json', 'upload'):
-                if op == 'contains': new_query = field.contains(value)
-                elif op == 'like': new_query = field.ilike(value)
-                elif op == 'startswith': new_query = field.startswith(value)
-                elif op == 'endswith': new_query = field.endswith(value)
-                else: raise RuntimeError("Invalid operation")
-            elif field._db._adapter.dbengine=='google:datastore' and \
-                 field.type in ('list:integer', 'list:string', 'list:reference'):
-                if op == 'contains': new_query = field.contains(value)
-                else: raise RuntimeError("Invalid operation")
-            else: raise RuntimeError("Invalid operation")
+                if op == 'contains':
+                    new_query = field.contains(value)
+                elif op == 'like':
+                    new_query = field.ilike(value)
+                elif op == 'startswith':
+                    new_query = field.startswith(value)
+                elif op == 'endswith':
+                    new_query = field.endswith(value)
+                else:
+                    raise RuntimeError("Invalid operation")
+            elif field._db._adapter.dbengine == 'google:datastore' and \
+                    field.type in ('list:integer', 'list:string', 'list:reference'):
+                if op == 'contains':
+                    new_query = field.contains(value)
+                else:
+                    raise RuntimeError("Invalid operation")
+            else:
+                raise RuntimeError("Invalid operation")
             if neg: new_query = ~new_query
             if query is None:
                 query = new_query
@@ -311,9 +329,10 @@ class _repr_ref_list(_repr_ref):
         if db._adapter.dbengine == 'google:datastore':
             def count(values):
                 return db(id.belongs(values)).select(id)
+
             rx = range(0, len(value), 30)
-            refs = reduce(lambda a, b: a & b, [count(value[i:i+30])
-                          for i in rx])
+            refs = reduce(lambda a, b: a & b, [count(value[i:i + 30])
+                                               for i in rx])
         else:
             refs = db(id.belongs(value)).select(id)
         return refs and ', '.join(
@@ -386,12 +405,14 @@ def attempt_upload(table, fields):
 def attempt_upload_on_insert(table):
     def wrapped(fields):
         return attempt_upload(table, fields)
+
     return wrapped
 
 
 def attempt_upload_on_update(table):
     def wrapped(dbset, fields):
         return attempt_upload(table, fields)
+
     return wrapped
 
 
@@ -406,7 +427,7 @@ def delete_uploaded_files(dbset, upload_fields=None):
         fields = table.fields
     fields = [
         f for f in fields if table[f].type == 'upload' and
-        table[f].uploadfield == True and table[f].autodelete
+                             table[f].uploadfield == True and table[f].autodelete
     ]
     if not fields:
         return False
@@ -417,7 +438,7 @@ def delete_uploaded_files(dbset, upload_fields=None):
             if not oldname:
                 continue
             if upload_fields and fieldname in upload_fields and \
-               oldname == upload_fields[fieldname]:
+                    oldname == upload_fields[fieldname]:
                 continue
             if field.custom_delete:
                 field.custom_delete(oldname)
@@ -430,7 +451,7 @@ def delete_uploaded_files(dbset, upload_fields=None):
                     items = oldname.split('.')
                     uploadfolder = pjoin(
                         uploadfolder, "%s.%s" %
-                        (items[0], items[1]), items[2][:2])
+                                      (items[0], items[1]), items[2][:2])
                 oldpath = pjoin(uploadfolder, oldname)
                 if exists(oldpath):
                     os.unlink(oldpath)

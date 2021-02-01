@@ -62,14 +62,15 @@ PY2 = sys.version_info[0] == 2
 
 logger = logging.getLogger("pydal")
 
-
 os_locking = None
 try:
     import google.appengine
+
     os_locking = 'gae'
 except:
     try:
         import fcntl
+
         os_locking = 'posix'
     except:
         try:
@@ -77,14 +78,16 @@ except:
             import ctypes
             from ctypes.wintypes import BOOL, DWORD, HANDLE
             from ctypes import windll
+
             os_locking = 'windows'
         except:
             pass
 
 if os_locking == 'windows':
-    LOCK_SH = 0    # the default
+    LOCK_SH = 0  # the default
     LOCK_NB = 0x1  # LOCKFILE_FAIL_IMMEDIATELY
     LOCK_EX = 0x2  # LOCKFILE_EXCLUSIVE_LOCK
+
 
     # --- the code is taken from pyserial project ---
     #
@@ -92,11 +95,13 @@ if os_locking == 'windows':
     def is_64bit():
         return ctypes.sizeof(ctypes.c_ulong) != ctypes.sizeof(ctypes.c_void_p)
 
+
     if is_64bit():
         ULONG_PTR = ctypes.c_int64
     else:
         ULONG_PTR = ctypes.c_ulong
     PVOID = ctypes.c_void_p
+
 
     # --- Union inside Structure by stackoverflow:3480240 ---
     class _OFFSET(ctypes.Structure):
@@ -104,11 +109,13 @@ if os_locking == 'windows':
             ('Offset', DWORD),
             ('OffsetHigh', DWORD)]
 
+
     class _OFFSET_UNION(ctypes.Union):
         _anonymous_ = ['_offset']
         _fields_ = [
             ('_offset', _OFFSET),
             ('Pointer', PVOID)]
+
 
     class OVERLAPPED(ctypes.Structure):
         _anonymous_ = ['_offset_union']
@@ -117,6 +124,7 @@ if os_locking == 'windows':
             ('InternalHigh', ULONG_PTR),
             ('_offset_union', _OFFSET_UNION),
             ('hEvent', HANDLE)]
+
 
     LPOVERLAPPED = ctypes.POINTER(OVERLAPPED)
 
@@ -128,10 +136,12 @@ if os_locking == 'windows':
     UnlockFileEx.restype = BOOL
     UnlockFileEx.argtypes = [HANDLE, DWORD, DWORD, DWORD, LPOVERLAPPED]
 
+
     def lock(file, flags):
         hfile = msvcrt.get_osfhandle(file.fileno())
         overlapped = OVERLAPPED()
         LockFileEx(hfile, flags, 0, 0, 0xFFFF0000, ctypes.byref(overlapped))
+
 
     def unlock(file):
         hfile = msvcrt.get_osfhandle(file.fileno())
@@ -143,8 +153,10 @@ elif os_locking == 'posix':
     LOCK_SH = fcntl.LOCK_SH
     LOCK_NB = fcntl.LOCK_NB
 
+
     def lock(file, flags):
         fcntl.flock(file.fileno(), flags)
+
 
     def unlock(file):
         fcntl.flock(file.fileno(), fcntl.LOCK_UN)
@@ -158,8 +170,10 @@ else:
     LOCK_SH = None
     LOCK_NB = None
 
+
     def lock(file, flags):
         pass
+
 
     def unlock(file):
         pass

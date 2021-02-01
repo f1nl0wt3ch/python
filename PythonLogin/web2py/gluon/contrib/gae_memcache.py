@@ -14,10 +14,9 @@ from google.appengine.api.memcache import Client
 
 
 class MemcacheClient(object):
-
     client = Client()
 
-    def __init__(self, request, default_time_expire = 300):
+    def __init__(self, request, default_time_expire=300):
         self.request = request
         self.default_time_expire = default_time_expire
 
@@ -25,10 +24,10 @@ class MemcacheClient(object):
         pass
 
     def __call__(
-        self,
-        key,
-        f,
-        time_expire=None,
+            self,
+            key,
+            f,
+            time_expire=None,
     ):
         if time_expire is None:
             time_expire = self.default_time_expire

@@ -24,18 +24,18 @@ An alternative solution is to set top-margin to div#main padding-top:60px; comme
 }
 
 .icon-white,
-.nav-tabs>.active>a>[class^="icon-"],
-.nav-tabs>.active>a>[class*=" icon-"],
-.nav-pills>.active>a>[class^="icon-"],
-.nav-pills>.active>a>[class*=" icon-"],
-.nav-list>.active>a>[class^="icon-"],
-.nav-list>.active>a>[class*=" icon-"],
-.navbar-inverse .nav>.active>a>[class^="icon-"],
-.navbar-inverse .nav>.active>a>[class*=" icon-"],
-.dropdown-menu>li>a:hover>[class^="icon-"],
-.dropdown-menu>li>a:hover>[class*=" icon-"],
-.dropdown-menu>.active>a>[class^="icon-"],
-.dropdown-menu>.active>a>[class*=" icon-"] {
+.nav-tabs > .active > a > [class^="icon-"],
+.nav-tabs > .active > a > [class*=" icon-"],
+.nav-pills > .active > a > [class^="icon-"],
+.nav-pills > .active > a > [class*=" icon-"],
+.nav-list > .active > a > [class^="icon-"],
+.nav-list > .active > a > [class*=" icon-"],
+.navbar-inverse .nav > .active > a > [class^="icon-"],
+.navbar-inverse .nav > .active > a > [class*=" icon-"],
+.dropdown-menu > li > a:hover > [class^="icon-"],
+.dropdown-menu > li > a:hover > [class*=" icon-"],
+.dropdown-menu > .active > a > [class^="icon-"],
+.dropdown-menu > .active > a > [class*=" icon-"] {
     /* right folder for bootstrap white images/icons*/
     background-image: url("../images/glyphicons-halflings-white.png");
 }
@@ -72,9 +72,9 @@ select:focus,
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(232, 149, 60, 0.6);
 }
 
-.web2py_grid .dropdown-menu li>a:hover,
-.web2py_grid .dropdown-menu li>a:focus {
-    filter: progid: DXImageTransform.Microsoft.gradient(enabled=false);
+.web2py_grid .dropdown-menu li > a:hover,
+.web2py_grid .dropdown-menu li > a:focus {
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
     /* IE6-9*/
     background-image: none;
     background-color: #E8953C;
@@ -111,7 +111,7 @@ a:hover {
     padding: 0 1em;
 }
 
-.pwdchange>.button {
+.pwdchange > .button {
     margin-bottom: 10px;
 }
 
@@ -123,7 +123,7 @@ input[type="file"] {
     margin-bottom: 0px;
 }
 
-input+.help-block {
+input + .help-block {
     margin-top: -10px;
     margin-bottom: 4px;
 }
@@ -146,11 +146,11 @@ div[rel='tooltip'] span {
     position: relative;
 }
 
-[rel="pagebookmark"]>.component {
+[rel="pagebookmark"] > .component {
     cursor: pointer;
 }
 
-[rel="pagebookmark"]>.hashstick {
+[rel="pagebookmark"] > .hashstick {
     position: absolute;
     top: -54px;
     left: -9999px;
@@ -165,7 +165,7 @@ div[rel='tooltip'] span {
     visibility: hidden;
 }
 
-.hashstick:target+.tophashlink.btn {
+.hashstick:target + .tophashlink.btn {
     visibility: visible;
 }
 
@@ -179,7 +179,7 @@ ul.act_edit .btn {
     margin-bottom: 4px;
 }
 
-ul.act_edit .file>a {
+ul.act_edit .file > a {
     white-space: pre;
 }
 
@@ -220,7 +220,7 @@ ul.act_edit .file>a {
     list-style-type: none;
 }
 
-.folder>i {
+.folder > i {
     display: inline-block;
     width: 5px;
     height: 5px;
@@ -232,7 +232,7 @@ ul.act_edit .file>a {
     border-radius: 1px;
 }
 
-.folder>i+a {
+.folder > i + a {
     padding-left: 0.5em;
 }
 
@@ -343,7 +343,7 @@ div.web2py_counter.span6 {
     white-space: pre;
 }
 
-.test div[id^="output_"]>h2 {
+.test div[id^="output_"] > h2 {
     font-size: 18px;
     line-height: 1;
     color: grey;
@@ -589,7 +589,7 @@ ul[id$="_grow_input"] {
     width: 142px;
 }
 
-.step [rel="pagebookmark"]>.hashstick {
+.step [rel="pagebookmark"] > .hashstick {
     display: none;
 }
 
@@ -625,7 +625,7 @@ ul[id$="_grow_input"] {
     background: -o-linear-gradient(top, #FAFAFA 0%, #E9E9E9 100%);
     background: -ms-linear-gradient(top, #FAFAFA 0%, #E9E9E9 100%);
     background: linear-gradient(top, #FAFAFA 0%, #E9E9E9 100%);
-    filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#FAFAFA', endColorstr='#E9E9E9');
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FAFAFA', endColorstr='#E9E9E9');
     -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#FAFAFA', endColorstr='#E9E9E9')";
     /*font-size:10px; color:#444; text-transform:uppercase;*/
 }
@@ -635,14 +635,15 @@ th.cbcentered {
     text-align: center;
 }
 
-td.cbcentered>input,
-th.cbcentered>input {
+td.cbcentered > input,
+th.cbcentered > input {
     margin-top: -1px;
 }
 
-.traceback div {}
+.traceback div {
+}
 
-.ticket_code>table td:first-child {
+.ticket_code > table td:first-child {
     border-left: 0;
 }
 
@@ -882,7 +883,7 @@ EDIT PAGE SLIDING FILES MENU
     width: 100%;
 }
 
-#filelist li>a {
+#filelist li > a {
     text-shadow: none;
 }
 
@@ -892,22 +893,24 @@ EDIT PAGE SLIDING FILES MENU
 ==============================================================*/
 
 @media (max-width: 800px) {
-    .step [rel="pagebookmark"]>.hashstick {
+    .step [rel="pagebookmark"] > .hashstick {
         /*top:-54px;*/
         display: block;
     }
 }
 
 @media (max-width: 767px) {
-    [rel="pagebookmark"]>.hashstick {
+    [rel="pagebookmark"] > .hashstick {
         top: 0;
     }
+
     /*-----------------------------------
  main
 -------------------------------------*/
     #main {
         margin-top: 0;
     }
+
     /*-----------------------------------
  footer
 -------------------------------------*/
@@ -917,27 +920,34 @@ EDIT PAGE SLIDING FILES MENU
         padding-left: 20px;
         padding-right: 20px;
     }
+
     /*-----------------------------------
  errors page
 -------------------------------------*/
     #trck_errors {
         table-layout: fixed;
     }
+
     #trck_errors .column1 {
         width: 20px;
     }
+
     #trck_errors .column2 {
         width: 45px;
     }
+
     #trck_errors .column3 {
         width: 150px;
     }
+
     #trck_errors .columnN {
         width: 55px;
     }
+
     #trck_errors .columnN1 {
         width: 138px;
     }
+
     .ticket_code,
     .inspect.resp1,
     .inspect.controls pre,
@@ -945,9 +955,11 @@ EDIT PAGE SLIDING FILES MENU
         width: 100%;
         overflow: auto;
     }
-    .ticket_code>table {
+
+    .ticket_code > table {
         width: 100%;
     }
+
     .celled {
         width: 320px;
     }
@@ -958,6 +970,7 @@ EDIT PAGE SLIDING FILES MENU
         display: block;
         margin-top: 4px;
     }
+
     /*-----------------------------------
  wizard
 -------------------------------------*/
@@ -966,11 +979,15 @@ EDIT PAGE SLIDING FILES MENU
         width: 160px;
         padding-top: 5px;
     }
-    .inspect>code {
+
+    .inspect > code {
         display: block;
         white-space: normal;
     }
-    .li-controls {}
+
+    .li-controls {
+    }
+
     .celled {
         width: 165px;
     }
@@ -1042,6 +1059,6 @@ div.error_wrapper {
     color: #d62e2b;
 }
 
-.twitter-timeline>iframe {
+.twitter-timeline > iframe {
     padding: 1em 0;
 }
